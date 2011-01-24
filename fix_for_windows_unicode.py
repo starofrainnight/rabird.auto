@@ -85,6 +85,10 @@ def __on_exit_rabird_module():
 	sys.stderr = old_stderr
 	sys.stdout = old_stdout
 	sys.stdin = old_stdin
+	
+	# FIXME : when we want to close the handles open by pipe(), it seems that
+	# the script just blocked down , thought it's no harm to no close the 
+	# handles, but it's really confuse me...
 
 # we must restore original standard input/output file
 atexit.register( __on_exit_rabird_module )
