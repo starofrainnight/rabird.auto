@@ -43,15 +43,29 @@ class stdout_thread_t(threading.Thread):
 		# do not in the encoding scale, that will case a convertion error:
 		# 'ascii' codec can't encode character u'\xbb' in position ...
 		stdout_file = io.open(self.file_descriptor, mode='rb', closefd=False)
+		block_end = "." + os.linesep
 
 		while True:
 			# it will be block here until any string coming ...
-			s = pickle.load(stdout_file)	
-			if len(s) > 0 :
-				if( type(s) == types.UnicodeType ) :
-					screen_buffer.WriteConsole( s )
-				else :
-					old_stdout.write( s )
+			# we shoudl be read three lines for a unit ( the pickle format )
+			temp_line = ""
+			a_line = ""
+			
+			while 0 != cmp( temp_line, block_end ):
+				temp_line = stdout_file.readline()
+				a_line += temp_line
+
+			if not a_line :
+				continue
+				
+			s = pickle.loads(a_line)
+			if len(s) <= 0 :
+				continue
+			
+			if( type(s) == types.UnicodeType ) :
+				screen_buffer.WriteConsole( s )
+			else :
+				old_stdout.write( s )
 				
 class stdio_file_t( io.FileIO ): 
 	def __init__(self, name, mode='r', closefd=True):
@@ -60,8 +74,10 @@ class stdio_file_t( io.FileIO ):
 	def write(self, value ):
 		if( type(value) != types.UnicodeType ) :
 			value = str(value) # changed value to str 
-
-		io.FileIO.write( self, pickle.dumps( value ) )		
+			
+		# the line separator must be at the end of line !
+		value = str( pickle.dumps( value ) ) + os.linesep
+		io.FileIO.write( self, value )		
 
 stdout_pipe = os.pipe()
 stderr_pipe = os.pipe()
