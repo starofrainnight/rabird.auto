@@ -25,13 +25,7 @@ import win32api
 import types # for all standard type values for buildin type()
 import cPickle as pickle
 
-stdout_pipe = os.pipe()
-stderr_pipe = os.pipe()
-stdin_pipe = os.pipe()
-
-old_stdout = sys.stdout
-old_stderr = sys.stderr
-old_stdin = sys.stdin
+# * replace the stdout / stderr / stdin file object in sys with our fixed objects
 
 class stdout_thread_t(threading.Thread):
     def __init__(self, file_descriptor, std_handle_type ):
@@ -69,6 +63,14 @@ class stdio_file_t( io.FileIO ):
 
 		io.FileIO.write( self, pickle.dumps( value ) )		
 
+stdout_pipe = os.pipe()
+stderr_pipe = os.pipe()
+stdin_pipe = os.pipe()
+
+old_stdout = sys.stdout
+old_stderr = sys.stderr
+old_stdin = sys.stdin
+
 stdout_thread = stdout_thread_t( stdout_pipe[0], win32api.STD_OUTPUT_HANDLE )
 stderr_thread = stdout_thread_t( stderr_pipe[0], win32api.STD_ERROR_HANDLE )
 
@@ -79,6 +81,12 @@ stderr_thread.start()
 sys.stdout = stdio_file_t( stdout_pipe[1], "wb", closefd=False )
 # keep not to overwrite the sys.stderr for debug purpose
 sys.stderr = stdio_file_t( stderr_pipe[1], "wb", closefd=False )
+
+# * fixed the sys.argv list with GetCommandLine() api in win32
+
+
+
+# * finalize windows's unicode fix
 
 def __on_exit_rabird_module():
 	# restore original standard input/output 
