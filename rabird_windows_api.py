@@ -1,4 +1,4 @@
-#
+##
 # pywin32 actially do not support unicode version of windows api, just as if 
 # you input the multilanguage ( mix different language characters ). for ex:
 # the api GetCommandLine() will return a string object decoded by current locale,

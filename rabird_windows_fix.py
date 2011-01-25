@@ -1,4 +1,4 @@
-#
+##
 # import this unit to fixed multilanguage read /write problems, 
 # it's a rarely appear problem : even you set the correct locale, 
 # if there are a folder / file name is mix with different language copy 
