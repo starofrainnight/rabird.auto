@@ -24,6 +24,7 @@ import win32console
 import win32api
 import types # for all standard type values for buildin type()
 import cPickle as pickle
+import rabird_windows_api
 
 # * replace the stdout / stderr / stdin file object in sys with our fixed objects
 
@@ -99,8 +100,7 @@ sys.stdout = stdio_file_t( stdout_pipe[1], "wb", closefd=False )
 sys.stderr = stdio_file_t( stderr_pipe[1], "wb", closefd=False )
 
 # * fixed the sys.argv list with GetCommandLine() api in win32
-
-
+sys.argv = rabird_windows_api.CommandLineToArgv( rabird_windows_api.GetCommandLine() )
 
 # * finalize windows's unicode fix
 

@@ -12,6 +12,22 @@
 # 
 import ctypes
 
+# @return an unicode string indicate the command line
 def GetCommandLine():	
-	result = ctypes.c_wchar_p( ctypes.windll.kernel32.GetCommandLineW() )
-	print result	 
+	return ctypes.c_wchar_p( ctypes.windll.kernel32.GetCommandLineW() ).value
+
+def CommandLineToArgv( ACommandLine  ):
+	arguments_count = ctypes.c_int()
+	arguments_memory = ctypes.c_void_p( ctypes.windll.shell32.CommandLineToArgvW( ctypes.c_wchar_p(ACommandLine), ctypes.byref(arguments_count) ) )
+	
+	result = []		
+	if 0 != arguments_memory.value :
+		for i in xrange( 1, arguments_count.value ):
+			wstring_memory = ctypes.c_void_p.from_address( arguments_memory.value + i * ctypes.sizeof(ctypes.c_void_p) )
+			result.append( ctypes.wstring_at( wstring_memory.value ) )
+
+	ctypes.windll.kernel32.LocalFree( arguments_memory )
+	
+	#print result
+	
+	return result
