@@ -37,7 +37,6 @@ class stdout_thread_t(threading.Thread):
 		self.file_descriptor = file_descriptor
 		self.std_handle_type = std_handle_type
 		self.old_stdout = old_stdout
-		self.is_destroy = False		
 		
 		# use for internal purpose 
 		self.screen_buffer = win32console.GetStdHandle(self.std_handle_type)
@@ -49,6 +48,7 @@ class stdout_thread_t(threading.Thread):
 		
 	def run(self):
 		end_mark = ord(".")
+		exit_mark = ord("@")
 
 		while True:
 			# it will be block here until any string coming ...
@@ -57,12 +57,7 @@ class stdout_thread_t(threading.Thread):
 			a_line = ""
 			
 			while True:
-				temp_line = self.stdout.readline()
-				
-				# if outside need us to destroy our self, we exit ...
-				if self.is_destroy :
-					break
-					
+				temp_line = self.stdout.readline()				
 				a_line += temp_line
 				
 				if len(temp_line) > 0:
@@ -70,8 +65,9 @@ class stdout_thread_t(threading.Thread):
 						break
 				
 			# if outside need us to destroy our self, we exit ...
-			if self.is_destroy :
-				break
+			if len(temp_line) >= 2:
+				if ord(temp_line[1]) == exit_mark:
+					break
 
 			if not a_line :
 				continue
@@ -99,8 +95,7 @@ class stdio_file_t(io.FileIO):
 		
 		
 def stop_stdout_thread( a_thread, a_stdout_file ):
-	a_thread.is_destroy = True
-	a_stdout_file.write("\n") # break the read line , in thread
+	os.write( a_stdout_file.fileno(), ".@\n" ) # break the read line operation in thread
 	a_thread.join()
 
 stdout_pipe = os.pipe()
@@ -130,7 +125,7 @@ sys.argv = rabird_windows_api.CommandLineToArgv(rabird_windows_api.GetCommandLin
 
 # * finalize windows's unicode fix
 def __on_exit_rabird_module():
-	time.sleep(0.01) # wait for console finished their output
+	# wait for console finished their output
 	stop_stdout_thread( stdout_thread, our_stdout )
 	stop_stdout_thread( stderr_thread, our_stderr )
 	
