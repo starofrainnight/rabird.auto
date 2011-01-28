@@ -38,17 +38,16 @@ class stdout_thread_t(threading.Thread):
 		self.std_handle_type = std_handle_type
 		self.old_stdout = old_stdout
 		self.is_destroy = False		
-
-	def run(self):
-		screen_buffer = win32console.GetStdHandle(self.std_handle_type)
-
+		
+		# use for internal purpose 
+		self.screen_buffer = win32console.GetStdHandle(self.std_handle_type)
 		# do not open the file in text mode, otherwise it will try to decode
 		# with the encoding, but the unicode sometimes included something 
 		# do not in the encoding scale, that will case a convertion error:
 		# 'ascii' codec can't encode character u'\xbb' in position ...
-		stdout = io.open(self.file_descriptor, mode='rb')
+		self.stdout = io.open(self.file_descriptor, mode='rb')
 		
-		#block_end = "." + os.linesep
+	def run(self):
 		end_mark = ord(".")
 
 		while True:
@@ -58,7 +57,7 @@ class stdout_thread_t(threading.Thread):
 			a_line = ""
 			
 			while True:
-				temp_line = stdout.readline()
+				temp_line = self.stdout.readline()
 				
 				# if outside need us to destroy our self, we exit ...
 				if self.is_destroy :
@@ -82,11 +81,10 @@ class stdout_thread_t(threading.Thread):
 				continue
 				
 			if(type(s) == types.UnicodeType) :
-				screen_buffer.WriteConsole(s)
+				self.screen_buffer.WriteConsole(s)
 			else :
-				self.old_stdout.write(s)
-
-				
+				self.old_stdout.write(s)		
+		
 class stdio_file_t(io.FileIO): 
 	def __init__(self, name, mode='r', closefd=True):
 		io.FileIO.__init__(self, name, mode, closefd) 
@@ -132,6 +130,7 @@ sys.argv = rabird_windows_api.CommandLineToArgv(rabird_windows_api.GetCommandLin
 
 # * finalize windows's unicode fix
 def __on_exit_rabird_module():
+	time.sleep(0.01) # wait for console finished their output
 	stop_stdout_thread( stdout_thread, our_stdout )
 	stop_stdout_thread( stderr_thread, our_stderr )
 	
