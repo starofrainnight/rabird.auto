@@ -28,6 +28,5 @@ def CommandLineToArgv( ACommandLine  ):
 
 	ctypes.windll.kernel32.LocalFree( arguments_memory )
 	
-	#print result
-	
 	return result
+	
