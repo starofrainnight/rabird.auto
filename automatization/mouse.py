@@ -2,14 +2,13 @@
 # -*- coding: UTF-8 -*-
 import win32api, win32con, win32gui
 import time
-from compiler.ast import Return
 
-def pos():
+def position():
 	return win32api.GetCursorPos()
 
 def move_to( x, y, is_smooth = False, speed = 0.001 ):
 	if is_smooth :
-		start_pos = pos()
+		start_pos = position()
 		start_x = start_pos[0]
 		start_y = start_pos[1]
 		
@@ -56,6 +55,7 @@ def move_to( x, y, is_smooth = False, speed = 0.001 ):
 			temp_y += step_y
 			win32api.SetCursorPos( [int(temp_x), int(temp_y)] )
 			time.sleep( speed )
-	else:
-		win32api.SetCursorPos( [x, y] )
+			
+	# anyway, we will move the mouse to correct position
+	win32api.SetCursorPos( [x, y] )
 
