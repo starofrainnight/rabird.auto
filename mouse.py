@@ -67,6 +67,7 @@ def move_to( x, y, is_smooth = False, speed = 0.001 ):
 			
 	# anyway, we will move the mouse to correct position
 	win32api.SetCursorPos( [x, y] )
+	time.sleep( speed )
 
 ##
 # @param event_id see win32con.MOUSEEVENTF_XXX or search in MSDN
