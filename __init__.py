@@ -6,4 +6,4 @@ if sys.platform == "win32" :
 	
 	from . import windows_api
 	
-from . import automatization
+from . import mouse
