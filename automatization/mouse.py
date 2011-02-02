@@ -3,6 +3,15 @@
 import win32api, win32con, win32gui
 import time
 
+# button types
+BT_LEFT = 0
+BT_MIDDLE = 1
+BT_RIGHT = 2
+
+# button status
+BS_UP = 0
+BS_DOWN = 1
+
 def position():
 	return win32api.GetCursorPos()
 
@@ -59,3 +68,34 @@ def move_to( x, y, is_smooth = False, speed = 0.001 ):
 	# anyway, we will move the mouse to correct position
 	win32api.SetCursorPos( [x, y] )
 
+##
+# @param event_id see win32con.MOUSEEVENTF_XXX or search in MSDN
+# @param event_data: only related to wheel event and xbutton up / down 
+def send_event( event_id, event_data = 0 ):
+	win32api.mouse_event( event_id, 0, 0, event_data )
+	
+def button_up( button_type = BT_LEFT ):
+	if BT_LEFT == button_type:
+		send_event( win32con.MOUSEEVENTF_LEFTUP )
+	elif BT_RIGHT == button_type:
+		send_event( win32con.MOUSEEVENTF_RIGHTUP )
+	elif BT_MIDDLE == button_type:
+		send_event( win32con.MOUSEEVENTF_MIDDLEUP )
+		
+def button_down( button_type = BT_LEFT ):
+	if BT_LEFT == button_type:
+		send_event( win32con.MOUSEEVENTF_LEFTDOWN )
+	elif BT_RIGHT == button_type:
+		send_event( win32con.MOUSEEVENTF_RIGHTDOWN )
+	elif BT_MIDDLE == button_type:
+		send_event( win32con.MOUSEEVENTF_MIDDLEDOWN )
+		
+def click( button_type = BT_LEFT ):
+	button_down( button_type )
+	time.sleep(0.1)
+	button_up( button_type )
+	
+def double_click( button_type = BT_LEFT ):
+	click( button_type )
+	time.sleep( float(win32gui.GetDoubleClickTime()) / 2000 )
+	click( button_type )
