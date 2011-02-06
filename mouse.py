@@ -1,5 +1,5 @@
-#!/usr/bin/python
 # -*- coding: UTF-8 -*-
+
 import win32api, win32con, win32gui
 import time
 
@@ -12,11 +12,34 @@ BT_RIGHT = 2
 BS_UP = 0
 BS_DOWN = 1
 
+## all time related unit are second, see description about sleep() function 
+# of module time.
+class mouse_options_t():
+	click_delay = 0.010
+	click_down_delay = 0.010
+	click_drag_delay = 0.250
+
+## options of mouse related functions
+options = mouse_options_t()
+
+##
+# send event to system 
+#
+# @param event_id see win32con.MOUSEEVENTF_XXX or search in MSDN
+# @param event_data: only related to wheel event and xbutton up / down 
+def send_event( event_id, event_data = 0 ):
+	win32api.mouse_event( event_id, 0, 0, event_data )
+
+## return current mouse absolute position
 def position():
 	return win32api.GetCursorPos()
 
-def move_to( x, y, is_smooth = False, speed = 0.001 ):
-	if is_smooth :
+## move to target position 
+# @param x: 
+# @param y:
+# @param speed: scale 0 ~ 100, current is unused.
+def move_to( x, y, speed = 10 ):
+	if ( 0 < speed ) and ( speed <= 100 ) :
 		start_pos = position()
 		start_x = start_pos[0]
 		start_y = start_pos[1]
@@ -42,7 +65,7 @@ def move_to( x, y, is_smooth = False, speed = 0.001 ):
 			else:
 				step_x = float(distance_x) / distance_y 
 				step_y = float(1.0)
-				step_count = int(distance_y)			
+				step_count = int(distance_y)
 		else:
 			if 0 == distance_x:
 				step_x = 0
@@ -63,18 +86,13 @@ def move_to( x, y, is_smooth = False, speed = 0.001 ):
 			temp_x += step_x
 			temp_y += step_y
 			win32api.SetCursorPos( [int(temp_x), int(temp_y)] )
-			time.sleep( speed )
+			time.sleep( 0.001 )
 			
 	# anyway, we will move the mouse to correct position
 	win32api.SetCursorPos( [x, y] )
-	time.sleep( speed )
+	time.sleep( 0.001 )
 
-##
-# @param event_id see win32con.MOUSEEVENTF_XXX or search in MSDN
-# @param event_data: only related to wheel event and xbutton up / down 
-def send_event( event_id, event_data = 0 ):
-	win32api.mouse_event( event_id, 0, 0, event_data )
-	
+##  
 def button_up( button_type = BT_LEFT ):
 	if BT_LEFT == button_type:
 		send_event( win32con.MOUSEEVENTF_LEFTUP )
@@ -93,10 +111,14 @@ def button_down( button_type = BT_LEFT ):
 		
 def click( button_type = BT_LEFT ):
 	button_down( button_type )
-	time.sleep(0.1)
+	time.sleep( options.click_down_delay )
 	button_up( button_type )
 	
 def double_click( button_type = BT_LEFT ):
 	click( button_type )
+	# we read the double click time in real time, because the value will be
+	# changed by user . we must keep the double click time less than the real
+	# double click time ( plus script running time ), so we divide the system
+	# double click time to a half.
 	time.sleep( float(win32gui.GetDoubleClickTime()) / 2000 )
 	click( button_type )
