@@ -1,9 +1,13 @@
 ##
 # A compatile support module for 2.x and 3.x .
 # 
-# Ideas came from Armin Ronacher. References to 
+# Some ideas came from Armin Ronacher. References to 
 # http://lucumr.pocoo.org/2011/1/22/forwards-compatible-python/.
-# 
+#
+# There have another Python 2 and 3 compatibility utilities module named 'six'
+# takes a great deal jobs, you have better use it to write your applications. 
+# References to http://pypi.python.org/pypi/six/.
+#
 # @date 2011-11-13
 # @author: starofrainnight
 import sys
