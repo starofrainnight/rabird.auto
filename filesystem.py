@@ -16,6 +16,9 @@ class path_t(rabird.compatible.unicode_t):
 	
 	def __unicode__(self):
 		return self.__path
-
+	
+	def clear(self):
+		self.__path = u""
+		
 
 
