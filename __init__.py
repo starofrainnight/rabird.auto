@@ -8,3 +8,6 @@ if sys.platform == "win32" :
 	
 import rabird.mouse
 import rabird.system
+import rabird.filesystem
+import rabird.compatible
+import rabird.string

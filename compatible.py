@@ -26,7 +26,7 @@ import sys
 # 
 # You just need to do is inherit from it.
 class unicode_t(object):
-    if sys.version_info.major >= 3:
-        __str__ = lambda x: x.__unicode__()
-    else:
-        __str__ = lambda x: unicode(x).encode('utf-8')
+	if sys.version_info.major >= 3:
+		__str__ = lambda x: x.__unicode__()
+	else:
+		__str__ = lambda x: unicode(x).encode('utf-8')

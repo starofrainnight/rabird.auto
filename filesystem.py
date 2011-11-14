@@ -6,10 +6,11 @@
 # @author: starofrainnight
 
 import rabird.compatible
+import os
 
 class path_t(rabird.compatible.unicode_t):
 	def __init__(self, path=u"" ):
-		super(path_t, self).__init__(self)
+		super(path_t, self).__init__()
 		
 		## Internal path string, must be in unicode format.
 		self.__path = unicode(path)
@@ -23,6 +24,10 @@ class path_t(rabird.compatible.unicode_t):
 	def clear(self):
 		self.__path = u""
 		
+	def __div__(self, rhs):
+		self.__path = os.path.join( self.__path, unicode(rhs) )
+		return self 
+				
 		
 
 
