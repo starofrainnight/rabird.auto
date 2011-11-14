@@ -14,11 +14,15 @@ class path_t(rabird.compatible.unicode_t):
 		## Internal path string, must be in unicode format.
 		self.__path = unicode(path)
 	
+	## Support str(path object) or unicode(path object), they are all return
+	# an unicode object, actually rabird library is only support unicode 
+	# string!
 	def __unicode__(self):
 		return self.__path
 	
 	def clear(self):
 		self.__path = u""
+		
 		
 
 
