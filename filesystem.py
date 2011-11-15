@@ -7,6 +7,7 @@
 
 import rabird.compatible
 import os
+import shutil
 
 class option_t(object):
 	NONE = 0
@@ -15,8 +16,11 @@ class option_t(object):
 	# on directory remove operation.
 	RECURSIVE = 1
 	
+	# Ignored any errors we met when we doing an operation.
+	IGNORE_ERRORS = 2
+	
 	# Unused
-	FORCE = 2
+	FORCE = 4
 	
 class path_t(rabird.compatible.unicode_t):
 	def __init__(self, path=u""):
@@ -52,12 +56,16 @@ def create_hard_link(from_path, to_hard_link_path):
 	#os.link(str(from_path), str(to_hard_link_path))
 	pass
 
-## Create a symbol link ( unimplemented )
-def create_symbol_link(from_path, to_symbol_link_path):
+## Create a symbolic link ( unimplemented )
+def create_symbolic_link(from_path, to_symbol_link_path):
 	#os.symlink(str(from_path), str(to_symbol_link_path))
 	pass
 
 def copy(from_path, to_path):
+	pass
+
+def read_symbolic_link(path):
+	#os.readlink
 	pass
 
 ## Remove target path 
@@ -65,12 +73,19 @@ def copy(from_path, to_path):
 # @param [in] path: Target path we need to remove
 # @param [in] options: A series options to control the remove behaviors.
 # @see option_t.
-def remove(path, options=option_t.NONE):
+# @param [in] on_error: A callable object that could receive errors. It 
+# is only valid when path is a directory and options contained IGNORE_ERRORS
+# and RECURSIVE.
+# @see shutil.rmtree() 
+def remove(path, options=option_t.NONE, on_error=None):
 	path_string = str(path)
 	
 	if is_directory(path_string):
 		if options & option_t.RECURSIVE:
-			os.removedirs(path_string)
+			if options & option_t.IGNORE_ERRORS:
+				shutil.rmtree(path_string, True, on_error)
+			else:				
+				shutil.rmtree(path_string, False, on_error)
 		else:
 			os.rmdir(path_string)
 	else:
@@ -91,7 +106,7 @@ def is_directory(path):
 def is_regular_file(path):
 	return os.path.isfile(str(path))
 
-def is_symlink(path):
+def is_symbolic_link(path):
 	return os.path.islink(str(path))
 
 def is_other(path):
@@ -99,7 +114,7 @@ def is_other(path):
 		exists(path) 
 		and (not is_regular_file(path))
 		and (not is_directory(path)) 
-		and (not is_symlink(path)) 
+		and (not is_symbolic_link(path)) 
 		)
 
 		
