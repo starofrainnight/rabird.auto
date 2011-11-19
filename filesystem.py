@@ -125,6 +125,9 @@ def file_size(path):
 def exists(path):
 	return os.path.exists(str(path))		
 
+def equivalent(path1, path2):
+	return os.path.realpath(path1) == os.path.realpath(path2)
+
 def is_directory(path):
 	return os.path.isdir(str(path))
 
