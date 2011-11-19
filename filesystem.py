@@ -14,15 +14,18 @@ import jaraco.windows.filesystem
 class option_t(object):
 	NONE = 0
 	
-	## If we remove directories recursive ? Only effect
-	# on directory remove operation.
+	## If we do recursive on directories? Only effect on directory operation.
+	# Note : It only effect on directory remove operation.
 	RECURSIVE = 1
 	
-	# Ignored any errors we met when we doing an operation.
+	## Ignored any errors we met when we doing an operation.
 	IGNORE_ERRORS = 2
 	
-	# Unused
+	## Unused
 	FORCE = 4
+	
+	## Follow symbolic links when doing copy operations
+	FOLLOW_SYMBOLIC_LINKS = 8
 	
 class path_t(rabird.compatible.unicode_t):
 	def __init__(self, path=u""):
@@ -71,15 +74,21 @@ def create_directory(path):
 ## Create a hard link ( unimplemented )
 def create_hard_link(from_path, to_hard_link_path):
 	os.link(str(from_path), str(to_hard_link_path))
-	pass
 
 ## Create a symbolic link ( unimplemented )
 def create_symbolic_link(from_path, to_symbol_link_path):
 	os.symlink(str(from_path), str(to_symbol_link_path))
-	pass
 
-def copy(from_path, to_path):
-	pass
+def copy(from_path, to_path, options = option_t.NONE ):
+	from_path = str(from_path)
+	to_path = str(to_path)
+	if is_directory(from_path):
+		shutil.copytree(
+			from_path, 
+			to_path, 
+			not (options & option_t.FOLLOW_SYMBOLIC_LINKS) )
+	else:
+		shutil.copy2(from_path, to_path)
 
 def read_symbolic_link(path):
 	os.readlink(str(path))
