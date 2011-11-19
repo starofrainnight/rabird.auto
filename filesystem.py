@@ -159,8 +159,8 @@ def is_other(path):
 		and (not is_symbolic_link(path)) 
 		)
 
-
-
+def rename(old_path, new_path):
+	os.rename(old_path, new_path)
 		
 
 
