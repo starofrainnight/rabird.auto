@@ -126,8 +126,22 @@ def exists(path):
 	return os.path.exists(str(path))		
 
 def equivalent(path1, path2):
+	path1 = str(path1)
+	path2 = str(path2)
+	
+	if is_symbolic_link(path1):
+		path1 = read_symbolic_link(path1)
+		
+	if is_symbolic_link(path2):
+		path2 = read_symbolic_link(path2)
+		
 	return os.path.realpath(path1) == os.path.realpath(path2)
 
+# Override os.path.samefile, it have not be supported in win32 with python 2.x.
+if ( sys.version_info.major <= 2 ) and ( sys.platform == 'win32' ):
+	if not hasattr(os.path, 'samefile'):
+		os.path.samefile = equivalent
+		
 def is_directory(path):
 	return os.path.isdir(str(path))
 
@@ -145,7 +159,7 @@ def is_other(path):
 		and (not is_symbolic_link(path)) 
 		)
 
-		
+
 
 		
 
