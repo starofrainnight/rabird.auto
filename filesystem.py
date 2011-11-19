@@ -47,17 +47,17 @@ class path_t(rabird.compatible.unicode_t):
 # Python 2.x in win32 do not support link operations, so we use jaraco.window to
 # add this support.
 if ( sys.version_info.major <= 2 ) and ( sys.platform == "win32" ):
-	__is_symbolic_link = jaraco.windows.filesystem.islink
-	__create_hard_link = jaraco.windows.filesystem.link 
-	__create_symbolic_link = lambda from_path, to_symbolic_link_path: (
-		jaraco.windows.filesystem.symlink( from_path, to_symbolic_link_path, is_directory(from_path) ) 
-		) 
-	__read_symbolic_link = jaraco.windows.filesystem.readlink
-else:
-	__is_symbolic_link = os.path.islink
-	__create_hard_link = os.link
-	__create_symbolic_link = os.symlink
-	__read_symbolic_link = os.readlink
+	if not hasattr(os, 'symlink'):
+		os.symlink = lambda from_path, to_symbolic_link_path: (
+			jaraco.windows.filesystem.symlink( from_path, to_symbolic_link_path, is_directory(from_path) ) 
+			)
+		os.path.islink = jaraco.windows.filesystem.islink
+		
+	if not hasattr(os, 'readlink'):
+		os.readlink = jaraco.windows.filesystem.readlink
+		
+	if not hasattr(os, 'link'):
+		os.link = jaraco.windows.filesystem.link
 			
 def change_current_path(path):
 	os.chdir(str(path))
@@ -70,19 +70,19 @@ def create_directory(path):
 
 ## Create a hard link ( unimplemented )
 def create_hard_link(from_path, to_hard_link_path):
-	__create_hard_link(str(from_path), str(to_hard_link_path))
+	os.link(str(from_path), str(to_hard_link_path))
 	pass
 
 ## Create a symbolic link ( unimplemented )
 def create_symbolic_link(from_path, to_symbol_link_path):
-	__create_symbolic_link(str(from_path), str(to_symbol_link_path))
+	os.symlink(str(from_path), str(to_symbol_link_path))
 	pass
 
 def copy(from_path, to_path):
 	pass
 
 def read_symbolic_link(path):
-	__read_symbolic_link(str(path))
+	os.readlink(str(path))
 
 ## Remove target path 
 #
@@ -123,7 +123,7 @@ def is_regular_file(path):
 	return os.path.isfile(str(path))
 
 def is_symbolic_link(path):
-	return __is_symbolic_link(str(path))
+	return os.path.islink(str(path))
 
 def is_other(path):
 	return ( 
