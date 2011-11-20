@@ -2,6 +2,12 @@
 
 ## A module unified all file system related stuffs. 
 # 
+# @note We have read_symbolic_link() implementation, but do not have a 
+# read_hard_link() implementation and related stuffs. why? Because the hard link
+# just linked to the file object and do not record the original path, though 
+# each hard link will be target to the same object, but it just act like a real
+# file without original path we linked to. So ...
+#  
 # @date: 2011-11-13
 # @author: starofrainnight
 
@@ -145,12 +151,16 @@ if ( sys.version_info.major <= 2 ) and ( sys.platform == 'win32' ):
 def is_directory(path):
 	return os.path.isdir(str(path))
 
+## Check if a path is a regular file .
+# 
+# @param path: The path we want to take a check
+# @note The hard link is also a regular file !
 def is_regular_file(path):
 	return os.path.isfile(str(path))
 
 def is_symbolic_link(path):
 	return os.path.islink(str(path))
-
+	
 def is_other(path):
 	return ( 
 		exists(path) 
