@@ -15,8 +15,24 @@ import rabird.compatible
 import os
 import sys
 import shutil
-import jaraco.windows.filesystem
 
+# Python 2.x in win32 do not support link operations, so we use jaraco.window to
+# add this support.
+if ( sys.version_info.major <= 2 ) and ( sys.platform == "win32" ):
+	import jaraco.windows.filesystem
+	
+	if not hasattr(os, 'symlink'):
+		os.symlink = lambda from_path, to_symbolic_link_path: (
+			jaraco.windows.filesystem.symlink( from_path, to_symbolic_link_path, is_directory(from_path) ) 
+			)
+		os.path.islink = jaraco.windows.filesystem.islink
+		
+	if not hasattr(os, 'readlink'):
+		os.readlink = jaraco.windows.filesystem.readlink
+		
+	if not hasattr(os, 'link'):
+		os.link = jaraco.windows.filesystem.link
+		
 class option_t(object):
 	NONE = 0
 	
@@ -53,21 +69,6 @@ class path_t(rabird.compatible.unicode_t):
 	def clear(self):
 		self.__path = u""
 
-# Python 2.x in win32 do not support link operations, so we use jaraco.window to
-# add this support.
-if ( sys.version_info.major <= 2 ) and ( sys.platform == "win32" ):
-	if not hasattr(os, 'symlink'):
-		os.symlink = lambda from_path, to_symbolic_link_path: (
-			jaraco.windows.filesystem.symlink( from_path, to_symbolic_link_path, is_directory(from_path) ) 
-			)
-		os.path.islink = jaraco.windows.filesystem.islink
-		
-	if not hasattr(os, 'readlink'):
-		os.readlink = jaraco.windows.filesystem.readlink
-		
-	if not hasattr(os, 'link'):
-		os.link = jaraco.windows.filesystem.link
-			
 def change_current_path(path):
 	os.chdir(str(path))
 		
