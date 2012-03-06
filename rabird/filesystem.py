@@ -70,25 +70,25 @@ class path_t(rabird.compatible.unicode_t):
 		self.__path = u""
 
 def change_current_path(path):
-	os.chdir(str(path))
+	os.chdir(unicode(path))
 		
 def create_directories(path):
-	os.makedirs(str(path))
+	os.makedirs(unicode(path))
 	
 def create_directory(path):
-	os.mkdir(str(path))
+	os.mkdir(unicode(path))
 
 ## Create a hard link ( unimplemented )
 def create_hard_link(from_path, to_hard_link_path):
-	os.link(str(from_path), str(to_hard_link_path))
+	os.link(unicode(from_path), unicode(to_hard_link_path))
 
 ## Create a symbolic link ( unimplemented )
 def create_symbolic_link(from_path, to_symbol_link_path):
-	os.symlink(str(from_path), str(to_symbol_link_path))
+	os.symlink(unicode(from_path), unicode(to_symbol_link_path))
 
 def copy(from_path, to_path, options = option_t.NONE ):
-	from_path = str(from_path)
-	to_path = str(to_path)
+	from_path = unicode(from_path)
+	to_path = unicode(to_path)
 	if is_directory(from_path):
 		shutil.copytree(
 			from_path, 
@@ -98,7 +98,7 @@ def copy(from_path, to_path, options = option_t.NONE ):
 		shutil.copy2(from_path, to_path)
 
 def read_symbolic_link(path):
-	os.readlink(str(path))
+	os.readlink(unicode(path))
 
 ## Remove target path 
 #
@@ -110,7 +110,7 @@ def read_symbolic_link(path):
 # and RECURSIVE.
 # @see shutil.rmtree() 
 def remove(path, options=option_t.NONE, on_error=None):
-	path_string = str(path)
+	path_string = unicode(path)
 	
 	if is_directory(path_string):
 		if options & option_t.RECURSIVE:
@@ -130,11 +130,11 @@ def file_size(path):
 	return os.path.getsize(path) 
 
 def exists(path):
-	return os.path.exists(str(path))		
+	return os.path.exists(unicode(path))		
 
 def equivalent(path1, path2):
-	path1 = str(path1)
-	path2 = str(path2)
+	path1 = unicode(path1)
+	path2 = unicode(path2)
 	
 	if is_symbolic_link(path1):
 		path1 = read_symbolic_link(path1)
@@ -150,17 +150,17 @@ if ( sys.version_info.major <= 2 ) and ( sys.platform == 'win32' ):
 		os.path.samefile = equivalent
 		
 def is_directory(path):
-	return os.path.isdir(str(path))
+	return os.path.isdir(unicode(path))
 
 ## Check if a path is a regular file .
 # 
 # @param path: The path we want to take a check
 # @note The hard link is also a regular file !
 def is_regular_file(path):
-	return os.path.isfile(str(path))
+	return os.path.isfile(unicode(path))
 
 def is_symbolic_link(path):
-	return os.path.islink(str(path))
+	return os.path.islink(unicode(path))
 	
 def is_other(path):
 	return ( 

@@ -22,6 +22,7 @@ import threading
 import atexit 
 import win32console 
 import win32api
+import win32file
 import types # for all standard type values for buildin type()
 import pickle
 import rabird.windows_api
@@ -77,7 +78,17 @@ class stdout_thread_t(threading.Thread):
 				continue
 				
 			if(type(s) == types.UnicodeType) :
-				self.screen_buffer.WriteConsole(s)
+				if self.screen_buffer is not None:
+					# While debuging in Aptana Studio or some other situation, 
+					# the screen buffer will contain an invalid handle lead to 
+					# win32console.error be throw. We will use the old stdout 
+					# to output our informations instead.
+					try:
+						self.screen_buffer.WriteConsole(s)
+					except win32console.error:
+						self.screen_buffer = None
+				else:
+					self.old_stdout.write(s)						
 			else :
 				self.old_stdout.write(s)		
 		
