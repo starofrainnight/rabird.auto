@@ -63,10 +63,14 @@ class path_t(rabird.compatible.unicode_t):
 		return self.__path
 	
 	def __div__(self, rhs):
-		return os.path.join(self.__path, unicode(rhs)) 
+		return path_t(os.path.join(self.__path, unicode(rhs))) 
 				
 	def clear(self):
 		self.__path = u""
+	
+	def make_normal(self):
+		self.__path = os.path.normpath(self.__path)
+		return self
 
 def change_current_path(path):
 	os.chdir(unicode(path))
