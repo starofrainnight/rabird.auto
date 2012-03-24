@@ -68,7 +68,7 @@ class path_t(rabird.compatible.unicode_t):
 	def clear(self):
 		self.__path = u""
 	
-	def make_normal(self):
+	def make_preferred(self):
 		self.__path = os.path.normpath(self.__path)
 		return self
 
