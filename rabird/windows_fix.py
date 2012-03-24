@@ -87,8 +87,13 @@ class stdout_thread_t(threading.Thread):
 						self.screen_buffer.WriteConsole(s)
 					except win32console.error:
 						self.screen_buffer = None
+						
+						# If we could not output through screen buffer, we 
+						# convert the unicode string to python native string, 
+						# and write directly to old stndard output.
+						self.old_stdout.write(str(s))
 				else:
-					self.old_stdout.write(s)						
+					self.old_stdout.write(str(s))						
 			else :
 				self.old_stdout.write(s)		
 		
