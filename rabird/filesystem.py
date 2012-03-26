@@ -38,22 +38,16 @@ if ( sys.version_info.major <= 2 ) and ( sys.platform == "win32" ):
 	except AttributeError:
 		if not hasattr(os, 'symlink'):
 			os.symlink = lambda from_path, to_symbolic_link_path: (
-				if os.path.isdir(src):
-					shutil.copytree(from_path, to_symbolic_link_path, True)
-				else:
-					shutil.copy2(from_path, to_symbolic_link_path) 
+				os.path.isdir(from_path) if	shutil.copytree(from_path, to_symbolic_link_path, True) else shutil.copy2(from_path, to_symbolic_link_path) 
 				)
-			os.path.islink = lambda path: ( return False )
+			os.path.islink = lambda path: False
 			
 		if not hasattr(os, 'readlink'):
-			os.readlink = lambda path: ( return path)
+			os.readlink = lambda path: path
 			
 		if not hasattr(os, 'link'):
 			os.link = lambda from_path, to_link_path: (
-				if os.path.isdir(src):
-					shutil.copytree(from_path, to_link_path, True)
-				else:
-					shutil.copy2(from_path, to_link_path) 
+					os.path.isdir(from_path) if	shutil.copytree(from_path, to_link_path, True) else shutil.copy2(from_path, to_link_path)
 				)
 				
 		
