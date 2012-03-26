@@ -19,19 +19,43 @@ import shutil
 # Python 2.x in win32 do not support link operations, so we use jaraco.window to
 # add this support.
 if ( sys.version_info.major <= 2 ) and ( sys.platform == "win32" ):
-	import jaraco.windows.filesystem
+	# TODO: Temporary fix for AttributeError: function 'CreateSymbolicLinkW' not found
+	try:
+		import jaraco.windows.filesystem
 	
-	if not hasattr(os, 'symlink'):
-		os.symlink = lambda from_path, to_symbolic_link_path: (
-			jaraco.windows.filesystem.symlink( from_path, to_symbolic_link_path, is_directory(from_path) ) 
-			)
-		os.path.islink = jaraco.windows.filesystem.islink
-		
-	if not hasattr(os, 'readlink'):
-		os.readlink = jaraco.windows.filesystem.readlink
-		
-	if not hasattr(os, 'link'):
-		os.link = jaraco.windows.filesystem.link
+		if not hasattr(os, 'symlink'):
+			os.symlink = lambda from_path, to_symbolic_link_path: (
+				jaraco.windows.filesystem.symlink( from_path, to_symbolic_link_path, is_directory(from_path) ) 
+				)
+			os.path.islink = jaraco.windows.filesystem.islink
+			
+		if not hasattr(os, 'readlink'):
+			os.readlink = jaraco.windows.filesystem.readlink
+			
+		if not hasattr(os, 'link'):
+			os.link = jaraco.windows.filesystem.link
+			
+	except AttributeError:
+		if not hasattr(os, 'symlink'):
+			os.symlink = lambda from_path, to_symbolic_link_path: (
+				if os.path.isdir(src):
+					shutil.copytree(from_path, to_symbolic_link_path, True)
+				else:
+					shutil.copy2(from_path, to_symbolic_link_path) 
+				)
+			os.path.islink = lambda path: ( return False )
+			
+		if not hasattr(os, 'readlink'):
+			os.readlink = lambda path: ( return path)
+			
+		if not hasattr(os, 'link'):
+			os.link = lambda from_path, to_link_path: (
+				if os.path.isdir(src):
+					shutil.copytree(from_path, to_link_path, True)
+				else:
+					shutil.copy2(from_path, to_link_path) 
+				)
+				
 		
 class option_t(object):
 	NONE = 0
