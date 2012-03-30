@@ -1,5 +1,7 @@
 '''
-GTS ( General Terminal Scripter ) 
+GTS ( General Terminal Scripter ) .
+
+Only supported in windows.
 
 @author: starofrainnight
 @date: 2012-3-30
@@ -83,13 +85,20 @@ class scripter_t(rabird.compatible.unicode_t):
 		win32file.WriteFile(self.output_pipe, '@end\n')
 		
 	def send(self, command):
-		win32file.WriteFile(self.output_pipe, '#' + command + '\n')
+		win32file.WriteFile(self.output_pipe, '#')
+		win32file.WriteFile(self.output_pipe, command)
+		win32file.WriteFile(self.output_pipe, '\n')
 		
 	def wait_for_strings(self, strings):
 		self.send_begin()
 		self.send('wait_for_strings')
 		for c in strings:
 			self.send(c)
+		self.send_end()
+	
+	def remote_quit(self):
+		self.send_begin()
+		self.send('quit')
 		self.send_end()
 		
 	##
@@ -107,7 +116,7 @@ class scripter_t(rabird.compatible.unicode_t):
 		while 1:
 			time.sleep(0.1)
 			try:
-				readed_size, readed_buffer = win32file.ReadFile(input_pipe, 1024)
+				readed_size, readed_buffer = win32file.ReadFile(self.input_pipe, 1024)
 				while len(readed_buffer) > 0:
 					a_line = ""
 					sub_index = readed_buffer.find('\n')
