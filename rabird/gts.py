@@ -35,6 +35,7 @@ class scripter_t(rabird.compatible.unicode_t):
 	def __init__(self):
 		super(scripter_t,self).__init__()
 		
+		self.__id = 0
 		self.pipe_handles = [0, 0]
 		
 		for i in xrange(0, len(self.pipe_names)):
@@ -56,7 +57,7 @@ class scripter_t(rabird.compatible.unicode_t):
 		self.input_pipe = self.pipe_handles[1]
 		# All buffers need to split into command lines
 		self.raw_buffers = collections.deque()
-
+		
 	def wait_for_connection(self, timeout = None):
 		elapsed_time = 0.0
 		# Wait terminal scripter connect to us.
@@ -78,16 +79,18 @@ class scripter_t(rabird.compatible.unicode_t):
 			
 		return False
 	
-	def send_begin(self):
-		win32file.WriteFile(self.output_pipe, '@begin\n')
-		
-	def send_end(self):
-		win32file.WriteFile(self.output_pipe, '@end\n')
-		
 	def send(self, command):
 		win32file.WriteFile(self.output_pipe, '#')
 		win32file.WriteFile(self.output_pipe, command)
 		win32file.WriteFile(self.output_pipe, '\n')
+
+	def send_begin(self):
+		win32file.WriteFile(self.output_pipe, '@begin\n')
+		self.send(str(self.__id))
+		self.__id = self.__id + 1
+		
+	def send_end(self):
+		win32file.WriteFile(self.output_pipe, '@end\n')
 		
 	def wait_for_strings(self, strings):
 		self.send_begin()
@@ -100,6 +103,21 @@ class scripter_t(rabird.compatible.unicode_t):
 		self.send_begin()
 		self.send('quit')
 		self.send_end()
+		
+		while 1:
+			time.sleep(0.1)
+			try:
+				# Only read could detect pipe disconnect status.
+				win32file.ReadFile(self.input_pipe, 1024)
+			except pywintypes.error as e:
+				if 109 == e[0]:
+					# Remote pipe disconnected.
+					return 
+				elif 232 == e[0]:
+					# Nothing could read from input pipe
+					pass
+				else:
+					raise e;
 		
 	##
 	#
