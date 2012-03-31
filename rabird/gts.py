@@ -14,6 +14,8 @@ import pywintypes
 import collections
 import string
 import rabird.compatible
+import rabird.errors
+import exceptions
 
 PIPE_ACCESS_DUPLEX = 0x3
 PIPE_TYPE_MESSAGE = 0x4
@@ -31,6 +33,11 @@ class scripter_t(rabird.compatible.unicode_t):
 		"\\\\.\\pipe\\terminal_scripter_input",
 		"\\\\.\\pipe\\terminal_scripter_output"
 		]	
+	
+	# Command Member Index
+	__CMI_ID = 0
+	__CMI_NAME = 1
+	__CMI_ARGUMENT = 2
 
 	def __init__(self):
 		super(scripter_t,self).__init__()
@@ -85,39 +92,47 @@ class scripter_t(rabird.compatible.unicode_t):
 		win32file.WriteFile(self.output_pipe, '\n')
 
 	def send_begin(self):
+		result = self.__id
+		
 		win32file.WriteFile(self.output_pipe, '@begin\n')
 		self.send(str(self.__id))
 		self.__id = self.__id + 1
 		
+		return result
+		
 	def send_end(self):
 		win32file.WriteFile(self.output_pipe, '@end\n')
-		
+	
 	def wait_for_strings(self, strings):
-		self.send_begin()
+		command_id = self.send_begin()
 		self.send('wait_for_strings')
 		for c in strings:
 			self.send(c)
 		self.send_end()
+		command = self.__wait_for_command_with_id(command_id)
+		return int(command[self.__CMI_ARGUMENT])
 	
 	def remote_quit(self):
-		self.send_begin()
-		self.send('quit')
-		self.send_end()
-		
-		while 1:
-			time.sleep(0.1)
-			try:
-				# Only read could detect pipe disconnect status.
-				win32file.ReadFile(self.input_pipe, 1024)
-			except pywintypes.error as e:
-				if 109 == e[0]:
-					# Remote pipe disconnected.
-					return 
-				elif 232 == e[0]:
-					# Nothing could read from input pipe
-					pass
-				else:
-					raise e;
+		try:
+			self.send_begin()
+			self.send('quit')
+			self.send_end()
+			
+			while 1:
+				time.sleep(0.1)
+				try:
+					# Only read could detect pipe disconnect status.
+					win32file.ReadFile(self.input_pipe, 1024)
+				except pywintypes.error as e:
+					if 109 == e[0]:
+						raise rabird.errors.pipe_access_error_t
+					elif 232 == e[0]:
+						# Nothing could read from input pipe
+						pass
+					else:
+						raise e;
+		except rabird.errors.pipe_access_error_t:
+			pass
 		
 	##
 	#
@@ -125,7 +140,7 @@ class scripter_t(rabird.compatible.unicode_t):
 	#
 	# @return:  If successed, a new command will be returned. If pipe be disconnected, 
 	# a None will be returned.
-	def wait_for_command(self):
+	def __wait_for_command(self):
 		readed_size = 0
 		readed_buffer = "" 
 		a_line = ""
@@ -166,14 +181,26 @@ class scripter_t(rabird.compatible.unicode_t):
 							if a_command is not None:
 								return a_command
 						elif a_command is not None:
-							a_command.append(a_line)
+							# Remove prefix "#" and append to command
+							a_command.append(a_line[1:len(a_line)]) 
 			except pywintypes.error as e:
 				if 109 == e[0]:
-					# Remote pipe disconnected.
-					return None
+					raise rabird.errors.pipe_access_error_t
 				elif 232 == e[0]:
 					# Nothing could read from input pipe
 					pass
 				else:
-					raise e;
+					raise e
+
+	def __wait_for_command_with_id(self, command_id):
+		while 1:
+			command = self.__wait_for_command()
+			
+			# A command at least have two element : ID, Command Name 
+			if len(command) < 2:
+				continue
+			
+			if 0 == cmp(str(command_id), command[self.__CMI_ID]):
+				return command
+				
 				

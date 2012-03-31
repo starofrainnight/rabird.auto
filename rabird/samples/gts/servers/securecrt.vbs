@@ -1,6 +1,11 @@
 # $language = "VBScript"
 # $interface = "1.0"
 
+' Command Member Index
+Const CMI_ID = 0
+Const CMI_NAME = 1
+Const CMI_ARGUMENT = 2
+
 Function ReadCommand(Pipe)
 	Dim ACommand()
 	Dim CommandLineCount 
@@ -25,17 +30,55 @@ Function ReadCommand(Pipe)
 	ReadCommand = Nothing
 End Function
 
+Sub ReplyBegin(Pipe, ACommand)
+	Pipe.WriteLine "@begin"
+	Pipe.WriteLine ACommand(CMI_ID) 
+	Pipe.WriteLine ACommand(CMI_NAME)
+End Sub
+
+Sub ReplyMessage(Pipe, Message)
+	Pipe.Write "#"
+	Pipe.WriteLine Message
+End Sub
+
+Sub ReplyEnd(Pipe)
+	Pipe.WriteLine "@end"
+End Sub
+
 Function HandleQuitCommand(Pipe, ACommand)
 	HandleQuitCommand = False
+End Function
+
+Function HandleWaitForStringsCommand(Pipe, ACommand)
+	Dim Result 
+	Dim ArgumentCount 
+	Dim Arguments()
+	Dim i
+	
+	ArgumentCount = Ubound(ACommand) - CMI_ARGUMENT
+	ReDim Arguments(ArgumentCount)
+	
+	For i = 0 To Ubound(Arguments)
+		Arguments(i) = ACommand(CMI_ARGUMENT + i)
+	Next 
+		
+	Result = crt.screen.WaitForStrings(Arguments) - 1
+	
+	ReplyBegin Pipe, ACommand
+	ReplyMessage Pipe, CStr(Result)
+	ReplyEnd Pipe
+	
+	HandleWaitForStringsCommand = True
 End Function
 
 Function HandleCommand(Pipe, ACommand)
 	Dim i
 	
 	Select Case ACommand(1)
+	Case "#wait_for_strings"
+		HandleCommand = HandleWaitForStringsCommand(Pipe, ACommand)
 	Case "#quit"
 		HandleCommand = HandleQuitCommand(Pipe, ACommand)
-		Exit Function 
 	Case Else
 		HandleCommand = True
 	End Select
@@ -120,5 +163,4 @@ Sub Main
 		End If
 	Loop
 	
-	crt.Sleep 3000
 End Sub
