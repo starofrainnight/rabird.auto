@@ -29,7 +29,7 @@ INVALID_HANDLE_VALUE = -1
 ERROR_PIPE_CONNECTED = 535
 
 class scripter_t(rabird.compatible.unicode_t):
-	pipe_names = [
+	__pipe_names = [
 		"\\\\.\\pipe\\terminal_scripter_input",
 		"\\\\.\\pipe\\terminal_scripter_output"
 		]	
@@ -43,11 +43,11 @@ class scripter_t(rabird.compatible.unicode_t):
 		super(scripter_t,self).__init__()
 		
 		self.__id = 0
-		self.pipe_handles = [0, 0]
+		self.__pipe_handles = [0, 0]
 		
-		for i in xrange(0, len(self.pipe_names)):
-			self.pipe_handles[i] = win32pipe.CreateNamedPipe(
-				self.pipe_names[i],
+		for i in xrange(0, len(self.__pipe_names)):
+			self.__pipe_handles[i] = win32pipe.CreateNamedPipe(
+				self.__pipe_names[i],
 				PIPE_ACCESS_DUPLEX,
 				PIPE_TYPE_MESSAGE |	PIPE_READMODE_MESSAGE |	PIPE_NOWAIT,
 				PIPE_UNLIMITED_INSTANCES,
@@ -56,16 +56,16 @@ class scripter_t(rabird.compatible.unicode_t):
 				None
 				)
 	
-		if not self.pipe_handles[i]:
+		if not self.__pipe_handles[i]:
 			print "Error in creating Named Pipe"
 			exit()
 
-		self.output_pipe = self.pipe_handles[0]
-		self.input_pipe = self.pipe_handles[1]
+		self.__output_pipe = self.__pipe_handles[0]
+		self.__input_pipe = self.__pipe_handles[1]
 		# All buffers need to split into command lines
-		self.raw_buffers = collections.deque()
+		self.__raw_buffers = collections.deque()
 		
-	def wait_for_connection(self, timeout = None):
+	def connect(self, timeout = None):
 		elapsed_time = 0.0
 		# Wait terminal scripter connect to us.
 		while 1:
@@ -76,7 +76,7 @@ class scripter_t(rabird.compatible.unicode_t):
 					if elapsed_time > timeout:
 						break
 				
-				win32file.WriteFile(self.output_pipe, '\n')
+				win32file.WriteFile(self.__output_pipe, '\n')
 				# If we successed detected client connected, we break this 
 				# waiting loop.
 				return True
@@ -86,43 +86,43 @@ class scripter_t(rabird.compatible.unicode_t):
 			
 		return False
 	
-	def send(self, command):
-		win32file.WriteFile(self.output_pipe, '#')
-		win32file.WriteFile(self.output_pipe, command)
-		win32file.WriteFile(self.output_pipe, '\n')
+	def __send(self, command):
+		win32file.WriteFile(self.__output_pipe, '#')
+		win32file.WriteFile(self.__output_pipe, command)
+		win32file.WriteFile(self.__output_pipe, '\n')
 
-	def send_begin(self):
+	def __send_begin(self):
 		result = self.__id
 		
-		win32file.WriteFile(self.output_pipe, '@begin\n')
-		self.send(str(self.__id))
+		win32file.WriteFile(self.__output_pipe, '@begin\n')
+		self.__send(str(self.__id))
 		self.__id = self.__id + 1
 		
 		return result
 		
-	def send_end(self):
-		win32file.WriteFile(self.output_pipe, '@end\n')
+	def __send_end(self):
+		win32file.WriteFile(self.__output_pipe, '@end\n')
 	
 	def wait_for_strings(self, strings):
-		command_id = self.send_begin()
-		self.send('wait_for_strings')
+		command_id = self.__send_begin()
+		self.__send('wait_for_strings')
 		for c in strings:
-			self.send(c)
-		self.send_end()
+			self.__send(c)
+		self.__send_end()
 		command = self.__wait_for_command_with_id(command_id)
 		return int(command[self.__CMI_ARGUMENT])
 	
-	def remote_quit(self):
+	def _quit(self):
 		try:
-			self.send_begin()
-			self.send('quit')
-			self.send_end()
+			self.__send_begin()
+			self.__send('quit')
+			self.__send_end()
 			
 			while 1:
 				time.sleep(0.1)
 				try:
 					# Only read could detect pipe disconnect status.
-					win32file.ReadFile(self.input_pipe, 1024)
+					win32file.ReadFile(self.__input_pipe, 1024)
 				except pywintypes.error as e:
 					if 109 == e[0]:
 						raise rabird.errors.pipe_access_error_t
@@ -149,29 +149,29 @@ class scripter_t(rabird.compatible.unicode_t):
 		while 1:
 			time.sleep(0.1)
 			try:
-				readed_size, readed_buffer = win32file.ReadFile(self.input_pipe, 1024)
+				readed_size, readed_buffer = win32file.ReadFile(self.__input_pipe, 1024)
 				while len(readed_buffer) > 0:
 					a_line = ""
 					sub_index = readed_buffer.find('\n')
 					if sub_index == 0:
-						if len(self.raw_buffers) > 0:
-							a_line = string.join(self.raw_buffers)
-							self.raw_buffers.clear()
+						if len(self.__raw_buffers) > 0:
+							a_line = string.join(self.__raw_buffers)
+							self.__raw_buffers.clear()
 							readed_buffer = readed_buffer[(sub_index+1):len(readed_buffer)]
 					elif sub_index > 0:
 						sub_string = readed_buffer[0:sub_index].strip('\n\r')
 						if len(sub_string) > 0:
-							self.raw_buffers.append(sub_string)
+							self.__raw_buffers.append(sub_string)
 							
-						if len(self.raw_buffers) > 0:
-							a_line = string.join(self.raw_buffers)
+						if len(self.__raw_buffers) > 0:
+							a_line = string.join(self.__raw_buffers)
 							
-						self.raw_buffers.clear()
+						self.__raw_buffers.clear()
 						readed_buffer = readed_buffer[(sub_index+1):len(readed_buffer)]
 					else:
 						sub_string = readed_buffer.strip('\n\r')
 						if len(sub_string) > 0:
-							self.raw_buffers.append(sub_string)
+							self.__raw_buffers.append(sub_string)
 						break
 					
 					if len(a_line) > 0:
