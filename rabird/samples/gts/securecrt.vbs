@@ -22,7 +22,7 @@ Function ReadCommand(Pipe)
 			Exit Function
 		ElseIf CommandLineCount > 0 Then
 			ReDim Preserve ACommand(CommandLineCount)
-			ACommand(CommandLineCount - 1) = ALine
+			ACommand(CommandLineCount - 1) = Right( ALine, Len(ALine) - 1 ) ' Remove prefix "#"
 			CommandLineCount = CommandLineCount + 1
 		End If
 	Loop
@@ -32,13 +32,12 @@ End Function
 
 Sub ReplyBegin(Pipe, ACommand)
 	Pipe.WriteLine "@begin"
-	Pipe.WriteLine ACommand(CMI_ID) 
-	Pipe.WriteLine ACommand(CMI_NAME)
+	Pipe.WriteLine "#" & ACommand(CMI_ID) 
+	Pipe.WriteLine "#" & ACommand(CMI_NAME)
 End Sub
 
 Sub ReplyMessage(Pipe, Message)
-	Pipe.Write "#"
-	Pipe.WriteLine Message
+	Pipe.WriteLine "#" & Message
 End Sub
 
 Sub ReplyEnd(Pipe)
@@ -56,12 +55,12 @@ Function HandleWaitForStringsCommand(Pipe, ACommand)
 	Dim i
 	
 	ArgumentCount = Ubound(ACommand) - CMI_ARGUMENT
-	ReDim Arguments(ArgumentCount)
+	ReDim Arguments(ArgumentCount-1)
 	
 	For i = 0 To Ubound(Arguments)
 		Arguments(i) = ACommand(CMI_ARGUMENT + i)
 	Next 
-		
+	
 	Result = crt.screen.WaitForStrings(Arguments) - 1
 	
 	ReplyBegin Pipe, ACommand
@@ -75,9 +74,9 @@ Function HandleCommand(Pipe, ACommand)
 	Dim i
 	
 	Select Case ACommand(1)
-	Case "#wait_for_strings"
+	Case "wait_for_strings"
 		HandleCommand = HandleWaitForStringsCommand(Pipe, ACommand)
-	Case "#quit"
+	Case "quit"
 		HandleCommand = HandleQuitCommand(Pipe, ACommand)
 	Case Else
 		HandleCommand = True
