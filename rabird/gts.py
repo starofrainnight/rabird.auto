@@ -65,27 +65,6 @@ class scripter_t(rabird.compatible.unicode_t):
 		# All buffers need to split into command lines
 		self.__raw_buffers = collections.deque()
 		
-	def connect(self, timeout = None):
-		elapsed_time = 0.0
-		# Wait terminal scripter connect to us.
-		while 1:
-			try:
-				time.sleep(0.1)
-				if timeout is not None:
-					elapsed_time = elapsed_time + 0.1 
-					if elapsed_time > timeout:
-						break
-				
-				win32file.WriteFile(self.__output_pipe, '\n')
-				# If we successed detected client connected, we break this 
-				# waiting loop.
-				return True
-			except pywintypes.error:
-				# Ignored any errors
-				pass
-			
-		return False
-	
 	def __send(self, command):
 		win32file.WriteFile(self.__output_pipe, '#')
 		win32file.WriteFile(self.__output_pipe, command)
@@ -103,44 +82,6 @@ class scripter_t(rabird.compatible.unicode_t):
 	def __send_end(self):
 		win32file.WriteFile(self.__output_pipe, '@end\n')
 	
-	def wait_for_strings(self, strings):
-		command_id = self.__send_begin()
-		self.__send('wait_for_strings')
-		for c in strings:
-			self.__send(c)
-		self.__send_end()
-		command = self.__wait_for_command_with_id(command_id)
-		return int(command[self.__CMI_ARGUMENT])
-	
-	def send(self, input_string):
-		command_id = self.__send_begin()
-		self.__send('send')
-		self.__send(input_string)
-		self.__send_end()
-		self.__wait_for_command_with_id(command_id)
-	
-	def _quit(self):
-		try:
-			self.__send_begin()
-			self.__send('quit')
-			self.__send_end()
-			
-			while 1:
-				time.sleep(0.1)
-				try:
-					# Only read could detect pipe disconnect status.
-					win32file.ReadFile(self.__input_pipe, 1024)
-				except pywintypes.error as e:
-					if 109 == e[0]:
-						raise rabird.errors.pipe_access_error_t
-					elif 232 == e[0]:
-						# Nothing could read from input pipe
-						pass
-					else:
-						raise e;
-		except rabird.errors.pipe_access_error_t:
-			pass
-		
 	##
 	#
 	# Wait for a command
@@ -209,5 +150,62 @@ class scripter_t(rabird.compatible.unicode_t):
 			
 			if 0 == cmp(str(command_id), command[self.__CMI_ID]):
 				return command
+			
+	def connect(self, timeout = None):
+		elapsed_time = 0.0
+		# Wait terminal scripter connect to us.
+		while 1:
+			try:
+				time.sleep(0.1)
+				if timeout is not None:
+					elapsed_time = elapsed_time + 0.1 
+					if elapsed_time > timeout:
+						break
 				
+				win32file.WriteFile(self.__output_pipe, '\n')
+				# If we successed detected client connected, we break this 
+				# waiting loop.
+				return True
+			except pywintypes.error:
+				# Ignored any errors
+				pass
+			
+		return False
 				
+	def wait_for_strings(self, strings):
+		command_id = self.__send_begin()
+		self.__send('wait_for_strings')
+		for c in strings:
+			self.__send(c)
+		self.__send_end()
+		command = self.__wait_for_command_with_id(command_id)
+		return int(command[self.__CMI_ARGUMENT])
+	
+	def send(self, input_string):
+		command_id = self.__send_begin()
+		self.__send('send')
+		self.__send(input_string)
+		self.__send_end()
+		self.__wait_for_command_with_id(command_id)
+	
+	def _quit(self):
+		try:
+			self.__send_begin()
+			self.__send('quit')
+			self.__send_end()
+			
+			while 1:
+				time.sleep(0.1)
+				try:
+					# Only read could detect pipe disconnect status.
+					win32file.ReadFile(self.__input_pipe, 1024)
+				except pywintypes.error as e:
+					if 109 == e[0]:
+						raise rabird.errors.pipe_access_error_t
+					elif 232 == e[0]:
+						# Nothing could read from input pipe
+						pass
+					else:
+						raise e;
+		except rabird.errors.pipe_access_error_t:
+			pass	
