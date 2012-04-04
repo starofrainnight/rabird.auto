@@ -14,7 +14,7 @@ import pywintypes
 import collections
 import string
 import rabird.compatible
-import rabird.errors
+import rabird._exceptions
 import exceptions
 
 PIPE_ACCESS_DUPLEX = 0x3

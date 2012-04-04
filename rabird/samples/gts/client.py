@@ -6,7 +6,7 @@ import pywintypes
 import collections
 import string
 import rabird.gts
-import rabird._errors
+import rabird._exceptions
 import exceptions
 import sys
 
