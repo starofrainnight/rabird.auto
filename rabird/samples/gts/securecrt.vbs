@@ -12,8 +12,8 @@ Function ReadCommand(Pipe)
 	
 	CommandLineCount = 0
 	Do While True
-		crt.Sleep 10 
-		ALine = Pipe.ReadLine()
+		' It will wait for next line of there do not have any input
+		ALine = Pipe.ReadLine() 
 		
 		If ALine = "@begin" Then
 			CommandLineCount = CommandLineCount + 1

@@ -95,7 +95,6 @@ class scripter_t(rabird.compatible.unicode_t):
 		a_command = None
 		sub_index = 0
 		while 1:
-			time.sleep(0.1)
 			try:
 				readed_size, readed_buffer = win32file.ReadFile(self.__input_pipe, 1024)
 				while len(readed_buffer) > 0:
@@ -133,9 +132,10 @@ class scripter_t(rabird.compatible.unicode_t):
 							a_command.append(a_line[1:len(a_line)]) 
 			except pywintypes.error as e:
 				if 109 == e[0]:
-					raise rabird.errors.pipe_access_error_t
+					raise rabird._exceptions.pipe_access_error_t
 				elif 232 == e[0]:
 					# Nothing could read from input pipe
+					time.sleep(0.1)
 					pass
 				else:
 					raise e
@@ -208,11 +208,11 @@ class scripter_t(rabird.compatible.unicode_t):
 					win32file.ReadFile(self.__input_pipe, 1024)
 				except pywintypes.error as e:
 					if 109 == e[0]:
-						raise rabird.errors.pipe_access_error_t
+						raise rabird._exceptions.pipe_access_error_t
 					elif 232 == e[0]:
 						# Nothing could read from input pipe
 						pass
 					else:
 						raise e;
-		except rabird.errors.pipe_access_error_t:
+		except rabird._exceptions.pipe_access_error_t:
 			pass	
