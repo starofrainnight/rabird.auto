@@ -187,6 +187,13 @@ class scripter_t(rabird.compatible.unicode_t):
 		self.__send(input_string)
 		self.__send_end()
 		self.__wait_for_command_with_id(command_id)
+		
+	def send_keys(self, input_string):
+		command_id = self.__send_begin()
+		self.__send('send_keys')
+		self.__send(input_string)
+		self.__send_end()
+		self.__wait_for_command_with_id(command_id)
 	
 	def _quit(self):
 		try:

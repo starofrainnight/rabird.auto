@@ -88,6 +88,20 @@ Function HandleSendCommand(Pipe, ACommand)
 	HandleSendCommand = True
 End Function
 
+Function HandleSendKeysCommand(Pipe, ACommand)
+	ALine = Replace( ACommand(CMI_ARGUMENT), "\r", vbCr )
+	ALine = Replace( ALine, "\n", vbLf )
+	ALine = Replace( ALine, "\t", vbTab )
+	ALine = Replace( ALine, "\\", "\" )
+
+	crt.screen.SendKeys(ALine)
+	
+	ReplyBegin Pipe, ACommand
+	ReplyEnd Pipe
+	
+	HandleSendKeysCommand = True
+End Function
+
 Function HandleCommand(Pipe, ACommand)
 	Dim i
 	
@@ -96,6 +110,8 @@ Function HandleCommand(Pipe, ACommand)
 		HandleCommand = HandleWaitForStringsCommand(Pipe, ACommand)
 	Case "send"
 		HandleCommand = HandleSendCommand(Pipe, ACommand)
+	Case "send_keys"
+		HandleCommand = HandleSendKeysCommand(Pipe, ACommand)
 	Case "quit"
 		HandleCommand = HandleQuitCommand(Pipe, ACommand)
 	Case Else

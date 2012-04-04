@@ -19,10 +19,13 @@ scripter.connect()
 print "Execute commands ..."
 
 try:
+	scripter.send(r'sleep 3; echo hello\n')
 	result = scripter.wait_for_strings(['hello'])
 	print 'result : ' + str(result) 
+	scripter.send_keys('{NUM_9}')
+	scripter.send_keys('{NUM_ENTER}')
 	scripter._quit()
-except rabird.errors.pipe_access_error_t:
+except rabird._exceptions.pipe_access_error_t:
 	pass
 
 print "Exit ..."
