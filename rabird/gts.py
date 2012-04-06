@@ -148,7 +148,7 @@ class scripter_t(rabird.compatible.unicode_t):
 			if len(command) < 2:
 				continue
 			
-			if 0 == cmp(str(command_id), command[self.__CMI_ID]):
+			if int(command_id) == int(command[self.__CMI_ID]):
 				return command
 			
 	def connect(self, timeout = None):

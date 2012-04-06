@@ -1,6 +1,11 @@
 ; Sample macro for Tera Term
 ;   Rabird Generic Terminal Scripter Server
 
+; Command Member Index
+CMI_ID = 0
+CMI_NAME = 1
+CMI_ARGUMENT = 2
+
 pipe_count = 2
 ubound_pipe_array = pipe_count - 1
 timeout_count = 30
@@ -53,7 +58,7 @@ while 1
 endwhile
 
 if exception_count > timeout_count then 
-	messagebox "Timeout !" "timeout"
+	messagebox 'Timeout !' 'timeout'
 	exit
 endif
 
@@ -76,6 +81,82 @@ end
 ; @param output_pipe
 ; @param acommand
 ; @param acommand_size
+:reply_begin
+	filewriteln output_pipe '@begin'
+	filewrite output_pipe '#' 
+	filewriteln output_pipe acommand[CMI_ID]
+	filewrite output_pipe '#'
+	filewriteln output_pipe acommand[CMI_NAME]
+return
+
+; @param output_pipe
+; @param output_message
+:reply_message
+	filewrite output_pipe '#'
+	filewriteln output_pipe output_message
+return
+
+; @param output_pipe
+:reply_end
+	filewriteln output_pipe '@end'
+return
+
+; @param output_pipe
+; @param acommand
+; @param acommand_size
+; @return result If true then continue command handle loop, otherwise exit 
+; immediately.
+:handle_wait_for_strings_command
+	__acommand_ubound = acommand_size - 1
+	__exec_script = 'wait '
+	
+	for i CMI_ARGUMENT __acommand_ubound
+		int2str __temp i 
+			
+		__variant_define_script = '__temp_value'
+		strconcat __variant_define_script __temp
+		strconcat __variant_define_script ' = acommand['
+		strconcat __variant_define_script __temp
+		strconcat __variant_define_script '] '
+		execcmnd __variant_define_script
+		
+		strconcat __exec_script '__temp_value'
+		strconcat __exec_script __temp
+		strconcat __exec_script ' '
+	next 
+	
+	; Wait specific strings
+	execcmnd __exec_script
+	
+	call reply_begin
+	int2str output_message result
+	call reply_message 
+	call reply_end
+	
+	result = 1
+return 
+
+; @param output_pipe
+; @param acommand
+; @param acommand_size
+; @return result If true then continue command handle loop, otherwise exit 
+; immediately.
+:handle_send_command
+	result = 0
+return 
+
+; @param output_pipe
+; @param acommand
+; @param acommand_size
+; @return result If true then continue command handle loop, otherwise exit 
+; immediately.
+:handle_send_keys_command
+	result = 0
+return 
+
+; @param output_pipe
+; @param acommand
+; @param acommand_size
 ; @return result If true then continue command handle loop, otherwise exit 
 ; immediately.
 :handle_quit_command
@@ -89,6 +170,24 @@ return
 ; immediately.
 :handle_command
 	__command_name = acommand[1]
+	
+	strcompare __command_name 'wait_for_strings'
+	if result = 0 then
+		call handle_wait_for_strings_command
+		goto LABEL_HANDLE_COMMAND_EXIT
+	endif
+
+	strcompare __command_name 'send'
+	if result = 0 then
+		call handle_send_command
+		goto LABEL_HANDLE_COMMAND_EXIT
+	endif
+	
+	strcompare __command_name 'send_keys'
+	if result = 0 then
+		call handle_send_keys_command
+		goto LABEL_HANDLE_COMMAND_EXIT
+	endif
 	
 	strcompare __command_name 'quit'
 	if result = 0 then
@@ -121,7 +220,6 @@ return
 			strcompare __a_line "@end"
 			if result = 0 then
 				acommand_size = __command_line_index 
-				messagebox "a command received end" acommand_size
 				break
 			elseif __command_line_index > -1 then
 				strlen __a_line
