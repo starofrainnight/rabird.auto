@@ -185,16 +185,16 @@ class scripter_t(rabird.compatible.unicode_t):
 			
 		return False
 	
-	def execute(self, command):
+	def _execute(self, command):
 		command_id = self._send_begin()
-		self._send('execute')
+		self._send('_execute')
 		self._send(command)
 		self._send_end()
 		command = self.__wait_for_command_with_id(command_id)
 
-	def get_value(self, command):
+	def _get_value(self, command):
 		command_id = self._send_begin()
-		self._send('get_value')
+		self._send('_get_value')
 		self._send(command)
 		self._send_end()
 		command = self.__wait_for_command_with_id(command_id)
@@ -258,18 +258,18 @@ class securecrt_scripter_t(scripter_t):
 			
 		command = 'result = crt.screen.WaitForStrings(' + string.join(escaped_strings, ',') + ')'
 				
-		self.execute(command)
-		return int(self.get_value('result')) - 1
+		self._execute(command)
+		return int(self._get_value('result')) - 1
 	
 	def send(self, input_string):
-		self.execute('crt.screen.Send ' + self.__escape_string(input_string))
+		self._execute('crt.screen.Send ' + self.__escape_string(input_string))
 	
 	def send_keys(self, input_string):
-		self.execute('crt.screen.SendKeys "' + input_string + '"')
+		self._execute('crt.screen.SendKeys "' + input_string + '"')
 
 	def _do_quit(self, error_code):
 		# WScript.Quit may not existed before v6.7 
-		# self.execute("WScript.Quit " + str(error_code))
+		# self._execute("WScript.Quit " + str(error_code))
 		self._send_begin()
 		self._send('quit')
 		self._send_end()
@@ -292,13 +292,13 @@ class teraterm_scripter_t(scripter_t):
 		for s in strings:
 			escaped_strings.append(self.__escape_string(s))
 			
-		self.execute('wait ' + string.join(escaped_strings))
-		self.execute('int2str __last_command_result_str __last_command_result') 
+		self._execute('wait ' + string.join(escaped_strings))
+		self._execute('int2str __last_command_result_str __last_command_result') 
 		
-		return int(self.get_value('__last_command_result_str')) - 1
+		return int(self._get_value('__last_command_result_str')) - 1
 	
 	def send(self, input_string):
-		self.execute('send ' + self.__escape_string(input_string))
+		self._execute('send ' + self.__escape_string(input_string))
 	
 	def send_keys(self, input_string):
 		pass
