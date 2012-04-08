@@ -52,28 +52,6 @@ Function HandleQuitCommand(Pipe, ACommand)
 	HandleQuitCommand = False
 End Function
 
-Function HandleWaitForStringsCommand(Pipe, ACommand)
-	Dim Result 
-	Dim ArgumentCount 
-	Dim Arguments()
-	Dim i
-	
-	ArgumentCount = Ubound(ACommand) - CMI_ARGUMENT
-	ReDim Arguments(ArgumentCount-1)
-	
-	For i = 0 To Ubound(Arguments)
-		Arguments(i) = ACommand(CMI_ARGUMENT + i)
-	Next 
-	
-	Result = crt.screen.WaitForStrings(Arguments) - 1
-	
-	ReplyBegin Pipe, ACommand
-	ReplyMessage Pipe, CStr(Result)
-	ReplyEnd Pipe
-	
-	HandleWaitForStringsCommand = True
-End Function
-
 Function HandleExecuteCommand(Pipe, ACommand)
 	Execute ACommand(CMI_ARGUMENT)
 	
@@ -91,34 +69,6 @@ Function HandleGetValueCommand(Pipe, ACommand)
 	HandleGetValueCommand = True
 End Function
 
-Function HandleSendCommand(Pipe, ACommand)
-	ALine = Replace( ACommand(CMI_ARGUMENT), "\r", vbCr )
-	ALine = Replace( ALine, "\n", vbLf )
-	ALine = Replace( ALine, "\t", vbTab )
-	ALine = Replace( ALine, "\\", "\" )
-
-	crt.screen.Send(ALine)
-	
-	ReplyBegin Pipe, ACommand
-	ReplyEnd Pipe
-	
-	HandleSendCommand = True
-End Function
-
-Function HandleSendKeysCommand(Pipe, ACommand)
-	ALine = Replace( ACommand(CMI_ARGUMENT), "\r", vbCr )
-	ALine = Replace( ALine, "\n", vbLf )
-	ALine = Replace( ALine, "\t", vbTab )
-	ALine = Replace( ALine, "\\", "\" )
-
-	crt.screen.SendKeys(ALine)
-	
-	ReplyBegin Pipe, ACommand
-	ReplyEnd Pipe
-	
-	HandleSendKeysCommand = True
-End Function
-
 Function HandleCommand(Pipe, ACommand)
 	Dim i
 	
@@ -127,12 +77,6 @@ Function HandleCommand(Pipe, ACommand)
 		HandleCommand = HandleExecuteCommand(Pipe, ACommand)
 	Case "get_value"
 		HandleCommand = HandleGetValueCommand(Pipe, ACommand)
-	Case "wait_for_strings"
-		HandleCommand = HandleWaitForStringsCommand(Pipe, ACommand)
-	Case "send"
-		HandleCommand = HandleSendCommand(Pipe, ACommand)
-	Case "send_keys"
-		HandleCommand = HandleSendKeysCommand(Pipe, ACommand)
 	Case "quit"
 		HandleCommand = HandleQuitCommand(Pipe, ACommand)
 	Case Else
