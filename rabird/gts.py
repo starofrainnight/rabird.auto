@@ -186,12 +186,13 @@ class scripter_t(rabird.compatible.unicode_t):
 		self.__send_end()
 		command = self.__wait_for_command_with_id(command_id)
 		return command[self.__CMI_ARGUMENT]
-				
+	
+	def _do_quit(self):
+		pass
+		
 	def _quit(self):
 		try:
-			self.__send_begin()
-			self.__send('quit')
-			self.__send_end()
+			self._do_quit()
 			
 			while 1:
 				try:
