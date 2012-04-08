@@ -47,6 +47,9 @@ class scripter_t(rabird.compatible.unicode_t):
 		if 0 == cmp(scripter_name, 'securecrt'): 
 			return securecrt_scripter_t()
 		
+		if 0 == cmp(scripter_name, 'teraterm'):
+			return teraterm_scripter_t()
+		
 		raise exceptions.TypeError
 
 	def __init__(self):
@@ -245,7 +248,7 @@ class securecrt_scripter_t(scripter_t):
 				
 			escaped_chars.append('chr(' + str(ord(c)) + ')')
 			
-		return string.join(escaped_chars)
+		return string.join(escaped_chars,'')
 		
 	def wait_for_strings(self, strings):
 		escaped_strings = []
@@ -267,6 +270,32 @@ class securecrt_scripter_t(scripter_t):
 	def _do_quit(self, error_code):
 		# WScript.Quit may not existed before v6.7 
 		# self.execute("WScript.Quit " + str(error_code))
+		self._send_begin()
+		self._send('quit')
+		self._send_end()
+		
+class teraterm_scripter_t(scripter_t):
+	def __init__(self):
+		super(teraterm_scripter_t, self).__init__()
+	
+	def __escape_string(self, astring):
+		escaped_chars = []
+		
+		for c in astring:
+			escaped_chars.append('#' + str(ord(c)))
+			
+		return string.join(escaped_chars,'')
+		
+	def wait_for_strings(self, strings):
+		pass
+	
+	def send(self, input_string):
+		pass
+	
+	def send_keys(self, input_string):
+		pass
+
+	def _do_quit(self, error_code):
 		self._send_begin()
 		self._send('quit')
 		self._send_end()
