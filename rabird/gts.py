@@ -287,10 +287,18 @@ class teraterm_scripter_t(scripter_t):
 		return string.join(escaped_chars,'')
 		
 	def wait_for_strings(self, strings):
-		pass
+		escaped_strings = []
+		
+		for s in strings:
+			escaped_strings.append(self.__escape_string(s))
+			
+		self.execute('wait ' + string.join(escaped_strings))
+		self.execute('int2str __last_command_result_str __last_command_result') 
+		
+		return int(self.get_value('__last_command_result_str')) - 1
 	
 	def send(self, input_string):
-		pass
+		self.execute('send ' + self.__escape_string(input_string))
 	
 	def send_keys(self, input_string):
 		pass

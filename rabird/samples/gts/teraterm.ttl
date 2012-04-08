@@ -71,6 +71,8 @@ while 1
 	if acommand_size > 0 then
 		call handle_command
 		if result <> 0 then
+			__unused_test = 0
+		else 
 			break
 		endif 
 	endif
@@ -112,6 +114,9 @@ return
 	execcmnd command_need_to_execute
 	__last_command_result = result
 	
+	call reply_begin
+	call reply_end
+	
 	result = 1
 return 
 
@@ -122,6 +127,7 @@ return
 ; immediately.
 :handle_get_value_command
 	variant_name = acommand[CMI_ARGUMENT]
+	
 	sprintf2 command_line '%s = %s' '__geted_value' variant_name
 	execcmnd command_line
 	
