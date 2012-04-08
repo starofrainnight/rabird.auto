@@ -187,29 +187,6 @@ class scripter_t(rabird.compatible.unicode_t):
 		command = self.__wait_for_command_with_id(command_id)
 		return command[self.__CMI_ARGUMENT]
 				
-	def wait_for_strings(self, strings):
-		command_id = self.__send_begin()
-		self.__send('wait_for_strings')
-		for c in strings:
-			self.__send(c)
-		self.__send_end()
-		command = self.__wait_for_command_with_id(command_id)
-		return int(command[self.__CMI_ARGUMENT])
-	
-	def send(self, input_string):
-		command_id = self.__send_begin()
-		self.__send('send')
-		self.__send(input_string)
-		self.__send_end()
-		self.__wait_for_command_with_id(command_id)
-		
-	def send_keys(self, input_string):
-		command_id = self.__send_begin()
-		self.__send('send_keys')
-		self.__send(input_string)
-		self.__send_end()
-		self.__wait_for_command_with_id(command_id)
-	
 	def _quit(self):
 		try:
 			self.__send_begin()
