@@ -17,6 +17,7 @@ import rabird.compatible
 import rabird._exceptions
 import exceptions
 import abc
+import win32gui
 
 PIPE_ACCESS_DUPLEX = 0x3
 PIPE_TYPE_MESSAGE = 0x4
@@ -164,7 +165,7 @@ class scripter_t(rabird.compatible.unicode_t):
 			if int(command_id) == int(command[self.__CMI_ID]):
 				return command
 			
-	def connect(self, timeout = None):
+	def connect(self, timeout=None):
 		elapsed_time = 0.0
 		# Wait terminal scripter connect to us.
 		while 1:
@@ -274,6 +275,11 @@ class securecrt_scripter_t(scripter_t):
 		
 class teraterm_scripter_t(scripter_t):
 	
+	def __init__(self, *args, **kwarg):
+		super(teraterm_scripter_t, self).__init__(self, *args, **kwarg)
+		
+		self.__target_window = None
+	
 	def __escape_string(self, astring):
 		escaped_chars = []
 		
@@ -281,7 +287,36 @@ class teraterm_scripter_t(scripter_t):
 			escaped_chars.append('#' + str(ord(c)))
 			
 		return string.join(escaped_chars,'')
+	
+	def connect(self, timeout=None):
+		super(teraterm_scripter_t, self).connect(self)
+
+		# Get old title of teraterm		
+		self._execute('gettitle __old_title')
+		old_title = self._get_value('__old_title')
 		
+		# Set the teraterm window title to "rabird_gts_target_window"
+		self._execute('settitle "rabird_gts_target_window"')
+		
+		# Find the teraterm window 
+		window = 0
+		while 1:
+			window = win32gui.FindWindowEx(
+				0, 
+				window, 
+				u'VTWin32', 
+				None )
+			
+			if not window:
+				break
+			
+			if win32gui.GetWindowText(window).find(u'rabird_gts_target_window') >= 0 :
+				self.__target_window = window
+				break
+			
+		# Restore title
+		self._execute('settitle "' + old_title + '"')
+			
 	def wait_for_strings(self, strings):
 		escaped_strings = []
 		
