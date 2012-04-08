@@ -16,6 +16,7 @@ import string
 import rabird.compatible
 import rabird._exceptions
 import exceptions
+import abc
 
 PIPE_ACCESS_DUPLEX = 0x3
 PIPE_TYPE_MESSAGE = 0x4
@@ -29,6 +30,8 @@ INVALID_HANDLE_VALUE = -1
 ERROR_PIPE_CONNECTED = 535
 
 class scripter_t(rabird.compatible.unicode_t):
+	__metaclass__ = abc.ABCMeta
+
 	__pipe_names = [
 		"\\\\.\\pipe\\terminal_scripter_input",
 		"\\\\.\\pipe\\terminal_scripter_output"
@@ -72,21 +75,21 @@ class scripter_t(rabird.compatible.unicode_t):
 		# All buffers need to split into command lines
 		self.__raw_buffers = collections.deque()
 		
-	def __send(self, command):
+	def _send(self, command):
 		win32file.WriteFile(self.__output_pipe, '#')
 		win32file.WriteFile(self.__output_pipe, command)
 		win32file.WriteFile(self.__output_pipe, '\n')
 
-	def __send_begin(self):
+	def _send_begin(self):
 		result = self.__id
 		
 		win32file.WriteFile(self.__output_pipe, '@begin\n')
-		self.__send(str(self.__id))
+		self._send(str(self.__id))
 		self.__id = self.__id + 1
 		
 		return result
 		
-	def __send_end(self):
+	def _send_end(self):
 		win32file.WriteFile(self.__output_pipe, '@end\n')
 	
 	##
@@ -180,20 +183,21 @@ class scripter_t(rabird.compatible.unicode_t):
 		return False
 	
 	def execute(self, command):
-		command_id = self.__send_begin()
-		self.__send('execute')
-		self.__send(command)
-		self.__send_end()
+		command_id = self._send_begin()
+		self._send('execute')
+		self._send(command)
+		self._send_end()
 		command = self.__wait_for_command_with_id(command_id)
 
 	def get_value(self, command):
-		command_id = self.__send_begin()
-		self.__send('get_value')
-		self.__send(command)
-		self.__send_end()
+		command_id = self._send_begin()
+		self._send('get_value')
+		self._send(command)
+		self._send_end()
 		command = self.__wait_for_command_with_id(command_id)
 		return command[self.__CMI_ARGUMENT]
 	
+	@abc.abstractmethod
 	def _do_quit(self, error_code):
 		pass
 		
@@ -221,6 +225,8 @@ class securecrt_scripter_t(scripter_t):
 		super(securecrt_scripter_t, self).__init__()
 		
 	def _do_quit(self, error_code):
-		# may not have this command before v6.7 
+		# WScript.Quit may not existed before v6.7 
 		# self.execute("WScript.Quit " + str(error_code))
-		pass 
+		self._send_begin()
+		self._send('quit')
+		self._send_end()
