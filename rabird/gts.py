@@ -42,18 +42,18 @@ class scripter_t(rabird.compatible.unicode_t):
 	__CMI_NAME = 1
 	__CMI_ARGUMENT = 2
 	
-	@classmethod
-	def new(cls, scripter_name):
+	@staticmethod
+	def __new__(cls, scripter_name, *args, **kwarg):
 		if 0 == cmp(scripter_name, 'securecrt'): 
-			return securecrt_scripter_t()
+			return super(scripter_t, cls).__new__(securecrt_scripter_t, *args, **kwarg)
 		
 		if 0 == cmp(scripter_name, 'teraterm'):
-			return teraterm_scripter_t()
+			return super(scripter_t, cls).__new__(teraterm_scripter_t, *args, **kwarg)
 		
-		raise exceptions.TypeError
-
-	def __init__(self):
-		super(scripter_t,self).__init__()
+		return super(scripter_t, cls).__new__(cls, *args, **kwarg)
+	
+	def __init__(self, *args, **kwarg):
+		super(scripter_t,self).__init__(self)
 		
 		self.__id = 0
 		self.__pipe_handles = [0, 0]
@@ -187,14 +187,14 @@ class scripter_t(rabird.compatible.unicode_t):
 	
 	def _execute(self, command):
 		command_id = self._send_begin()
-		self._send('_execute')
+		self._send('execute')
 		self._send(command)
 		self._send_end()
 		command = self.__wait_for_command_with_id(command_id)
 
 	def _get_value(self, command):
 		command_id = self._send_begin()
-		self._send('_get_value')
+		self._send('get_value')
 		self._send(command)
 		self._send_end()
 		command = self.__wait_for_command_with_id(command_id)
@@ -236,8 +236,6 @@ class scripter_t(rabird.compatible.unicode_t):
 			pass	
 
 class securecrt_scripter_t(scripter_t):
-	def __init__(self):
-		super(securecrt_scripter_t, self).__init__()
 	
 	def __escape_string(self, astring):
 		escaped_chars = []
@@ -275,8 +273,6 @@ class securecrt_scripter_t(scripter_t):
 		self._send_end()
 		
 class teraterm_scripter_t(scripter_t):
-	def __init__(self):
-		super(teraterm_scripter_t, self).__init__()
 	
 	def __escape_string(self, astring):
 		escaped_chars = []
