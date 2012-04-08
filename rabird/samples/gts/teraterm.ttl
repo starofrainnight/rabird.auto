@@ -70,7 +70,7 @@ while 1
 	call read_command
 	if acommand_size > 0 then
 		call handle_command
-		if !result then
+		if result <> 0 then
 			break
 		endif 
 	endif
@@ -106,36 +106,9 @@ return
 ; @param acommand_size
 ; @return result If true then continue command handle loop, otherwise exit 
 ; immediately.
-:handle_wait_for_strings_command
-	__acommand_ubound = acommand_size - 1
-	__exec_script = 'wait '
-	
-	for i CMI_ARGUMENT __acommand_ubound
-		int2str __temp i 
-		
-		; Because wait command could not support array variant correctly, we 
-		; must split elements from array to __temp_valueX ( __temp_value0, 
-		; __temp_value1, __temp_value2 ... ) and generate a script that 
-		; invoke wait command with a series those temporary variants.
-		__variant_define_script = '__temp_value'
-		strconcat __variant_define_script __temp
-		strconcat __variant_define_script ' = acommand['
-		strconcat __variant_define_script __temp
-		strconcat __variant_define_script '] '
-		execcmnd __variant_define_script
-		
-		strconcat __exec_script '__temp_value'
-		strconcat __exec_script __temp
-		strconcat __exec_script ' '
-	next 
-	
-	; Wait specific strings
-	execcmnd __exec_script
-	
-	call reply_begin
-	int2str output_message result
-	call reply_message 
-	call reply_end
+:handle_execute_command
+	command_need_to_execute = acommand[CMI_ARGUMENT]
+	execcmnd command_need_to_execute
 	
 	result = 1
 return 
@@ -145,17 +118,17 @@ return
 ; @param acommand_size
 ; @return result If true then continue command handle loop, otherwise exit 
 ; immediately.
-:handle_send_command
-	result = 0
-return 
-
-; @param output_pipe
-; @param acommand
-; @param acommand_size
-; @return result If true then continue command handle loop, otherwise exit 
-; immediately.
-:handle_send_keys_command
-	result = 0
+:handle_get_value_command
+	variant_name = acommand[CMI_ARGUMENT]
+	sprintf2 command_line '%s = %s' '__geted_value' variant_name
+	execcmnd command_line
+	
+	call reply_begin
+	output_message = __geted_value
+	call reply_message 
+	call reply_end
+	
+	result = 1
 return 
 
 ; @param output_pipe
@@ -175,21 +148,15 @@ return
 :handle_command
 	__command_name = acommand[1]
 	
-	strcompare __command_name 'wait_for_strings'
+	strcompare __command_name 'execute'
 	if result = 0 then
-		call handle_wait_for_strings_command
-		goto LABEL_HANDLE_COMMAND_EXIT
-	endif
-
-	strcompare __command_name 'send'
-	if result = 0 then
-		call handle_send_command
+		call handle_execute_command
 		goto LABEL_HANDLE_COMMAND_EXIT
 	endif
 	
-	strcompare __command_name 'send_keys'
+	strcompare __command_name 'get_value'
 	if result = 0 then
-		call handle_send_keys_command
+		call handle_get_value_command
 		goto LABEL_HANDLE_COMMAND_EXIT
 	endif
 	
