@@ -198,6 +198,18 @@ class scripter_t(rabird.compatible.unicode_t):
 		return command[self.__CMI_ARGUMENT]
 	
 	@abc.abstractmethod
+	def wait_for_strings(self, strings):
+		pass
+	
+	@abc.abstractmethod
+	def send(self, input_string):
+		pass
+	
+	@abc.abstractmethod
+	def send_keys(self, input_string):
+		pass
+
+	@abc.abstractmethod
 	def _do_quit(self, error_code):
 		pass
 		
@@ -223,10 +235,39 @@ class scripter_t(rabird.compatible.unicode_t):
 class securecrt_scripter_t(scripter_t):
 	def __init__(self):
 		super(securecrt_scripter_t, self).__init__()
+	
+	def __escape_string(self, astring):
+		escaped_chars = []
 		
+		for c in astring:
+			if len(escaped_chars) > 0:
+				escaped_chars.append('&')
+				
+			escaped_chars.append('chr(' + str(ord(c)) + ')')
+			
+		return string.join(escaped_chars)
+		
+	def wait_for_strings(self, strings):
+		escaped_strings = []
+		
+		for s in strings:
+			escaped_strings.append(self.__escape_string(s))
+			
+		command = 'result = crt.screen.WaitForStrings(' + string.join(escaped_strings, ',') + ')'
+				
+		self.execute(command)
+		return int(self.get_value('result')) - 1
+	
+	def send(self, input_string):
+		self.execute('crt.screen.Send ' + self.__escape_string(input_string))
+	
+	def send_keys(self, input_string):
+		self.execute('crt.screen.SendKeys "' + input_string + '"')
+
 	def _do_quit(self, error_code):
 		# WScript.Quit may not existed before v6.7 
 		# self.execute("WScript.Quit " + str(error_code))
 		self._send_begin()
 		self._send('quit')
 		self._send_end()
+		

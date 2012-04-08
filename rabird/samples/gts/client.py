@@ -10,7 +10,7 @@ import rabird._exceptions
 import exceptions
 import sys
 
-scripter = rabird.gts.scripter_t()
+scripter = rabird.gts.scripter_t.new('securecrt')
 
 print "Wating connection ..."
 
@@ -19,7 +19,7 @@ scripter.connect()
 print "Execute commands ..."
 
 try:
-	scripter.send(r'sleep 3; echo hello\n')
+	scripter.send('sleep 3; echo hello\n')
 	result = scripter.wait_for_strings(['hello'])
 	print 'result : ' + str(result) 
 	scripter.send_keys('{NUM_9}')
