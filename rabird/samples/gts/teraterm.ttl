@@ -107,8 +107,10 @@ return
 ; @return result If true then continue command handle loop, otherwise exit 
 ; immediately.
 :handle_execute_command
+	result = 0
 	command_need_to_execute = acommand[CMI_ARGUMENT]
 	execcmnd command_need_to_execute
+	__last_command_result = result
 	
 	result = 1
 return 
