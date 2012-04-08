@@ -74,6 +74,23 @@ Function HandleWaitForStringsCommand(Pipe, ACommand)
 	HandleWaitForStringsCommand = True
 End Function
 
+Function HandleExecuteCommand(Pipe, ACommand)
+	Execute ACommand(CMI_ARGUMENT)
+	
+	ReplyBegin Pipe, ACommand
+	ReplyEnd Pipe
+	
+	HandleExecuteCommand = True
+End Function
+
+Function HandleGetValueCommand(Pipe, ACommand)
+	ReplyBegin Pipe, ACommand
+	ReplyMessage Pipe, CStr(Eval(ACommand(CMI_ARGUMENT)))
+	ReplyEnd Pipe
+	
+	HandleGetValueCommand = True
+End Function
+
 Function HandleSendCommand(Pipe, ACommand)
 	ALine = Replace( ACommand(CMI_ARGUMENT), "\r", vbCr )
 	ALine = Replace( ALine, "\n", vbLf )
@@ -106,6 +123,10 @@ Function HandleCommand(Pipe, ACommand)
 	Dim i
 	
 	Select Case ACommand(1)
+	Case "execute"
+		HandleCommand = HandleExecuteCommand(Pipe, ACommand)
+	Case "get_value"
+		HandleCommand = HandleGetValueCommand(Pipe, ACommand)
 	Case "wait_for_strings"
 		HandleCommand = HandleWaitForStringsCommand(Pipe, ACommand)
 	Case "send"

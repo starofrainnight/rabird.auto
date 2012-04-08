@@ -171,6 +171,21 @@ class scripter_t(rabird.compatible.unicode_t):
 				pass
 			
 		return False
+	
+	def execute(self, command):
+		command_id = self.__send_begin()
+		self.__send('execute')
+		self.__send(command)
+		self.__send_end()
+		command = self.__wait_for_command_with_id(command_id)
+
+	def get_value(self, command):
+		command_id = self.__send_begin()
+		self.__send('get_value')
+		self.__send(command)
+		self.__send_end()
+		command = self.__wait_for_command_with_id(command_id)
+		return command[self.__CMI_ARGUMENT]
 				
 	def wait_for_strings(self, strings):
 		command_id = self.__send_begin()
