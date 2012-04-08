@@ -194,7 +194,6 @@ class scripter_t(rabird.compatible.unicode_t):
 			self.__send_end()
 			
 			while 1:
-				time.sleep(0.1)
 				try:
 					# Only read could detect pipe disconnect status.
 					win32file.ReadFile(self.__input_pipe, 1024)
@@ -203,7 +202,7 @@ class scripter_t(rabird.compatible.unicode_t):
 						raise rabird._exceptions.pipe_access_error_t
 					elif 232 == e[0]:
 						# Nothing could read from input pipe
-						pass
+						time.sleep(0.1)
 					else:
 						raise e;
 		except rabird._exceptions.pipe_access_error_t:
