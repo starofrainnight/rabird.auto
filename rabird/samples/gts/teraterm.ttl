@@ -112,7 +112,11 @@ return
 	
 	for i CMI_ARGUMENT __acommand_ubound
 		int2str __temp i 
-			
+		
+		; Because wait command could not support array variant correctly, we 
+		; must split elements from array to __temp_valueX ( __temp_value0, 
+		; __temp_value1, __temp_value2 ... ) and generate a script that 
+		; invoke wait command with a series those temporary variants.
 		__variant_define_script = '__temp_value'
 		strconcat __variant_define_script __temp
 		strconcat __variant_define_script ' = acommand['
