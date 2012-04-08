@@ -38,6 +38,13 @@ class scripter_t(rabird.compatible.unicode_t):
 	__CMI_ID = 0
 	__CMI_NAME = 1
 	__CMI_ARGUMENT = 2
+	
+	@classmethod
+	def new(cls, scripter_name):
+		if 0 == cmp(scripter_name, 'securecrt'): 
+			return securecrt_scripter_t()
+		
+		raise exceptions.TypeError
 
 	def __init__(self):
 		super(scripter_t,self).__init__()
@@ -187,12 +194,12 @@ class scripter_t(rabird.compatible.unicode_t):
 		command = self.__wait_for_command_with_id(command_id)
 		return command[self.__CMI_ARGUMENT]
 	
-	def _do_quit(self):
+	def _do_quit(self, error_code):
 		pass
 		
-	def _quit(self):
+	def _quit(self, error_code=0):
 		try:
-			self._do_quit()
+			self._do_quit(error_code)
 			
 			while 1:
 				try:
@@ -208,3 +215,12 @@ class scripter_t(rabird.compatible.unicode_t):
 						raise e;
 		except rabird._exceptions.pipe_access_error_t:
 			pass	
+
+class securecrt_scripter_t(scripter_t):
+	def __init__(self):
+		super(securecrt_scripter_t, self).__init__()
+		
+	def _do_quit(self, error_code):
+		# may not have this command before v6.7 
+		# self.execute("WScript.Quit " + str(error_code))
+		pass 
