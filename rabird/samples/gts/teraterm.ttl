@@ -65,6 +65,8 @@ endif
 input_pipe = pipes[0]
 output_pipe = pipes[1]
 
+setsync 1
+
 ; Begin command analyse 
 while 1
 	call read_command
@@ -77,6 +79,8 @@ while 1
 		endif 
 	endif
 endwhile
+
+setsync 0
 
 end
 

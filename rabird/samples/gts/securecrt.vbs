@@ -152,6 +152,8 @@ Sub Main
 	Set InputPipe = Pipes(0)
 	Set OutputPipe = Pipes(1)	
 	
+	crt.Screen.Synchronous = True
+	
 	' Begin command analyse 
 	Do While True
 		ACommand = ReadCommand(InputPipe)
@@ -163,4 +165,5 @@ Sub Main
 		End If
 	Loop
 	
+	crt.Screen.Synchronous = False
 End Sub
