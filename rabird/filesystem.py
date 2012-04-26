@@ -18,38 +18,53 @@ import shutil
 
 # Python 2.x in win32 do not support link operations, so we use jaraco.window to
 # add this support.
-if ( sys.version_info.major <= 2 ) and ( sys.platform == "win32" ):
-	# TODO: Temporary fix for AttributeError: function 'CreateSymbolicLinkW' not found
-	try:
-		import jaraco.windows.filesystem
+if (sys.version_info.major <= 2) and (sys.platform == "win32"):
+	import jaraco.windows.filesystem
+	import win32api
+	import win32file
 	
-		if not hasattr(os, 'symlink'):
-			os.symlink = lambda from_path, to_symbolic_link_path: (
-				jaraco.windows.filesystem.symlink( from_path, to_symbolic_link_path, is_directory(from_path) ) 
-				)
-			os.path.islink = jaraco.windows.filesystem.islink
-			
-		if not hasattr(os, 'readlink'):
-			os.readlink = jaraco.windows.filesystem.readlink
-			
-		if not hasattr(os, 'link'):
-			os.link = jaraco.windows.filesystem.link
-			
-	except AttributeError:
-		if not hasattr(os, 'symlink'):
-			os.symlink = lambda from_path, to_symbolic_link_path: (
-				os.path.isdir(from_path) if	shutil.copytree(from_path, to_symbolic_link_path, True) else shutil.copy2(from_path, to_symbolic_link_path) 
-				)
-			os.path.islink = lambda path: False
-			
-		if not hasattr(os, 'readlink'):
-			os.readlink = lambda path: path
-			
-		if not hasattr(os, 'link'):
-			os.link = lambda from_path, to_link_path: (
-					os.path.isdir(from_path) if	shutil.copytree(from_path, to_link_path, True) else shutil.copy2(from_path, to_link_path)
-				)
+	version = win32api.GetVersionEx(0)
+	
+	# Vista or above, we use CreateSymbolicLink() to implement our symlink().
+	if (version[0] >= 6) and (version >= 0):
+		def __symlink(from_path, to_symbol_link_path):
+			if os.path.isdir(from_path):
+				win32api.CreateSymbolicLink(from_path, to_symbol_link_path, 1)
+			else:
+				win32api.CreateSymbolicLink(from_path, to_symbol_link_path, 0)
+	else:
+		def __symlink(from_path, to_symbol_link_path):
+			raise NotImplementedError(
+				'Only support create symbolic link on Vista or above!')
 				
+	# Win2000 or above:
+	# we use CreateHardLink() to implement our link() and use 
+	# GetFileAttributes() to implement our islink().
+	if (version[0] >= 5) and (version >= 0):
+		def __link(from_path, to_hard_link_path):
+			win32file.CreateHardLink(from_path, to_hard_link_path)
+			
+		def __islink(path):
+			# 0x400 == FILE_ATTRIBUTE_REPARSE_POINT
+			return win32file.GetFileAttributes() & 0x400  
+	else:
+		def __link(from_path, to_hard_link_path):
+			raise NotImplementedError(
+				'Only support create hard link on Win2000 or above!')
+			
+		def __islink(path):
+			raise NotImplementedError(
+				'Only support check link status on Win2000 or above!')
+		
+	if not hasattr(os, 'symlink'):
+		os.symlink = __symlink
+		os.path.islink = __islink
+		
+	if not hasattr(os, 'readlink'):
+		os.readlink = jaraco.windows.filesystem.readlink
+		
+	if not hasattr(os, 'link'):
+		os.link = __link
 		
 class option_t(object):
 	NONE = 0
