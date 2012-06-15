@@ -19,7 +19,6 @@ import shutil
 # Python 2.x in win32 do not support link operations, so we use jaraco.window to
 # add this support.
 if (sys.version_info.major <= 2) and (sys.platform == "win32"):
-	import jaraco.windows.filesystem
 	import win32api
 	import win32file
 	
@@ -60,8 +59,12 @@ if (sys.version_info.major <= 2) and (sys.platform == "win32"):
 		os.symlink = __symlink
 		os.path.islink = __islink
 		
+	def __readlink(path):
+		raise NotImplementedError(
+			'Only support check link status on Win2000 or above!')
+		
 	if not hasattr(os, 'readlink'):
-		os.readlink = jaraco.windows.filesystem.readlink
+		os.readlink = __readlink
 		
 	if not hasattr(os, 'link'):
 		os.link = __link
