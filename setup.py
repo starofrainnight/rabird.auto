@@ -12,6 +12,25 @@ from setuptools import setup, find_packages
 def convert_source(source_path, destination_path):
 	tag_line = r'#--IMPORT_ALL_FROM_FUTURE--#'
 	
+	if os.path.exists(destination_path):
+		# If there have any file in 'from_package' newer than source_version_file's 
+		# modify time, we do the complete convertion. 
+		status = os.stat(destination_path)
+		
+		is_need_convert = False
+		for root, dirs, files in os.walk(from_package):
+			for afile in files:
+				file_path = os.path.join(root, afile)
+				if os.stat(file_path).st_mtime > status.st_ctime:
+					is_need_convert = True
+					break
+			
+			if is_need_convert:
+				break
+		
+		if not is_need_convert:
+			return
+			
 	shutil.rmtree(destination_path,  ignore_errors=True)
 	shutil.copytree(source_path, destination_path)
 	
@@ -46,38 +65,8 @@ to_package = 'rabird'
 
 logging.basicConfig(level=logging.INFO)
 
-source_version_file_path = 'source_version.txt'
-source_version_file = None
-if os.path.exists(source_version_file_path):
-	source_version_file = open(source_version_file_path, 'rb+')
-	version = int(source_version_file.read())
-	if version != sys.version_info.major:
-		source_version_file.seek(0)
-		source_version_file.write(str(sys.version_info.major).encode('utf-8'))
-		convert_source(from_package, to_package)
-	else:
-		# If there have any file in 'from_package' newer than source_version_file's 
-		# modify time, we do the complete convertion. 
-		status = os.fstat(source_version_file.fileno())
-		
-		is_need_convert = False
-		for root, dirs, files in os.walk(from_package):
-			for afile in files:
-				file_path = os.path.join(root, afile)
-				if os.stat(file_path).st_mtime > status.st_mtime:
-					is_need_convert = True
-					break
-			
-			if is_need_convert:
-				break
-		
-		if is_need_convert:
-			convert_source(from_package, to_package)
-else:
-	source_version_file = open(source_version_file_path, 'wb')
-	source_version_file.write(str(sys.version_info.major).encode('utf-8'))
-	convert_source(from_package, to_package)
-source_version_file.close()
+# Convert source to v2.x if we are using python 3.x.
+convert_source(from_package, to_package)
 
 # Exclude the original source package, only accept the preprocessed package!
 our_packages = find_packages(exclude=[from_package]) 
