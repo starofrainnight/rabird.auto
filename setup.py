@@ -6,7 +6,6 @@ import sys
 import shutil
 import logging
 import fnmatch
-import src as rabird
 from setuptools import setup, find_packages
 
 from_package = 'src'
@@ -64,9 +63,14 @@ source_version_file.close()
 # Exclude the original source package, only accept the preprocessed package!
 pkgs = find_packages(exclude=[from_package]) 
 
+our_requires = []
+
+if sys.platform == "win32":
+	our_requires.append('pywin32>=218')
+
 setup(
 	name=to_package,
-	version=rabird.__version__,
+	version='0.0.0.40',
 	author='HongShe Liang',
 	author_email='starofrainnight@gmail.com',
 	url='',
@@ -81,6 +85,7 @@ setup(
 		'Topic :: Software Development :: Libraries',
 		'Topic :: Utilities',
 	],
+	install_requires=our_requires,
     packages = pkgs,
 	)
 
