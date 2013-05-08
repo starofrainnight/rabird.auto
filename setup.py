@@ -9,9 +9,6 @@ import fnmatch
 from src import __version__
 from setuptools import setup, find_packages
 
-from_package = 'src'
-to_package = 'rabird'
-
 def convert_source_for_version(source_package, destination_package, version):
 	tag_line = r'#--IMPORT_ALL_FROM_FUTURE--#'
 	
@@ -43,6 +40,9 @@ def convert_source_for_version(source_package, destination_package, version):
 					source_file.write('from __future__ import unicode_literals\n')
 					source_file.write(content[founded_index+len(tag_line):]) # Rest after tag line
 				source_file.close()
+
+from_package = 'src'
+to_package = 'rabird'
 
 logging.basicConfig(level=logging.INFO)
 

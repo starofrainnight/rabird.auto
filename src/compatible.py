@@ -1,3 +1,6 @@
+
+#--IMPORT_ALL_FROM_FUTURE--#
+
 ##
 # A compatile support module for 2.x and 3.x .
 # 

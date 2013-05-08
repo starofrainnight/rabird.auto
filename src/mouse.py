@@ -1,5 +1,7 @@
 # -*- coding: UTF-8 -*-
 
+#--IMPORT_ALL_FROM_FUTURE--#
+
 import win32api, win32con, win32gui
 import time
 
