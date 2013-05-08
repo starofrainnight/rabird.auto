@@ -54,7 +54,25 @@ if os.path.exists(source_version_file_path):
 	if version != sys.version_info.major:
 		source_version_file.seek(0)
 		source_version_file.write(str(sys.version_info.major).encode('utf-8'))
-		convert_source_for_version(from_package, to_package, sys.version_info.major)	
+		convert_source_for_version(from_package, to_package, sys.version_info.major)
+	else:
+		# If there have any file in 'from_package' newer than source_version_file's 
+		# modify time, we do the complete convertion. 
+		status = os.fstat(source_version_file.fileno())
+		
+		is_need_convert = False
+		for root, dirs, files in os.walk(from_package):
+			for afile in files:
+				file_path = os.path.join(root, afile)
+				if os.stat(file_path).st_mtime > status.st_mtime:
+					is_need_convert = True
+					break
+			
+			if is_need_convert:
+				break
+		
+		if is_need_convert:
+			convert_source_for_version(from_package, to_package, sys.version_info.major)
 else:
 	source_version_file = open(source_version_file_path, 'wb')
 	source_version_file.write(str(sys.version_info.major).encode('utf-8'))
