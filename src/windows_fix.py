@@ -1,3 +1,6 @@
+
+#--IMPORT_ALL_FROM_FUTURE--#
+
 ##
 # import this unit to fixed multilanguage read /write problems, 
 # it's a rarely appear problem : even you set the correct locale, 
@@ -114,30 +117,20 @@ def stop_stdout_thread( a_thread, a_stdout_file ):
 	os.write( a_stdout_file.fileno(), ".@\n" ) # break the read line operation in thread
 	a_thread.join()
 
-stdout_pipe = os.pipe()
-stderr_pipe = os.pipe()
-stdin_pipe = os.pipe()
 
 old_stdout = sys.stdout
 old_stderr = sys.stderr
 old_stdin = sys.stdin
 
-stdout_thread = stdout_thread_t(stdout_pipe[0], win32api.STD_OUTPUT_HANDLE, old_stdout)
-stderr_thread = stdout_thread_t(stderr_pipe[0], win32api.STD_ERROR_HANDLE, old_stderr)
+stdout_pipe = None
+stderr_pipe = None
+stdin_pipe = None
 
-stdout_thread.start()
-stderr_thread.start()
+stdout_thread = None
+stderr_thread = None
 
-# to test our stdout with new stdout
-our_stdout = stdio_file_t(stdout_pipe[1], "wb")
-our_stderr = stdio_file_t(stderr_pipe[1], "wb")
-
-sys.stdout = our_stdout
-# keep not to overwrite the sys.stderr for debug purpose
-sys.stderr = our_stderr
-
-# * fixed the sys.argv list with GetCommandLine() api in win32
-sys.argv = rabird.windows_api.CommandLineToArgv(rabird.windows_api.GetCommandLine())
+our_stdout = None
+our_stderr = None
 
 # * finalize windows's unicode fix
 def __on_exit_rabird_module():
@@ -154,6 +147,29 @@ def __on_exit_rabird_module():
 	for i in stdin_pipe:
 		os.close(i)
 
-# we must restore original standard input/output file
-atexit.register(__on_exit_rabird_module)
+def monkey_patch():
+	# Fixed the sys.argv list with GetCommandLine() api in win32
+	sys.argv = rabird.windows_api.CommandLineToArgv(rabird.windows_api.GetCommandLine())
+	
+	# Replace 
+	stdout_pipe = os.pipe()
+	stderr_pipe = os.pipe()
+	stdin_pipe = os.pipe()
+	
+	stdout_thread = stdout_thread_t(stdout_pipe[0], win32api.STD_OUTPUT_HANDLE, old_stdout)
+	stderr_thread = stdout_thread_t(stderr_pipe[0], win32api.STD_ERROR_HANDLE, old_stderr)
+	
+	stdout_thread.start()
+	stderr_thread.start()
+	
+	# to test our stdout with new stdout
+	our_stdout = stdio_file_t(stdout_pipe[1], "wb")
+	our_stderr = stdio_file_t(stderr_pipe[1], "wb")
+	
+	sys.stdout = our_stdout
+	# keep not to overwrite the sys.stderr for debug purpose
+	sys.stderr = our_stderr
+	
+	# we must restore original standard input/output file
+	atexit.register(__on_exit_rabird_module)
 

@@ -12,7 +12,7 @@ from_package = 'src'
 to_package = 'rabird'
 
 def convert_source_for_version(source_package, destination_package, version):
-	tag_line = r'##--IMPORT_ALL_FROM_FUTURE--##'
+	tag_line = r'#--IMPORT_ALL_FROM_FUTURE--#'
 	
 	shutil.rmtree(destination_package,  ignore_errors=True)
 	shutil.copytree(source_package, destination_package)
@@ -52,11 +52,11 @@ if os.path.exists(source_version_file_path):
 	version = int(source_version_file.read())
 	if version != sys.version_info.major:
 		source_version_file.seek(0)
-		source_version_file.write(str(sys.version_info.major))
+		source_version_file.write(str(sys.version_info.major).encode('utf-8'))
 		convert_source_for_version(from_package, to_package, sys.version_info.major)	
 else:
 	source_version_file = open(source_version_file_path, 'wb')
-	source_version_file.write(str(sys.version_info.major))
+	source_version_file.write(str(sys.version_info.major).encode('utf-8'))
 	convert_source_for_version(from_package, to_package, sys.version_info.major)
 source_version_file.close()
 
@@ -65,20 +65,20 @@ pkgs = find_packages(exclude=[from_package])
 
 setup(
 	name=to_package,
-	version="0.0.0.39",
-	author="HongShe Liang",
-	author_email="starofrainnight@gmail.com",
-	url="",
+	version='0.0.0.39',
+	author='HongShe Liang',
+	author_email='starofrainnight@gmail.com',
+	url='',
 	py_modules=[to_package],
-	description="{} utilities".format(to_package),
-	long_description=open("README", "r").read(),
+	description='{} utilities'.format(to_package),
+	long_description=open('README', 'r').read(),
 	classifiers=[
-		"Programming Language :: Python :: 2",
-		"Programming Language :: Python :: 3",
-		"Intended Audience :: Developers",
-		"License :: OSI Approved :: BSD License",
-		"Topic :: Software Development :: Libraries",
-		"Topic :: Utilities",
+		'Programming Language :: Python :: 2',
+		'Programming Language :: Python :: 3',
+		'Intended Audience :: Developers',
+		'License :: OSI Approved :: BSD License',
+		'Topic :: Software Development :: Libraries',
+		'Topic :: Utilities',
 	],
     packages = pkgs,
 	)

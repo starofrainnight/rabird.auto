@@ -1,3 +1,6 @@
+
+#--IMPORT_ALL_FROM_FUTURE--#
+
 '''
 GTS ( General Terminal Scripter ) .
 
@@ -18,6 +21,7 @@ import rabird._exceptions
 import exceptions
 import abc
 import win32gui
+import logging
 
 PIPE_ACCESS_DUPLEX = 0x3
 PIPE_TYPE_MESSAGE = 0x4
@@ -71,7 +75,7 @@ class scripter_t(rabird.compatible.unicode_t):
 				)
 	
 		if not self.__pipe_handles[i]:
-			print "Error in creating Named Pipe"
+			logging.error("Error while in creating Named Pipe")
 			exit()
 
 		self.__output_pipe = self.__pipe_handles[0]
