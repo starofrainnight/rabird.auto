@@ -57,6 +57,7 @@ def convert_source(source_path, destination_path):
 					source_file.write('from __future__ import with_statement\n')
 					source_file.write('from __future__ import print_function\n')
 					source_file.write('from __future__ import unicode_literals\n')
+					source_file.write('range = xrange\n') # Emulate behaviors of range
 					source_file.write(content[founded_index+len(tag_line):]) # Rest after tag line
 				source_file.close()
 

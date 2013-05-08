@@ -109,7 +109,7 @@ Sub Main
 	PipeModes(0) = ForReading 
 	PipeModes(1) = ForAppending ' Do not use ForWriting to write pipe ... 
 	
-	'WshShell.Run "cmd /C start .\client.py"
+	WshShell.Run "cmd /C start python client.py"
 	
 	' Could only use CreateTextFile() to open the named pipe
 	i = 0

@@ -16,6 +16,7 @@ try:
 	from . import mouse
 	from . import system
 	from . import compatible
+	from . import gts 
 	
 	if sys.platform == "win32" :
 		import win32console 

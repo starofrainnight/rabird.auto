@@ -17,8 +17,6 @@ import pywintypes
 import collections
 import string
 import rabird.compatible
-import rabird._exceptions
-import exceptions
 import abc
 import win32gui
 import logging
@@ -37,33 +35,23 @@ ERROR_PIPE_CONNECTED = 535
 class scripter_t(rabird.compatible.unicode_t):
 	__metaclass__ = abc.ABCMeta
 
-	__pipe_names = [
-		"\\\\.\\pipe\\terminal_scripter_input",
-		"\\\\.\\pipe\\terminal_scripter_output"
-		]	
-	
 	# Command Member Index
 	__CMI_ID = 0
 	__CMI_NAME = 1
 	__CMI_ARGUMENT = 2
 	
-	@staticmethod
-	def __new__(cls, scripter_name, *args, **kwarg):
-		if 0 == cmp(scripter_name, 'securecrt'): 
-			return super(scripter_t, cls).__new__(securecrt_scripter_t, *args, **kwarg)
-		
-		if 0 == cmp(scripter_name, 'teraterm'):
-			return super(scripter_t, cls).__new__(teraterm_scripter_t, *args, **kwarg)
-		
-		return super(scripter_t, cls).__new__(cls, *args, **kwarg)
-	
 	def __init__(self, *args, **kwarg):
-		super(scripter_t,self).__init__(self)
+		super(scripter_t,self).__init__()
 		
+		self.__pipe_names = [
+			"\\\\.\\pipe\\terminal_scripter_input",
+			"\\\\.\\pipe\\terminal_scripter_output"
+			]
+			
 		self.__id = 0
 		self.__pipe_handles = [0, 0]
 		
-		for i in xrange(0, len(self.__pipe_names)):
+		for i in range(0, len(self.__pipe_names)):
 			self.__pipe_handles[i] = win32pipe.CreateNamedPipe(
 				self.__pipe_names[i],
 				PIPE_ACCESS_DUPLEX,
@@ -343,3 +331,11 @@ class teraterm_scripter_t(scripter_t):
 		self._send('quit')
 		self._send_end()
 		
+
+def create_scripter(name):
+	if 'securecrt' == name:
+		return securecrt_scripter_t()
+	elif 'teraterm' == name:
+		return teraterm_scripter_t()
+	else:
+		raise NotImplemented('Unknow scripter : {}'.format(name))
