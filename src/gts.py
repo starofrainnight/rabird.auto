@@ -20,6 +20,7 @@ import rabird.compatible
 import abc
 import win32gui
 import logging
+import six
 
 PIPE_ACCESS_DUPLEX = 0x3
 PIPE_TYPE_MESSAGE = 0x4
@@ -72,21 +73,21 @@ class scripter_t(rabird.compatible.unicode_t):
 		self.__raw_buffers = collections.deque()
 		
 	def _send(self, command):
-		win32file.WriteFile(self.__output_pipe, '#')
+		win32file.WriteFile(self.__output_pipe, six.b('#'))
 		win32file.WriteFile(self.__output_pipe, command)
-		win32file.WriteFile(self.__output_pipe, '\n')
+		win32file.WriteFile(self.__output_pipe, six.b('\n'))
 
 	def _send_begin(self):
 		result = self.__id
 		
-		win32file.WriteFile(self.__output_pipe, '@begin\n')
+		win32file.WriteFile(self.__output_pipe, six.b('@begin\n'))
 		self._send(str(self.__id))
 		self.__id = self.__id + 1
 		
 		return result
 		
 	def _send_end(self):
-		win32file.WriteFile(self.__output_pipe, '@end\n')
+		win32file.WriteFile(self.__output_pipe, six.b('@end\n'))
 	
 	##
 	#
@@ -138,7 +139,7 @@ class scripter_t(rabird.compatible.unicode_t):
 							a_command.append(a_line[1:len(a_line)]) 
 			except pywintypes.error as e:
 				if 109 == e[0]:
-					raise rabird._exceptions.pipe_access_error_t
+					raise ConnectionAbortedError()
 				elif 232 == e[0]:
 					# Nothing could read from input pipe
 					time.sleep(0.1)
@@ -168,7 +169,7 @@ class scripter_t(rabird.compatible.unicode_t):
 					if elapsed_time > timeout:
 						break
 				
-				win32file.WriteFile(self.__output_pipe, '\n')
+				win32file.WriteFile(self.__output_pipe, six.b('\n'))
 				# If we successed detected client connected, we break this 
 				# waiting loop.
 				return True

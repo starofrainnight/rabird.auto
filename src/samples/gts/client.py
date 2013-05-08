@@ -10,7 +10,7 @@ import string
 import rabird.gts
 import sys
 
-scripter = rabird.gts.scripter_t.new('securecrt')
+scripter = rabird.gts.create_scripter('securecrt')
 
 print("Wating connection ...")
 
@@ -25,7 +25,7 @@ try:
 	scripter.send_keys('{NUM_9}')
 	scripter.send_keys('{NUM_ENTER}')
 	scripter._quit()
-except rabird._exceptions.pipe_access_error_t:
+except ConnectionAbortedError:
 	pass
 
 print("Exit ...")
