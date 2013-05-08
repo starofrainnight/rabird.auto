@@ -6,6 +6,7 @@ import sys
 import shutil
 import logging
 import fnmatch
+from src import __version__
 from setuptools import setup, find_packages
 
 from_package = 'src'
@@ -61,7 +62,7 @@ else:
 source_version_file.close()
 
 # Exclude the original source package, only accept the preprocessed package!
-pkgs = find_packages(exclude=[from_package]) 
+our_packages = find_packages(exclude=[from_package]) 
 
 our_requires = []
 
@@ -70,7 +71,7 @@ if sys.platform == "win32":
 
 setup(
 	name=to_package,
-	version='0.0.0.40',
+	version=__version__,
 	author='HongShe Liang',
 	author_email='starofrainnight@gmail.com',
 	url='',
@@ -86,6 +87,6 @@ setup(
 		'Topic :: Utilities',
 	],
 	install_requires=our_requires,
-    packages = pkgs,
+    packages = our_packages,
 	)
 
