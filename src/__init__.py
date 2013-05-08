@@ -15,6 +15,8 @@ from . import system
 from . import filesystem
 from . import compatible
 
+__version__ = '0.0.0.40' 
+
 if sys.platform == "win32" :
 	import win32console 
 	import win32api

@@ -6,6 +6,7 @@ import sys
 import shutil
 import logging
 import fnmatch
+import src as rabird
 from setuptools import setup, find_packages
 
 from_package = 'src'
@@ -65,7 +66,7 @@ pkgs = find_packages(exclude=[from_package])
 
 setup(
 	name=to_package,
-	version='0.0.0.39',
+	version=rabird.__version__,
 	author='HongShe Liang',
 	author_email='starofrainnight@gmail.com',
 	url='',
