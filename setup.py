@@ -9,18 +9,18 @@ import fnmatch
 from src import __version__
 from setuptools import setup, find_packages
 
-def convert_source_for_version(source_package, destination_package, version):
+def convert_source(source_path, destination_path):
 	tag_line = r'#--IMPORT_ALL_FROM_FUTURE--#'
 	
-	shutil.rmtree(destination_package,  ignore_errors=True)
-	shutil.copytree(source_package, destination_package)
+	shutil.rmtree(destination_path,  ignore_errors=True)
+	shutil.copytree(source_path, destination_path)
 	
-	if version != 2:
+	if sys.version_info.major != 2:
 		# We wrote program implicated by version 3, if python version large than 2,
 		# we need not change the sources.
 		return
 		
-	for root, dirs, files in os.walk(destination_package):
+	for root, dirs, files in os.walk(destination_path):
 		for afile in files:
 			if fnmatch.fnmatch(afile, '*.py') or fnmatch.fnmatch(afile, '*.pyw'):
 				file_path = os.path.join(root, afile)
@@ -54,7 +54,7 @@ if os.path.exists(source_version_file_path):
 	if version != sys.version_info.major:
 		source_version_file.seek(0)
 		source_version_file.write(str(sys.version_info.major).encode('utf-8'))
-		convert_source_for_version(from_package, to_package, sys.version_info.major)
+		convert_source(from_package, to_package)
 	else:
 		# If there have any file in 'from_package' newer than source_version_file's 
 		# modify time, we do the complete convertion. 
@@ -72,11 +72,11 @@ if os.path.exists(source_version_file_path):
 				break
 		
 		if is_need_convert:
-			convert_source_for_version(from_package, to_package, sys.version_info.major)
+			convert_source(from_package, to_package)
 else:
 	source_version_file = open(source_version_file_path, 'wb')
 	source_version_file.write(str(sys.version_info.major).encode('utf-8'))
-	convert_source_for_version(from_package, to_package, sys.version_info.major)
+	convert_source(from_package, to_package)
 source_version_file.close()
 
 # Exclude the original source package, only accept the preprocessed package!
