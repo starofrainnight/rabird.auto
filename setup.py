@@ -82,10 +82,13 @@ source_version_file.close()
 # Exclude the original source package, only accept the preprocessed package!
 our_packages = find_packages(exclude=[from_package]) 
 
-our_requires = []
+our_requires = [
+	'six>=1.3.0'
+	]
 
 if sys.platform == "win32":
 	our_requires.append('pywin32>=218')
+
 
 setup(
 	name=to_package,
