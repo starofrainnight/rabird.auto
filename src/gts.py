@@ -16,10 +16,10 @@ import win32file
 import pywintypes
 import collections
 import string
-import rabird.compatible
 import abc
 import win32gui
 import logging
+from . import compatible
 
 PIPE_ACCESS_DUPLEX = 0x3
 PIPE_TYPE_MESSAGE = 0x4
@@ -32,7 +32,7 @@ NMPWAIT_USE_DEFAULT_WAIT = 0
 INVALID_HANDLE_VALUE = -1
 ERROR_PIPE_CONNECTED = 535
 
-class scripter_t(rabird.compatible.unicode_t):
+class scripter_t(compatible.unicode_t):
 	__metaclass__ = abc.ABCMeta
 
 	# Command Member Index
