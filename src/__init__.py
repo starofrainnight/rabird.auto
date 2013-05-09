@@ -19,9 +19,6 @@ try:
 	from . import gts 
 	
 	if sys.platform == "win32" :
-		import win32console 
-		import win32api
-		import win32file
 		from . import windows_api
 		from . import windows_fix	
 	
