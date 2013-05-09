@@ -73,21 +73,21 @@ class scripter_t(rabird.compatible.unicode_t):
 		self.__raw_buffers = collections.deque()
 		
 	def _send(self, command):
-		win32file.WriteFile(self.__output_pipe, six.b('#'))
-		win32file.WriteFile(self.__output_pipe, command)
-		win32file.WriteFile(self.__output_pipe, six.b('\n'))
+		win32file.WriteFile(self.__output_pipe, b'#')
+		win32file.WriteFile(self.__output_pipe, six.b(command))
+		win32file.WriteFile(self.__output_pipe, b'\n')
 
 	def _send_begin(self):
 		result = self.__id
 		
-		win32file.WriteFile(self.__output_pipe, six.b('@begin\n'))
+		win32file.WriteFile(self.__output_pipe, b'@begin\n')
 		self._send(str(self.__id))
 		self.__id = self.__id + 1
 		
 		return result
 		
 	def _send_end(self):
-		win32file.WriteFile(self.__output_pipe, six.b('@end\n'))
+		win32file.WriteFile(self.__output_pipe, b'@end\n')
 	
 	##
 	#
@@ -106,41 +106,41 @@ class scripter_t(rabird.compatible.unicode_t):
 				readed_size, readed_buffer = win32file.ReadFile(self.__input_pipe, 1024)
 				while len(readed_buffer) > 0:
 					a_line = ""
-					sub_index = readed_buffer.find('\n')
+					sub_index = readed_buffer.find(b'\n')
 					if sub_index == 0:
 						if len(self.__raw_buffers) > 0:
-							a_line = string.join(self.__raw_buffers)
+							a_line = b''.join(self.__raw_buffers)
 							self.__raw_buffers.clear()
 							readed_buffer = readed_buffer[(sub_index+1):len(readed_buffer)]
 					elif sub_index > 0:
-						sub_string = readed_buffer[0:sub_index].strip('\n\r')
+						sub_string = readed_buffer[0:sub_index].strip(b'\n\r')
 						if len(sub_string) > 0:
 							self.__raw_buffers.append(sub_string)
 							
 						if len(self.__raw_buffers) > 0:
-							a_line = string.join(self.__raw_buffers)
+							a_line = b''.join(self.__raw_buffers)
 							
 						self.__raw_buffers.clear()
 						readed_buffer = readed_buffer[(sub_index+1):len(readed_buffer)]
 					else:
-						sub_string = readed_buffer.strip('\n\r')
+						sub_string = readed_buffer.strip(b'\n\r')
 						if len(sub_string) > 0:
 							self.__raw_buffers.append(sub_string)
 						break
 					
 					if len(a_line) > 0:
-						if cmp(a_line, "@begin") == 0:
+						if a_line == b"@begin":
 							a_command = []
-						elif cmp(a_line, "@end") == 0:
+						elif a_line == b"@end":
 							if a_command is not None:
 								return a_command
 						elif a_command is not None:
 							# Remove prefix "#" and append to command
 							a_command.append(a_line[1:len(a_line)]) 
 			except pywintypes.error as e:
-				if 109 == e[0]:
+				if 109 == e.winerror:
 					raise ConnectionAbortedError()
-				elif 232 == e[0]:
+				elif 232 == e.winerror:
 					# Nothing could read from input pipe
 					time.sleep(0.1)
 					pass
@@ -219,15 +219,15 @@ class scripter_t(rabird.compatible.unicode_t):
 					# Only read could detect pipe disconnect status.
 					win32file.ReadFile(self.__input_pipe, 1024)
 				except pywintypes.error as e:
-					if 109 == e[0]:
-						raise rabird._exceptions.pipe_access_error_t
-					elif 232 == e[0]:
+					if 109 == e.winerror:
+						raise ConnectionAbortedError
+					elif 232 == e.winerror:
 						# Nothing could read from input pipe
 						time.sleep(0.1)
 					else:
 						raise e;
-		except rabird._exceptions.pipe_access_error_t:
-			pass	
+		except ConnectionAbortedError:
+			pass
 
 class securecrt_scripter_t(scripter_t):
 	
@@ -240,7 +240,7 @@ class securecrt_scripter_t(scripter_t):
 				
 			escaped_chars.append('chr(' + str(ord(c)) + ')')
 			
-		return string.join(escaped_chars,'')
+		return ''.join(escaped_chars)
 		
 	def wait_for_strings(self, strings):
 		escaped_strings = []
@@ -248,7 +248,7 @@ class securecrt_scripter_t(scripter_t):
 		for s in strings:
 			escaped_strings.append(self.__escape_string(s))
 			
-		command = 'result = crt.screen.WaitForStrings(' + string.join(escaped_strings, ',') + ')'
+		command = 'result = crt.screen.WaitForStrings(' + ','.join(escaped_strings) + ')'
 				
 		self._execute(command)
 		return int(self._get_value('result')) - 1
@@ -279,7 +279,7 @@ class teraterm_scripter_t(scripter_t):
 		for c in astring:
 			escaped_chars.append('#' + str(ord(c)))
 			
-		return string.join(escaped_chars,'')
+		return ''.join(escaped_chars)
 	
 	def connect(self, timeout=None):
 		super(teraterm_scripter_t, self).connect(self)
@@ -297,13 +297,13 @@ class teraterm_scripter_t(scripter_t):
 			window = win32gui.FindWindowEx(
 				0, 
 				window, 
-				u'VTWin32', 
+				'VTWin32', 
 				None )
 			
 			if not window:
 				break
 			
-			if win32gui.GetWindowText(window).find(u'rabird_gts_target_window') >= 0 :
+			if win32gui.GetWindowText(window).find('rabird_gts_target_window') >= 0 :
 				self.__target_window = window
 				break
 			
@@ -316,7 +316,7 @@ class teraterm_scripter_t(scripter_t):
 		for s in strings:
 			escaped_strings.append(self.__escape_string(s))
 			
-		self._execute('wait ' + string.join(escaped_strings))
+		self._execute('wait ' + ''.join(escaped_strings))
 		self._execute('int2str __last_command_result_str __last_command_result') 
 		
 		return int(self._get_value('__last_command_result_str')) - 1
