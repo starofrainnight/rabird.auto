@@ -11,32 +11,16 @@ import rabird.gts
 import sys
 import os
 import logging
+import rabird.logging
 
-def help():
+def usage():
 	logging.info('{} [scripter name]'.format(__file__))
 
 def main():
-	logging_level = None
-	logging_filename = None
-	
-	try:
-		logging_level=logging.getLevelName(os.environ['PYTHON_LOGGING_LEVEL'])
-	except ValueError:
-		pass
-	except KeyError:
-		pass
-			
-	try:
-		logging_filename=os.environ['PYTHON_LOGGING_FILENAME']
-	except ValueError:
-		pass
-	except KeyError:
-		pass
-			
-	logging.basicConfig(filename=logging_filename, filemode='wb', level=logging_level)
+	rabird.logging.load_basic_config_from_environment()
 	
 	if len(sys.argv)<2:
-		help()
+		usage()
 		return -1
 	
 	# It would exit the script if user use a scripter we have not support yet.
