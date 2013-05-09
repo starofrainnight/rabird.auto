@@ -2,7 +2,7 @@
 #--IMPORT_ALL_FROM_FUTURE--#
 
 version_info = (0, 0, 0, 45)
-__version__ = ".".join(map(str, version_info))
+__version__ = '.'.join(map(str, version_info))
 
 try:
 	from . import mouse
@@ -10,12 +10,12 @@ try:
 	from . import compatible
 	from . import gts 
 	
-	if sys.platform == "win32" :
+	if sys.platform == 'win32' :
 		from . import windows_api
 		from . import windows_fix	
 	
 	def monkey_patch():
-		if sys.platform == "win32" :
+		if sys.platform == 'win32' :
 			if sys.version_info.major <= 2 :
 				windows_fix.monkey_patch()
 except ImportError as e:
