@@ -5,14 +5,6 @@ version_info = (0, 0, 0, 45)
 __version__ = ".".join(map(str, version_info))
 
 try:
-	import sys
-	import os
-	import io
-	import threading
-	import atexit 
-	import types # for all standard type values for buildin type()
-	import time
-
 	from . import mouse
 	from . import system
 	from . import compatible
