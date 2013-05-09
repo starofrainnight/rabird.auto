@@ -12,13 +12,14 @@ import sys
 import os
 import logging
 
-scripter = rabird.gts.create_scripter('securecrt')
-
 if 'PYTHON_LOGGING_LEVEL' in os.environ:
 	try:
 		logging.basicConfig(level=logging.getLevelName(os.environ['PYTHON_LOGGING_LEVEL']))
 	except ValueError:
 		pass
+
+# It would exit the script if user use a scripter we have not support yet.
+scripter = rabird.gts.create_scripter('securecrt')
 
 logging.info("Wating connection ...")
 
@@ -29,7 +30,6 @@ logging.info("Execute commands ...")
 try:
 	scripter.send('echo hello\n')
 	result = scripter.wait_for_strings(['hello'])
-	logging.info( 'result : ' + str(result) ) 
 	scripter.send_keys('{NUM_9}')
 	scripter.send_keys('{NUM_ENTER}')
 	scripter._quit()
