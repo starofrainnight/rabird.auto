@@ -5,6 +5,7 @@ version_info = (0, 0, 0, 45)
 __version__ = '.'.join(map(str, version_info))
 
 try:
+	import sys
 	from . import mouse
 	from . import system
 	from . import compatible

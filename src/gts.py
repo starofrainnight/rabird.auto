@@ -41,34 +41,22 @@ class scripter_t(compatible.unicode_t):
 	__CMI_NAME = 1
 	__CMI_ARGUMENT = 2
 	
+	##
+	# @param input_pipe_name
+	# @param output_pipe_name
 	def __init__(self, *args, **kwarg):
 		super(scripter_t,self).__init__()
 		
 		self.__pipe_names = [
-			"\\\\.\\pipe\\terminal_scripter_input",
-			"\\\\.\\pipe\\terminal_scripter_output"
+			"\\\\.\\pipe\\gts_input_default",
+			"\\\\.\\pipe\\gts_output_default"
 			]
-			
+		
 		self.__id = 0
 		self.__pipe_handles = [0, 0]
+		self.__output_pipe = None
+		self.__output_pipe = None
 		
-		for i in range(0, len(self.__pipe_names)):
-			self.__pipe_handles[i] = win32pipe.CreateNamedPipe(
-				self.__pipe_names[i],
-				PIPE_ACCESS_DUPLEX,
-				PIPE_TYPE_MESSAGE |	PIPE_READMODE_MESSAGE |	PIPE_NOWAIT,
-				PIPE_UNLIMITED_INSTANCES,
-				BUFSIZE, BUFSIZE,
-				NMPWAIT_USE_DEFAULT_WAIT,
-				None
-				)
-	
-		if not self.__pipe_handles[i]:
-			logging.error("Error while in creating Named Pipe")
-			exit()
-
-		self.__output_pipe = self.__pipe_handles[0]
-		self.__input_pipe = self.__pipe_handles[1]
 		# All buffers need to split into command lines
 		self.__raw_buffers = collections.deque()
 		
@@ -158,7 +146,31 @@ class scripter_t(compatible.unicode_t):
 			if int(command_id) == int(command[self.__CMI_ID]):
 				return command
 			
-	def connect(self, timeout=None):
+	def connect(self, input_pipe_name=None, output_pipe_name=None, timeout=None):
+		if input_pipe_name is not None:
+			self.__pipe_names[0] = "\\\\.\\pipe\\gts_input_{}".format(input_pipe_name)
+			
+		if output_pipe_name is not None:
+			self.__pipe_names[1] = "\\\\.\\pipe\\gts_output_{}".format(output_pipe_name)
+		
+		for i in range(0, len(self.__pipe_names)):
+			self.__pipe_handles[i] = win32pipe.CreateNamedPipe(
+				self.__pipe_names[i],
+				PIPE_ACCESS_DUPLEX,
+				PIPE_TYPE_MESSAGE |	PIPE_READMODE_MESSAGE |	PIPE_NOWAIT,
+				PIPE_UNLIMITED_INSTANCES,
+				BUFSIZE, BUFSIZE,
+				NMPWAIT_USE_DEFAULT_WAIT,
+				None
+				)
+	
+		if not self.__pipe_handles[i]:
+			logging.error("Error while in creating Named Pipe")
+			return False
+
+		self.__output_pipe = self.__pipe_handles[0]
+		self.__input_pipe = self.__pipe_handles[1]
+		
 		elapsed_time = 0.0
 		# Wait terminal scripter connect to us.
 		while 1:
@@ -177,7 +189,7 @@ class scripter_t(compatible.unicode_t):
 				# Ignored any errors
 				pass
 			
-		return False
+		return True
 	
 	def _execute(self, command):
 		command_id = self._send_begin()
