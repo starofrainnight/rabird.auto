@@ -12,11 +12,20 @@ import sys
 import os
 import logging
 
-if 'PYTHON_LOGGING_LEVEL' in os.environ:
-	try:
-		logging.basicConfig(level=logging.getLevelName(os.environ['PYTHON_LOGGING_LEVEL']))
-	except ValueError:
-		pass
+logging_level = None
+logging_filename = None
+
+try:
+	logging_level=logging.getLevelName(os.environ['PYTHON_LOGGING_LEVEL'])
+except ValueError:
+	pass
+		
+try:
+	logging_filename=os.environ['PYTHON_LOGGING_FILENAME']
+except ValueError:
+	pass
+		
+logging.basicConfig(filename=logging_filename, level=logging_level)
 
 # It would exit the script if user use a scripter we have not support yet.
 scripter = rabird.gts.create_scripter('securecrt')

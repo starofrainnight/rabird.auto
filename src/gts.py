@@ -19,6 +19,7 @@ import string
 import abc
 import win32gui
 import logging
+import six
 from . import compatible
 
 PIPE_ACCESS_DUPLEX = 0x3
@@ -73,7 +74,7 @@ class scripter_t(compatible.unicode_t):
 		
 	def _send(self, command):
 		win32file.WriteFile(self.__output_pipe, b'#')
-		win32file.WriteFile(self.__output_pipe, bytearray(command))
+		win32file.WriteFile(self.__output_pipe, six.b(command))
 		win32file.WriteFile(self.__output_pipe, b'\n')
 
 	def _send_begin(self):
