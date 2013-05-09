@@ -28,7 +28,7 @@ import win32api
 import win32file
 import types # for all standard type values for buildin type()
 import pickle
-import rabird.windows_api
+from . import windows_api
 import time
 
 # * replace the stdout / stderr / stdin file object in sys with our fixed objects

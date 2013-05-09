@@ -11,12 +11,24 @@ from setuptools import setup, find_packages
 
 def convert_source(source_path, destination_path):
 	tag_line = r'#--IMPORT_ALL_FROM_FUTURE--#'
+	source_file_path = 'source_version.txt'
 	
-	if os.path.exists(destination_path):
+	while os.path.exists(destination_path):
 		# If there have any file in 'from_package' newer than source_version_file's 
 		# modify time, we do the complete convertion. 
 		status = os.stat(destination_path)
-		
+
+		# Read the source version, if the version not equal current python's version,
+		# we need do some change
+		try:
+			source_version = open(source_file_path, 'rb+').read().strip()
+			if int(source_version) != sys.version_info.major:
+				# Do convert
+				break
+		except:
+			# Do convert
+			break
+
 		is_need_convert = False
 		for root, dirs, files in os.walk(from_package):
 			for afile in files:
@@ -31,11 +43,19 @@ def convert_source(source_path, destination_path):
 		if not is_need_convert:
 			return
 			
+		# We must break here, otherwise we will run into infinite loop
+		break 
+			
 	shutil.rmtree(destination_path,  ignore_errors=True)
 	shutil.copytree(source_path, destination_path)
 	
-	if sys.version_info.major != 2:
-		# We wrote program implicated by version 3, if python version large than 2,
+	try:
+		open(source_file_path, 'rb+').write(bytearray(sys.version_info.major))
+	except:
+		pass
+	
+	if sys.version_info.major >= 3:
+		# We wrote program implicated by version 3, if python version large or equal than 3,
 		# we need not change the sources.
 		return
 		

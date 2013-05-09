@@ -5,7 +5,7 @@ import sys
 import os
 
 if sys.platform == "win32" :
-	import rabird.windows_api
+	from . import windows_api
 
 def get_single_argument_win32():
 	command_line = rabird.windows_api.GetCommandLine().strip()
