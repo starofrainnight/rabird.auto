@@ -46,7 +46,11 @@ def convert_source(source_path, destination_path):
 		# We must break here, otherwise we will run into infinite loop
 		break 
 			
-	shutil.rmtree(destination_path,  ignore_errors=True)
+	# The 'build' and 'dist' folder sometimes will not update! So we need to 
+	# remove them all !
+	shutil.rmtree('build', ignore_errors=True)
+	shutil.rmtree('dist', ignore_errors=True)
+	shutil.rmtree(destination_path, ignore_errors=True)
 	shutil.copytree(source_path, destination_path)
 	
 	try:
@@ -85,6 +89,7 @@ from_package = 'src'
 to_package = 'rabird'
 
 logging.basicConfig(level=logging.INFO)
+
 
 # Convert source to v2.x if we are using python 3.x.
 convert_source(from_package, to_package)

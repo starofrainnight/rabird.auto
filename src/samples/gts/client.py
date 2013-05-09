@@ -9,9 +9,16 @@ import collections
 import string
 import rabird.gts
 import sys
+import os
 import logging
 
 scripter = rabird.gts.create_scripter('securecrt')
+
+if 'PYTHON_LOGGING_LEVEL' in os.environ:
+	try:
+		logging.basicConfig(level=logging.getLevelName(os.environ['PYTHON_LOGGING_LEVEL']))
+	except ValueError:
+		pass
 
 logging.info("Wating connection ...")
 
