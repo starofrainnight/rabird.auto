@@ -12,38 +12,52 @@ import sys
 import os
 import logging
 
-logging_level = None
-logging_filename = None
+def help():
+	logging.info('{} [scripter name]'.format(__file__))
 
-try:
-	logging_level=logging.getLevelName(os.environ['PYTHON_LOGGING_LEVEL'])
-except ValueError:
-	pass
-		
-try:
-	logging_filename=os.environ['PYTHON_LOGGING_FILENAME']
-except ValueError:
-	pass
-		
-logging.basicConfig(filename=logging_filename, level=logging_level)
+def main():
+	logging_level = None
+	logging_filename = None
+	
+	try:
+		logging_level=logging.getLevelName(os.environ['PYTHON_LOGGING_LEVEL'])
+	except ValueError:
+		pass
+	except KeyError:
+		pass
+			
+	try:
+		logging_filename=os.environ['PYTHON_LOGGING_FILENAME']
+	except ValueError:
+		pass
+	except KeyError:
+		pass
+			
+	logging.basicConfig(filename=logging_filename, filemode='wb', level=logging_level)
+	
+	if len(sys.argv)<2:
+		help()
+		return -1
+	
+	# It would exit the script if user use a scripter we have not support yet.
+	scripter = rabird.gts.create_scripter(sys.argv[1])
+	
+	logging.info("Wating connection ...")
+	
+	scripter.connect()
+	
+	logging.info("Execute commands ...")
+	
+	try:
+		scripter.send('echo hello\n')
+		result = scripter.wait_for_strings(['hello'])
+		scripter.send_keys('{NUM_9}')
+		scripter.send_keys('{NUM_ENTER}')
+		scripter._quit()
+	except ConnectionAbortedError:
+		pass
+	
+	logging.info("Exit ...")
 
-# It would exit the script if user use a scripter we have not support yet.
-scripter = rabird.gts.create_scripter('securecrt')
-
-logging.info("Wating connection ...")
-
-scripter.connect()
-
-logging.info("Execute commands ...")
-
-try:
-	scripter.send('echo hello\n')
-	result = scripter.wait_for_strings(['hello'])
-	scripter.send_keys('{NUM_9}')
-	scripter.send_keys('{NUM_ENTER}')
-	scripter._quit()
-except ConnectionAbortedError:
-	pass
-
-logging.info("Exit ...")
-
+if __name__ == "__main__":
+	exit(main())
