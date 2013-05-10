@@ -95,7 +95,7 @@ logging.basicConfig(level=logging.INFO)
 convert_source(from_package, to_package)
 
 # Exclude the original source package, only accept the preprocessed package!
-our_packages = find_packages(exclude=[from_package]) 
+our_packages = find_packages(exclude=[from_package, '{}.*'.format(from_package)])
 
 our_requires = [
 	'six>=1.3.0'
@@ -103,7 +103,6 @@ our_requires = [
 
 if sys.platform == "win32":
 	our_requires.append('pywin32>=218')
-
 
 setup(
 	name=to_package,
@@ -123,6 +122,7 @@ setup(
 		'Topic :: Utilities',
 	],
 	install_requires=our_requires,
-    packages = our_packages,
+    packages=our_packages,
+    namespace_packages = ['rabird'],
 	)
 

@@ -1,15 +1,13 @@
 
 #--IMPORT_ALL_FROM_FUTURE--#
 
-version_info = (0, 0, 0, 45)
+__import__('pkg_resources').declare_namespace(__name__)
+
+version_info = (0, 0, 0, 46)
 __version__ = '.'.join(map(str, version_info))
 
 try:
 	import sys
-	from . import mouse
-	from . import system
-	from . import compatible
-	from . import gts 
 	
 	if sys.platform == 'win32' :
 		from . import windows_api
