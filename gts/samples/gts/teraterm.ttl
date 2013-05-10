@@ -1,0 +1,222 @@
+; Sample macro for Tera Term
+;   Rabird Generic Terminal Scripter Server
+
+; Command Member Index
+CMI_ID = 0
+CMI_NAME = 1
+CMI_ARGUMENT = 2
+
+pipe_count = 2
+ubound_pipe_array = pipe_count - 1
+timeout_count = 30
+
+; acommand is a global object to store lines with current command.
+strdim acommand 64
+strdim pipe_paths pipe_count
+intdim pipe_modes pipe_count
+intdim pipes pipe_count
+
+pipe_paths[0] = '\\.\pipe\terminal_scripter_input'
+pipe_paths[1] = '\\.\pipe\terminal_scripter_output'
+pipe_modes[0] = 0
+pipe_modes[1] = 1
+pipes[0] = -1
+pipes[1] = -1
+
+successed_count = 0
+exception_count = 0
+
+while 1
+	mpause 100
+	 
+	for i 0 ubound_pipe_array
+		pipe_path = pipe_paths[i]
+		pipe_mode = pipe_modes[i]
+		pipe = pipes[i]
+		
+		if pipe <= -1 then
+			fileopen pipe pipe_path pipe_mode
+			if pipe > -1 then
+				successed_count = successed_count + 1
+			endif
+			pipes[i] = pipe
+			
+			if successed_count > ubound_pipe_array then
+				break
+			endif
+		endif
+	next
+	
+	if successed_count > ubound_pipe_array then
+		break
+	endif
+	
+	exception_count = exception_count + 1
+	if exception_count > timeout_count then 
+		break
+	endif
+endwhile
+
+if exception_count > timeout_count then 
+	messagebox 'Timeout !' 'timeout'
+	exit
+endif
+
+input_pipe = pipes[0]
+output_pipe = pipes[1]
+
+setsync 1
+
+; Begin command analyse 
+while 1
+	call read_command
+	if acommand_size > 0 then
+		call handle_command
+		if result <> 0 then
+			__unused_test = 0
+		else 
+			break
+		endif 
+	endif
+endwhile
+
+setsync 0
+
+end
+
+; @param output_pipe
+; @param acommand
+; @param acommand_size
+:reply_begin
+	filewriteln output_pipe '@begin'
+	filewrite output_pipe '#' 
+	filewriteln output_pipe acommand[CMI_ID]
+	filewrite output_pipe '#'
+	filewriteln output_pipe acommand[CMI_NAME]
+return
+
+; @param output_pipe
+; @param output_message
+:reply_message
+	filewrite output_pipe '#'
+	filewriteln output_pipe output_message
+return
+
+; @param output_pipe
+:reply_end
+	filewriteln output_pipe '@end'
+return
+
+; @param output_pipe
+; @param acommand
+; @param acommand_size
+; @return result If true then continue command handle loop, otherwise exit 
+; immediately.
+:handle_execute_command
+	result = 0
+	command_need_to_execute = acommand[CMI_ARGUMENT]
+	execcmnd command_need_to_execute
+	__last_command_result = result
+	
+	call reply_begin
+	call reply_end
+	
+	result = 1
+return 
+
+; @param output_pipe
+; @param acommand
+; @param acommand_size
+; @return result If true then continue command handle loop, otherwise exit 
+; immediately.
+:handle_get_value_command
+	variant_name = acommand[CMI_ARGUMENT]
+	
+	sprintf2 command_line '%s = %s' '__geted_value' variant_name
+	execcmnd command_line
+	
+	call reply_begin
+	output_message = __geted_value
+	call reply_message 
+	call reply_end
+	
+	result = 1
+return 
+
+; @param output_pipe
+; @param acommand
+; @param acommand_size
+; @return result If true then continue command handle loop, otherwise exit 
+; immediately.
+:handle_quit_command
+	result = 0
+return 
+
+; @param output_pipe
+; @param acommand
+; @param acommand_size
+; @return result If true then continue command handle loop, otherwise exit 
+; immediately.
+:handle_command
+	__command_name = acommand[1]
+	
+	strcompare __command_name 'execute'
+	if result = 0 then
+		call handle_execute_command
+		goto LABEL_HANDLE_COMMAND_EXIT
+	endif
+	
+	strcompare __command_name 'get_value'
+	if result = 0 then
+		call handle_get_value_command
+		goto LABEL_HANDLE_COMMAND_EXIT
+	endif
+	
+	strcompare __command_name 'quit'
+	if result = 0 then
+		call handle_quit_command
+		goto LABEL_HANDLE_COMMAND_EXIT
+	endif
+	
+	result = 1
+
+:LABEL_HANDLE_COMMAND_EXIT
+
+; Go back to the main routine.
+return
+
+; Read a command line from pipe
+; @param input_pipe
+; @return acommand ( strdim ), acommand_size
+:read_command
+	__command_line_index = -1
+	__a_line = ''
+	
+	acommand_size = 0
+	while 1
+		filereadln input_pipe __a_line
+		
+		strcompare __a_line "@begin"
+		if result = 0 then
+			__command_line_index = __command_line_index + 1
+		else
+			strcompare __a_line "@end"
+			if result = 0 then
+				acommand_size = __command_line_index 
+				break
+			elseif __command_line_index > -1 then
+				strlen __a_line
+				if result > 0 then
+					; Remove prefix "#"
+					strremove __a_line 1 1
+					acommand[__command_line_index] = __a_line
+				else
+					acommand[__command_line_index] = ""
+				endif
+				__command_line_index = __command_line_index + 1				
+			endif
+		endif
+	endwhile
+	
+; Go back to the main routine.
+return
