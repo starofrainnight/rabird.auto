@@ -23,7 +23,6 @@ try:
 	import win32gui
 	import logging
 	import six
-	from rabird import compatible
 
 	PIPE_ACCESS_DUPLEX = 0x3
 	PIPE_TYPE_MESSAGE = 0x4
@@ -36,7 +35,7 @@ try:
 	INVALID_HANDLE_VALUE = -1
 	ERROR_PIPE_CONNECTED = 535
 
-	class scripter_t(compatible.unicode_t):
+	class scripter_t(object):
 		__metaclass__ = abc.ABCMeta
 
 		# Command Member Index
