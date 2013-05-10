@@ -78,8 +78,9 @@ def preprocess_sources_for_compatible(source_path):
 		path = os.path.join(source_path, item)
 		if os.path.isdir(path):
 			directories.append(item)
-			shutil.rmtree(os.path.join(destination_path, item), ignore_errors=True)
-			__copy_tree(path, os.path.join(destination_path, item))
+			destination_item_path = os.path.join(destination_path, item)
+			shutil.rmtree(destination_item_path, ignore_errors=True)
+			__copy_tree(path, destination_item_path)
 			
 	try:
 		open(source_file_path, 'rb+').write(bytearray(sys.version_info.major))
