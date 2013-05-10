@@ -6,8 +6,9 @@ import sys
 import shutil
 import logging
 import fnmatch
-import src.version
-import src.distutils
+import src.rabird
+from src.rabird.version import __version__ as __version__
+import src.rabird.distutils as distutils
 from setuptools import setup, find_packages
 
 from_package = 'src'
@@ -16,7 +17,7 @@ to_package = 'rabird'
 logging.basicConfig(level=logging.INFO)
 
 # Convert source to v2.x if we are using python 3.x.
-src.distutils.preprocess_sources_for_compatible(from_package, to_package)
+distutils.preprocess_sources_for_compatible(from_package)
 
 # Exclude the original source package, only accept the preprocessed package!
 our_packages = find_packages(exclude=[from_package, '{}.*'.format(from_package)])
@@ -30,7 +31,7 @@ if sys.platform == "win32":
 
 setup(
 	name=to_package,
-	version=src.version.__version__,
+	version=__version__,
 	author='HongShe Liang',
 	author_email='starofrainnight@gmail.com',
 	url='',
