@@ -30,10 +30,13 @@ def __copy_tree(src_dir, dest_dir):
 		else:
 			shutil.copy2(from_path, to_path)
 
-def preprocess_sources_for_compatible(source_path):
+##
+# A special method for convert all source files to compatible with current
+# python version during installation time.
+#
+def preprocess_sources_for_compatible(source_path, destination_path):
 	tag_line = r'#--IMPORT_ALL_FROM_FUTURE--#'
-	source_file_path = 'source_version.txt'
-	destination_path = os.path.relpath(os.curdir)
+	source_file_path = os.path.join(destination_path, 'source_version.txt')
 	
 	while os.path.exists(source_file_path):
 		# If there have any file in 'from_package' newer than source_version_file's 

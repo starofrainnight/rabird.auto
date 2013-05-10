@@ -17,7 +17,7 @@ package_name = 'rabird.gts'
 logging.basicConfig(level=logging.INFO)
 
 # Convert source to v2.x if we are using python 2.x.
-rabird.distutils.preprocess_sources_for_compatible(from_package)
+rabird.distutils.preprocess_sources_for_compatible(from_package, os.path.realpath(os.curdir))
 
 # Exclude the original source package, only accept the preprocessed package!
 our_packages = find_packages(exclude=[from_package, '{}.*'.format(from_package)])
