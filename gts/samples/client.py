@@ -14,17 +14,16 @@ import logging
 import rabird.logging
 
 def usage():
-	logging.info('{} [scripter name] [input pipe name] [output pipe name]'.format(__file__))
+	print('{} [scripter name]'.format(__file__))
 
 def main():
 	rabird.logging.load_basic_config_from_environment()
-	
-	if len(sys.argv)<4:
+	if len(sys.argv)<2:
 		usage()
 		return -1
 		
 	# It would exit the script if user use a scripter we have not support yet.
-	scripter = rabird.gts.create_scripter(sys.argv[1], sys.argv[2], sys.argv[3])
+	scripter = rabird.gts.create_scripter(sys.argv[1])
 	
 	logging.info("Wating connection ...")
 	

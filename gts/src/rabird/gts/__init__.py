@@ -22,6 +22,8 @@ import abc
 import win32gui
 import logging
 import six
+import random
+from rabird.config_parser import config_parser_t
 
 version_info = version.version_info
 __version__ = version.__version__
@@ -149,29 +151,45 @@ class scripter_t(object):
 			
 			if int(command_id) == int(command[self.__CMI_ID]):
 				return command
-			
-	def connect(self, input_pipe_name=None, output_pipe_name=None, timeout=None):
-		if input_pipe_name is not None:
-			self.__pipe_names[0] = "\\\\.\\pipe\\gts_input_{}".format(input_pipe_name)
-			
-		if output_pipe_name is not None:
-			self.__pipe_names[1] = "\\\\.\\pipe\\gts_output_{}".format(output_pipe_name)
-		
-		for i in range(0, len(self.__pipe_names)):
-			self.__pipe_handles[i] = win32pipe.CreateNamedPipe(
-				self.__pipe_names[i],
-				PIPE_ACCESS_DUPLEX,
-				PIPE_TYPE_MESSAGE |	PIPE_READMODE_MESSAGE |	PIPE_NOWAIT,
-				PIPE_UNLIMITED_INSTANCES,
-				BUFSIZE, BUFSIZE,
-				NMPWAIT_USE_DEFAULT_WAIT,
-				None
-				)
-	
-		if not self.__pipe_handles[i]:
-			logging.error("Error while in creating Named Pipe")
-			return False
 
+	def connect(self, timeout=None):
+		random.seed()
+		
+		# Find terminal script channels we need to use .
+		pipe_prefix = ['\\\\.\\pipe\\ts_input', '\\\\.\\pipe\\ts_output']
+		for i in range(0, 2):
+			pipe_number = random.randint(0, 65535)
+			try_times = 0
+			while True:
+				self.__pipe_names[i] = "{}_{}".format(pipe_prefix[i], pipe_number)
+				self.__pipe_handles[i] = win32pipe.CreateNamedPipe(
+					self.__pipe_names[i],
+					PIPE_ACCESS_DUPLEX,
+					PIPE_TYPE_MESSAGE |	PIPE_READMODE_MESSAGE |	PIPE_NOWAIT,
+					PIPE_UNLIMITED_INSTANCES,
+					BUFSIZE, BUFSIZE,
+					NMPWAIT_USE_DEFAULT_WAIT,
+					None
+					)
+				if self.__pipe_handles[i]:
+					break
+					
+				try_times = try_times + 1
+				if try_times > 3:
+					logging.error("Error while in creating Named Pipe")
+					return False
+		
+		# Write the channel pair to ini file in current directory		
+		config_file = open('gts.ini', 'w')
+		parser = config_parser_t()
+		parser.read(config_file)
+		parser.set('system', 'input_pipe', self.__pipe_names[0])
+		parser.set('system', 'output_pipe', self.__pipe_names[1])
+		parser.write(config_file)
+		config_file.close() 					
+			
+		# Terminal script's input pipe is our output pipe, and it's output pipe
+		# is our intput pipe.
 		self.__output_pipe = self.__pipe_handles[0]
 		self.__input_pipe = self.__pipe_handles[1]
 		

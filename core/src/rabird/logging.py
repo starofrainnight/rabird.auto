@@ -32,6 +32,10 @@ def load_basic_config_from_environment():
 		if arguments[k] is None:
 			del arguments[k]
 			
+	# Set default level to logging.INFO .
+	if 'level' not in arguments.keys():
+		arguments['level'] = logging.INFO
+		
 	return logging.basicConfig(**arguments)
 		
 		
