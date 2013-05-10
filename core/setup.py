@@ -6,8 +6,6 @@ import sys
 import shutil
 import logging
 import fnmatch
-#from src import __version__
-#from src import distutils
 import src.version
 import src.distutils
 from setuptools import setup, find_packages
