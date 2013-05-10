@@ -3,27 +3,18 @@
 
 __import__('pkg_resources').declare_namespace(__name__)
 
-version_info = (0, 0, 0, 46)
-__version__ = '.'.join(map(str, version_info))
+import sys
+from . import version
 
-try:
-	import sys
-	
+version_info = version.version_info
+__version__ = version.__version__
+
+if sys.platform == 'win32' :
+	from . import windows_api
+	from . import windows_fix	
+
+def monkey_patch():
 	if sys.platform == 'win32' :
-		from . import windows_api
-		from . import windows_fix	
-	
-	def monkey_patch():
-		if sys.platform == 'win32' :
-			if sys.version_info.major <= 2 :
-				windows_fix.monkey_patch()
-except ImportError as e:
-	# This is to make Debian packaging easier, it ignores import
-	# errors of greenlet so that the packager can still at least
-	# access the version.  Also this makes easy_install a little quieter
-	if 'rabird' not in str(e):
-		# any other exception should be printed
-		import traceback
-		traceback.print_exc()
-		
-
+		if sys.version_info.major <= 2 :
+			windows_fix.monkey_patch()
+			

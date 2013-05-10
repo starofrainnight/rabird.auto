@@ -1,7 +1,7 @@
 '''
 Created on 2013-5-9
 
-@author: Administrator
+@author: HongShe Liang <starofrainnight@gmail.com>
 '''
 
 import os
