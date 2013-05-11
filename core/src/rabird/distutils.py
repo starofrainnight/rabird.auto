@@ -5,10 +5,14 @@ Created on 2013-5-10
 
 '''
 
+#--IMPORT_ALL_FROM_FUTURE--#
+
 import os
 import os.path
 import shutil
 import sys
+import fnmatch
+import re
 
 # The shutil.copytree() or distutils.dir_util.copy_tree() will happen to report
 # error list below if we invoke it again and again ( at least in python 2.7.4 ):
@@ -35,7 +39,7 @@ def __copy_tree(src_dir, dest_dir):
 # python version during installation time.
 #
 def preprocess_sources_for_compatible(source_path, destination_path):
-	tag_line = r'#--IMPORT_ALL_FROM_FUTURE--#'
+	tag_line = r'^[ \t\f\v]*#--IMPORT_ALL_FROM_FUTURE--#[ \t\f\v]*$'
 	source_file_path = os.path.join(destination_path, 'source_version.txt')
 	
 	while os.path.exists(source_file_path):
@@ -102,10 +106,10 @@ def preprocess_sources_for_compatible(source_path, destination_path):
 					file_path = os.path.join(root, afile)
 					source_file = open(file_path, 'rb+')
 					content = source_file.read()
-					founded_index = content.find(tag_line)
-					if founded_index >= 0:
+					match = re.search(tag_line, content, re.MULTILINE)
+					if match is not None:
 						source_file.seek(0) # Go to beginning of file ...
-						source_file.write(content[0:founded_index]) # All things before tag line
+						source_file.write(content[:match.start()]) # All things before tag line
 						# Import all future stuffs while we are using python 2.7.x
 						source_file.write('from __future__ import nested_scopes\n')
 						source_file.write('from __future__ import generators\n')
@@ -115,6 +119,5 @@ def preprocess_sources_for_compatible(source_path, destination_path):
 						source_file.write('from __future__ import print_function\n')
 						source_file.write('from __future__ import unicode_literals\n')
 						source_file.write('range = xrange\n') # Emulate behaviors of range
-						source_file.write(content[founded_index+len(tag_line):]) # Rest after tag line
+						source_file.write(content[match.end():]) # Rest after tag line
 					source_file.close()
-					

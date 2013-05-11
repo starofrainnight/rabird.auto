@@ -6,9 +6,7 @@ import sys
 import shutil
 import logging
 import fnmatch
-import src.rabird
-from src.rabird.version import __version__ as __version__
-import src.rabird.distutils as distutils
+from src.rabird import __version__, distutils
 from setuptools import setup, find_packages
 
 from_package = 'src'
