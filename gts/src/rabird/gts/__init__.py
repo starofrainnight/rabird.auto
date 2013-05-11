@@ -23,6 +23,7 @@ import win32gui
 import logging
 import six
 import random
+import os.path
 from rabird.config_parser import config_parser_t
 
 version_info = version.version_info
@@ -179,8 +180,11 @@ class scripter_t(object):
 					logging.error("Error while in creating Named Pipe")
 					return False
 		
-		# Write the channel pair to ini file in current directory		
-		config_file = open('gts.ini', 'w')
+		# Write the channel pair to ini file in current directory
+		if os.path.exists('gts.ini'):		
+			config_file = open('gts.ini', 'r+')
+		else:
+			config_file = open('gts.ini', 'w+')
 		parser = config_parser_t()
 		parser.read(config_file)
 		parser.set('system', 'input_pipe', self.__pipe_names[0])

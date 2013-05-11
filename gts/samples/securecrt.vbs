@@ -1,14 +1,37 @@
 # $language = "VBScript"
 # $interface = "1.0"
 
+Option Explicit 
+
 ' Command Member Index
 Const CMI_ID = 0
 Const CMI_NAME = 1
 Const CMI_ARGUMENT = 2
 
+Function IsValid(Value)
+	IsValid = False
+	
+	If IsNull(Value) Then
+		Exit Function
+	End If
+	
+	If IsEmpty(Value) Then
+		Exit Function
+	End If
+	
+	If IsObject(Value) Then
+		If Value is Nothing Then
+			Exit Function
+		End If
+	End If
+	
+	IsValid = True
+End Function
+
 Function ReadCommand(Pipe)
 	Dim ACommand()
 	Dim CommandLineCount 
+	Dim ALine
 	
 	CommandLineCount = 0
 	Do While True
@@ -85,6 +108,48 @@ Function HandleCommand(Pipe, ACommand)
 	
 End Function
 
+Function IniGetValue(FileName, Section, KeyName, Default)
+	Dim fso
+	Dim IniFile
+	Dim Pos
+	Dim SectionLeftPos
+	Dim SectionRightPos
+	Dim ObtainedSection
+	Dim ObtainedKey
+	Dim ObtainedValue
+	Dim ALine
+	
+	IniGetValue = Default
+	
+	Set fso = CreateObject("Scripting.FileSystemObject")
+	If Not fso.FileExists(FileName) Then
+		Exit Function
+	End If
+	
+	Set IniFile = fso.OpenTextFile(FileName, 1, False)
+	Do While Not IniFile.AtEndOfStream
+		ALine = IniFile.ReadLine
+		If IsValid(ALine) Then
+			SectionLeftPos = InStr( ALine, "[" )
+			SectionRightPos = InStrRev( ALine, "]" )
+			Pos = InStr( ALine, "=" )
+			If IsValid(SectionLeftPos) And IsValid(SectionRightPos) _
+			 	And ( SectionLeftPos <> 0 ) And ( SectionRightPos > SectionLeftPos)  And (SectionRightPos <> 0) Then
+				ObtainedSection = Mid( ALine, SectionLeftPos + 1, ( SectionRightPos - SectionLeftPos - 1 ) )
+			ElseIf IsValid(Pos) And ( Pos > 0 ) Then
+				ObtainedKey = Trim( Left(ALine, Pos - 1) )
+				ObtainedValue = Trim( Right(ALine, Len(ALine) - Pos ) )
+				If ( StrComp( ObtainedKey, KeyName ) = 0 ) And ( StrComp( ObtainedSection, Section ) = 0 ) Then
+					' Found the section, key we want to search
+					IniGetValue = ObtainedValue
+					Exit Do
+				End If 
+			End If
+		End If
+	Loop
+	IniFile.Close
+End Function
+
 Sub Main
 	const ForReading = 1
 	const ForWriting = 2
@@ -99,6 +164,10 @@ Sub Main
 	Dim i
 	Dim SuccessedCount
 	Dim ExceptionCount
+	Dim IniValue
+	Dim fso
+	Dim WshShell
+	Dim ACommand
 	
 	' file system object server
 	Set fso = CreateObject("Scripting.FileSystemObject")
@@ -109,7 +178,24 @@ Sub Main
 	PipeModes(0) = ForReading 
 	PipeModes(1) = ForAppending ' Do not use ForWriting to write pipe ... 
 	
-	WshShell.Run "cmd /C start python client.py"
+	WshShell.Run "cmd /C del gts.ini && start python client.py securecrt"
+	
+	' Get pipe names from gts.ini that client.py generated
+	ExceptionCount = 0
+	Do While True
+		crt.Sleep 100 ' Sleep 100ms to wait for pipe open
+		If fso.FileExists( "gts.ini" ) Then
+			crt.Sleep 100 ' Wait for ini file write finished
+			PipeNames(0) = IniGetValue("gts.ini", "system", "input_pipe", Empty)
+			PipeNames(1) = IniGetValue("gts.ini", "system", "output_pipe", Empty)
+			Exit Do
+		End If
+		
+		ExceptionCount = ExceptionCount + 1
+		If ExceptionCount * 100 > 3000 Then ' If timeout large than 3 seconds, we exit the script.
+			Exit Sub
+		End If
+	Loop
 	
 	' Could only use CreateTextFile() to open the named pipe
 	i = 0
