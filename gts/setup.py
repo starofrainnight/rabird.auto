@@ -7,7 +7,7 @@ import shutil
 import logging
 import fnmatch
 import rabird.distutils
-from src.rabird.gts.version import __version__  
+from src.rabird.gts import __version__  
 from setuptools import setup, find_packages
 
 from_package = 'src'
