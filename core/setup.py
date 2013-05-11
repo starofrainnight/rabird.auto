@@ -6,13 +6,14 @@ import sys
 import shutil
 import logging
 import fnmatch
+import src.rabird.logging as rabird_logging
 from src.rabird import __version__, distutils
 from setuptools import setup, find_packages
 
 from_package = 'src'
 to_package = 'rabird'
 
-logging.basicConfig(level=logging.INFO)
+rabird_logging.load_basic_config_from_environment()
 
 # Convert source to v2.x if we are using python 3.x.
 distutils.preprocess_sources_for_compatible(from_package, os.path.realpath(os.curdir))

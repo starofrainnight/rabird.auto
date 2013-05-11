@@ -4,8 +4,11 @@ Created on 2013-5-9
 @author: HongShe Liang <starofrainnight@gmail.com>
 '''
 
+import sys
 import os
-import logging
+
+# Import the global logging unit, not our logging .
+global_logging = __import__('logging', level=-1)
 
 def load_basic_config_from_environment():
 	arguments = {
@@ -34,8 +37,10 @@ def load_basic_config_from_environment():
 			
 	# Set default level to logging.INFO .
 	if 'level' not in arguments.keys():
-		arguments['level'] = logging.INFO
+		arguments['level'] = global_logging.INFO
 		
-	return logging.basicConfig(**arguments)
+	global_logging.basicConfig(**arguments)
+	
+	global_logging.getLogger().addHandler(global_logging.StreamHandler(sys.stdout))
 		
 		
