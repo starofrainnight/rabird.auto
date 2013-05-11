@@ -8,7 +8,7 @@ import logging
 import fnmatch
 import rabird.distutils
 import rabird.logging
-from src.rabird.gts import __version__  
+from src.rabird.automation import __version__  
 from setuptools import setup, find_packages
 
 from_package = 'src'
