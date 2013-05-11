@@ -8,7 +8,7 @@ import sys
 import os
 
 # Import the global logging unit, not our logging .
-global_logging = __import__('logging', level=-1)
+global_logging = __import__('logging')
 
 def load_basic_config_from_environment():
 	arguments = {
