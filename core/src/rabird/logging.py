@@ -41,6 +41,8 @@ def load_basic_config_from_environment():
 		
 	global_logging.basicConfig(**arguments)
 	
-	global_logging.getLogger().addHandler(global_logging.StreamHandler(sys.stdout))
+	# Added console handler only there have filename argument. 
+	if 'filename' in arguments.keys():
+		global_logging.getLogger().addHandler(global_logging.StreamHandler(sys.stdout))
 		
 		

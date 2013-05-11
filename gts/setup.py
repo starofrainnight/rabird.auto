@@ -7,6 +7,7 @@ import shutil
 import logging
 import fnmatch
 import rabird.distutils
+import rabird.logging
 from src.rabird.gts import __version__  
 from setuptools import setup, find_packages
 
@@ -14,7 +15,7 @@ from_package = 'src'
 to_package = 'rabird'
 package_name = 'rabird.gts'
 
-logging.basicConfig(level=logging.INFO)
+rabird.logging.load_basic_config_from_environment()
 
 # Convert source to v2.x if we are using python 2.x.
 rabird.distutils.preprocess_sources_for_compatible(from_package, os.path.realpath(os.curdir))
