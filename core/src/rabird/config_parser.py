@@ -4,6 +4,8 @@ Created on 2013-5-10
 @author: "HongShe Liang <starofrainnight@gmail.com>"
 '''
 
+#--IMPORT_ALL_FROM_FUTURE--#
+
 from six.moves import configparser
 
 class config_parser_t(configparser.ConfigParser):

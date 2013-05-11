@@ -119,5 +119,7 @@ def preprocess_sources_for_compatible(source_path, destination_path):
 						source_file.write('from __future__ import print_function\n')
 						source_file.write('from __future__ import unicode_literals\n')
 						source_file.write('range = xrange\n') # Emulate behaviors of range
+						# Import all exceptions that new introduced in python 3
+						source_file.write('from rabird.exceptions import *\n') 
 						source_file.write(content[match.end():]) # Rest after tag line
 					source_file.close()
