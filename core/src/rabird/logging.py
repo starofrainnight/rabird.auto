@@ -10,7 +10,7 @@ import os
 # Import the global logging unit, not our logging .
 global_logging = __import__('logging')
 
-def load_basic_config_from_environment():
+def load_default_config():
 	arguments = {
 		'level':None,
 		'filename':None,

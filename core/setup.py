@@ -13,7 +13,7 @@ from setuptools import setup, find_packages
 from_package = 'src'
 to_package = 'rabird'
 
-rabird_logging.load_basic_config_from_environment()
+rabird_logging.load_default_config()
 
 # Convert source to v2.x if we are using python 3.x.
 distutils.preprocess_sources_for_compatible(from_package, os.path.realpath(os.curdir))

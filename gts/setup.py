@@ -15,7 +15,7 @@ from_package = 'src'
 to_package = 'rabird'
 package_name = 'rabird.gts'
 
-rabird.logging.load_basic_config_from_environment()
+rabird.logging.load_default_config()
 
 # Convert source to v2.x if we are using python 2.x.
 rabird.distutils.preprocess_sources_for_compatible(from_package, os.path.realpath(os.curdir))
