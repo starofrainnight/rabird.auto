@@ -4,6 +4,8 @@
 
 import win32api, win32con, win32gui
 import time
+import datetime
+import rabird.datetime
 
 # button types
 BT_LEFT = 0
@@ -39,9 +41,10 @@ def position():
 ## move to target position 
 # @param x: 
 # @param y:
-# @param speed: scale 0 ~ 100, current is unused.
-def move_to( x, y, speed = 10 ):
-	if ( 0 < speed ) and ( speed <= 100 ) :
+# @param process_time: How much seconds you want to process the whole
+# mouse move operation. Default to 0.25 second
+def move_to( x, y, process_time = 0.25  ):
+	while 0 <= process_time  :
 		start_pos = position()
 		start_x = start_pos[0]
 		start_y = start_pos[1]
@@ -84,12 +87,22 @@ def move_to( x, y, speed = 10 ):
 		temp_x = start_x
 		temp_y = start_y
 		
-		for i in xrange(0,step_count):			
+		# The step count too small, just one step enough!
+		if step_count <= 1:
+			break
+		
+		sleep_slice_time = process_time / step_count
+		timer = rabird.datetime.step_timer_t()
+		timer.start(process_time, sleep_slice_time)
+		for i in range(0,step_count):			
 			temp_x += step_x
 			temp_y += step_y
 			win32api.SetCursorPos( [int(temp_x), int(temp_y)] )
-			time.sleep( 0.001 )
-			
+			timer.step()
+		timer.stop()
+		
+		break # We must break the while!
+		
 	# anyway, we will move the mouse to correct position
 	win32api.SetCursorPos( [x, y] )
 	time.sleep( 0.001 )
