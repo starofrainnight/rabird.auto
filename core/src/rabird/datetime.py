@@ -71,10 +71,22 @@ if sys.platform == 'win32' :
 else:
 	raise NotImplemented('The cpu_time_t not ready for unixs yet!')
 
-class step_timer_t(object):
+##
+# A class that determine if we need to sleep for a while to achieve 
+# expected time.
+#
+# Because the python's execution is not time sensitive, if we need 
+# to do something more precisely to the final expected time step 
+# by step, we have to sleep to wait for current expected step time 
+# or not to sleep for let the expected time catch up.
+#
+# This class implemented all stuffs we must care about, and provided
+# a simply interface to handle the suitation. 
+# 
+class step_sleeper_t(object):
 	
 	def __init__(self):
-		super(step_timer_t, self).__init__()
+		super(step_sleeper_t, self).__init__()
 		self.__cpu_timer = cpu_timer_t()
 		self.__final_expected_time = None
 		self.__slice_time = None
