@@ -4,7 +4,6 @@ Created on 2013-5-12
 @author: "HongShe Liang <starofrainnight@gmail.com>"
 '''
 
-import win32api
 import time
 import ctypes
 import copy
@@ -67,6 +66,7 @@ class win32_cpu_timer_t(abstract_cpu_timer_t):
 		super(win32_cpu_timer_t, self).resume()		
 		
 if sys.platform == 'win32' :
+	import win32api
 	cpu_timer_t = win32_cpu_timer_t
 else:
 	raise NotImplemented('The cpu_time_t not ready for unixs yet!')
