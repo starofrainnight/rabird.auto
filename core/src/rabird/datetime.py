@@ -4,6 +4,8 @@ Created on 2013-5-12
 @author: "HongShe Liang <starofrainnight@gmail.com>"
 '''
 
+#--IMPORT_ALL_FROM_FUTURE--#
+
 import time
 import ctypes
 import copy
