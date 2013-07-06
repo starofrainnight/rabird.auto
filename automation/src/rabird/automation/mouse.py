@@ -6,25 +6,28 @@ import win32api, win32con, win32gui
 import time
 import datetime
 import rabird.datetime
+from rabird.enum import Enum 
 
 # button types
-BT_LEFT = 0
-BT_MIDDLE = 1
-BT_RIGHT = 2
+class ButtonType(Enum):
+	LEFT = 0
+	MIDDLE = 1
+	RIGHT = 2
 
 # button status
-BS_UP = 0
-BS_DOWN = 1
+class ButtonStatus(Enum):
+	UP = 0
+	DOWN = 1
 
 ## all time related unit are second, see description about sleep() function 
 # of module time.
-class mouse_options_t():
+class ButtonOptions():
 	click_delay = 0.010
 	click_down_delay = 0.010
 	click_drag_delay = 0.250
 
 ## options of mouse related functions
-options = mouse_options_t()
+options = ButtonOptions()
 
 ##
 # send event to system 
@@ -108,32 +111,31 @@ def move_to( x, y, process_time = 0.25  ):
 	time.sleep( 0.001 )
 
 ##  
-def button_up( button_type = BT_LEFT ):
-	if BT_LEFT == button_type:
+def button_up( button_type = ButtonType.LEFT ):
+	if ButtonType.LEFT == button_type:
 		send_event( win32con.MOUSEEVENTF_LEFTUP )
-	elif BT_RIGHT == button_type:
+	elif ButtonType.RIGHT == button_type:
 		send_event( win32con.MOUSEEVENTF_RIGHTUP )
-	elif BT_MIDDLE == button_type:
+	elif ButtonType.MIDDLE == button_type:
 		send_event( win32con.MOUSEEVENTF_MIDDLEUP )
 		
-def button_down( button_type = BT_LEFT ):
-	if BT_LEFT == button_type:
+def button_down( button_type = ButtonType.LEFT ):
+	if ButtonType.LEFT == button_type:
 		send_event( win32con.MOUSEEVENTF_LEFTDOWN )
-	elif BT_RIGHT == button_type:
+	elif ButtonType.RIGHT == button_type:
 		send_event( win32con.MOUSEEVENTF_RIGHTDOWN )
-	elif BT_MIDDLE == button_type:
+	elif ButtonType.MIDDLE == button_type:
 		send_event( win32con.MOUSEEVENTF_MIDDLEDOWN )
 		
-def click( button_type = BT_LEFT ):
-	button_down( button_type )
-	time.sleep( options.click_down_delay )
-	button_up( button_type )
+def click( button_type = ButtonType.LEFT, clicks = 1 ):
 	
-def double_click( button_type = BT_LEFT ):
-	click( button_type )
-	# we read the double click time in real time, because the value will be
-	# changed by user . we must keep the double click time less than the real
-	# double click time ( plus script running time ), so we divide the system
-	# double click time to a half.
-	time.sleep( float(win32gui.GetDoubleClickTime()) / 2000 )
-	click( button_type )
+	if clicks > 1:
+		double_click_time = float(win32gui.GetDoubleClickTime()) / 2000
+	else:
+		double_click_time = 0 
+	
+	for i in xrange(0, clicks):
+		button_down( button_type )
+		time.sleep( options.click_down_delay )
+		button_up( button_type )
+		time.sleep(double_click_time)
