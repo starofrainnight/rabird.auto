@@ -33,7 +33,7 @@ import time
 
 # * replace the stdout / stderr / stdin file object in sys with our fixed objects
 
-class stdout_thread_t(threading.Thread):
+class StdoutThread(threading.Thread):
 	def __init__(self, file_descriptor, std_handle_type, old_stdout):
 		threading.Thread.__init__(self)
 		# so that if the main thread exit, our thread will also exit
@@ -100,7 +100,7 @@ class stdout_thread_t(threading.Thread):
 			else :
 				self.old_stdout.write(s)		
 		
-class stdio_file_t(io.FileIO): 
+class StdioFile(io.FileIO): 
 	def __init__(self, name, mode='r', closefd=True):
 		io.FileIO.__init__(self, name, mode, closefd) 
 
@@ -156,15 +156,15 @@ def monkey_patch():
 	stderr_pipe = os.pipe()
 	stdin_pipe = os.pipe()
 	
-	stdout_thread = stdout_thread_t(stdout_pipe[0], win32api.STD_OUTPUT_HANDLE, old_stdout)
-	stderr_thread = stdout_thread_t(stderr_pipe[0], win32api.STD_ERROR_HANDLE, old_stderr)
+	stdout_thread = StdoutThread(stdout_pipe[0], win32api.STD_OUTPUT_HANDLE, old_stdout)
+	stderr_thread = StdoutThread(stderr_pipe[0], win32api.STD_ERROR_HANDLE, old_stderr)
 	
 	stdout_thread.start()
 	stderr_thread.start()
 	
 	# to test our stdout with new stdout
-	our_stdout = stdio_file_t(stdout_pipe[1], "wb")
-	our_stderr = stdio_file_t(stderr_pipe[1], "wb")
+	our_stdout = StdioFile(stdout_pipe[1], "wb")
+	our_stderr = StdioFile(stderr_pipe[1], "wb")
 	
 	sys.stdout = our_stdout
 	# keep not to overwrite the sys.stderr for debug purpose
