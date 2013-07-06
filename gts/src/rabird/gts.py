@@ -10,7 +10,7 @@ Only supported in windows.
 @date: 2012-3-30
 '''
 
-version_info = (0, 0, 0, 2)
+version_info = (0, 0, 0, 3)
 __version__ = '.'.join(map(str, version_info))
 
 try:
@@ -26,7 +26,7 @@ try:
 	import six
 	import random
 	import os.path
-	from rabird.config_parser import config_parser_t
+	from rabird.configparser import ConfigParser
 	
 	PIPE_ACCESS_DUPLEX = 0x3
 	PIPE_TYPE_MESSAGE = 0x4
@@ -39,7 +39,7 @@ try:
 	INVALID_HANDLE_VALUE = -1
 	ERROR_PIPE_CONNECTED = 535
 	
-	class scripter_t(object):
+	class Scripter(object):
 		__metaclass__ = abc.ABCMeta
 	
 		# Command Member Index
@@ -51,7 +51,7 @@ try:
 		# @param input_pipe_name
 		# @param output_pipe_name
 		def __init__(self, *args, **kwarg):
-			super(scripter_t,self).__init__()
+			super(Scripter,self).__init__()
 			
 			self.__pipe_names = [
 				"\\\\.\\pipe\\gts_input_default",
@@ -184,7 +184,7 @@ try:
 				config_file = open('gts.ini', 'r+')
 			else:
 				config_file = open('gts.ini', 'w+')
-			parser = config_parser_t()
+			parser = ConfigParser()
 			parser.read(config_file)
 			parser.set('system', 'input_pipe', self.__pipe_names[0])
 			parser.set('system', 'output_pipe', self.__pipe_names[1])
@@ -266,7 +266,7 @@ try:
 			except ConnectionAbortedError:
 				pass
 	
-	class securecrt_scripter_t(scripter_t):
+	class SecurecrtScripter(Scripter):
 		
 		def __escape_string(self, astring):
 			escaped_chars = []
@@ -303,10 +303,10 @@ try:
 			self._send('quit')
 			self._send_end()
 			
-	class teraterm_scripter_t(scripter_t):
+	class TeratermScripter(Scripter):
 		
 		def __init__(self, *args, **kwarg):
-			super(teraterm_scripter_t, self).__init__(self, *args, **kwarg)
+			super(TeratermScripter, self).__init__(self, *args, **kwarg)
 			
 			self.__target_window = None
 		
@@ -319,7 +319,7 @@ try:
 			return ''.join(escaped_chars)
 		
 		def connect(self, timeout=None):
-			super(teraterm_scripter_t, self).connect(self)
+			super(TeratermScripter, self).connect(self)
 	
 			# Get old title of teraterm		
 			self._execute('gettitle __old_title')
@@ -372,9 +372,9 @@ try:
 	
 	def create_scripter(name):
 		if 'securecrt' == name:
-			return securecrt_scripter_t()
+			return SecurecrtScripter()
 		elif 'teraterm' == name:
-			return teraterm_scripter_t()
+			return TeratermScripter()
 		else:
 			raise NotImplemented('Unknow scripter : {}'.format(name))
 			
