@@ -12,6 +12,7 @@ from setuptools import setup, find_packages
 
 from_package = 'src'
 to_package = 'rabird'
+package_name = 'rabird.core'
 
 rabird_logging.load_default_config()
 
@@ -29,13 +30,13 @@ if sys.platform == "win32":
 	our_requires.append('pywin32>=218')
 
 setup(
-	name=to_package,
+	name=package_name,
 	version=__version__,
 	author='HongShe Liang',
 	author_email='starofrainnight@gmail.com',
 	url='',
 	py_modules=[to_package],
-	description='{} utilities'.format(to_package),
+	description='{} utilities'.format(package_name),
 	long_description=open('README', 'r').read(),
 	classifiers=[
 		'Programming Language :: Python :: 2',
