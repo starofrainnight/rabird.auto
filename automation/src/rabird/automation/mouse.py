@@ -95,7 +95,7 @@ def move_to( x, y, process_time = 0.25  ):
 			break
 		
 		sleep_slice_time = process_time / step_count
-		timer = rabird.datetime.step_sleeper_t()
+		timer = rabird.datetime.StepSleeper()
 		timer.start(process_time, sleep_slice_time)
 		for i in range(0,step_count):			
 			temp_x += step_x
