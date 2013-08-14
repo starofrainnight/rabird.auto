@@ -43,8 +43,6 @@ def __is_title_macth(hwnd, title):
 	# Extrac only the option value, excluded all flags	
 	title_match_option = title_match_option & 0xff
 	
-	print '"{}" : "{}"'.format(target_title, title)
-	
 	if title_match_option == WTMM2_FROM_START:
 		return target_title.startswith(title)
 	elif title_match_option == WTMM2_ANY:
