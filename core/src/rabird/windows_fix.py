@@ -30,6 +30,7 @@ import types # for all standard type values for buildin type()
 import pickle
 from . import windows_api
 import time
+import os.path
 
 # * replace the stdout / stderr / stdin file object in sys with our fixed objects
 
