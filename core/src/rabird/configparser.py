@@ -13,4 +13,9 @@ class ConfigParser(configparser.ConfigParser):
 		if not self.has_section(section):
 			self.add_section(section)
 		
-		super(ConfigParser, self).set(section, option, str(value))
+		# In 3.x, the ConfigParser is a newstyle object
+		if issubclass(ConfigParser, object):
+			super(ConfigParser, self).set(section, option, str(value))
+		else:
+			configparser.ConfigParser.set(self, section, option, str(value))
+			
