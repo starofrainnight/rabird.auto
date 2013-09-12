@@ -17,7 +17,7 @@ def usage():
 	print('{} [scripter name]'.format(__file__))
 
 def main():
-	rabird.logging.load_basic_config_from_environment()
+	rabird.logging.load_default_config()
 	if len(sys.argv)<2:
 		usage()
 		return -1
@@ -25,7 +25,7 @@ def main():
 	# It would exit the script if user use a scripter we have not support yet.
 	scripter = rabird.gts.create_scripter(sys.argv[1])
 	
-	logging.info("Wating connection ...")
+	logging.info("Waiting connection ...")
 	
 	scripter.connect()
 	
