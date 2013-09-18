@@ -89,6 +89,7 @@ def exists(title=None):
 		if __is_title_macth(hwnd, title):
 			result.append(hwnd)
 			return False # Break EnumWindows() process 
+		return True
 	
 	try:
 		win32gui.EnumWindows(enum_window_callback, result)
@@ -111,6 +112,7 @@ def get_handle(title=None):
 		if __is_title_macth(hwnd, title):
 			result.append(hwnd)
 			return False # Break EnumWindows() process 
+		return True
 	
 	try:
 		win32gui.EnumWindows(enum_window_callback, result)
