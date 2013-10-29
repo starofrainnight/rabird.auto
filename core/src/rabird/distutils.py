@@ -39,25 +39,22 @@ def __copy_tree(src_dir, dest_dir):
 # python version during installation time.
 #
 def preprocess_sources_for_compatible(source_path, destination_path):
-	tag_line = r'^[ \t\f\v]*#--IMPORT_ALL_FROM_FUTURE--#[ \t\f\v]*$'
+	# tag_line = r'^[ \t\f\v]*#--IMPORT_ALL_FROM_FUTURE--#[ \t\f\v]*$'
+	tag_line =  r'[\r\n][ \t\f\v]*#--IMPORT_ALL_FROM_FUTURE--#[ \t\f\v]*(?:(?:\r\n)|\r|\n)'
 	source_file_path = os.path.join(destination_path, 'source_version.txt')
 	
 	while os.path.exists(source_file_path):
 		# If there have any file in 'from_package' newer than source_version_file's 
 		# modify time, we do the complete convertion. 
 		status = os.stat(source_file_path)
-
+		
 		# Read the source version, if the version not equal current python's version,
 		# we need do some change
-		try:
-			source_version = open(source_file_path, 'rb+').read().strip()
-			if int(source_version) != sys.version_info.major:
-				# Do convert
-				break
-		except:
+		source_version = open(source_file_path, 'rb+').read().strip()
+		if int(source_version) != sys.version_info[0]:
 			# Do convert
 			break
-
+			
 		is_need_convert = False
 		for root, dirs, files in os.walk(source_path):
 			for afile in files:
@@ -88,28 +85,25 @@ def preprocess_sources_for_compatible(source_path, destination_path):
 			destination_item_path = os.path.join(destination_path, item)
 			shutil.rmtree(destination_item_path, ignore_errors=True)
 			__copy_tree(path, destination_item_path)
-			
-	try:
-		open(source_file_path, 'rb+').write(bytearray(sys.version_info.major))
-	except:
-		pass
+		
+	open(source_file_path, 'wb+').write(str(sys.version_info[0]))
 	
-	if sys.version_info.major >= 3:
+	if sys.version_info[0] >= 3:
 		# We wrote program implicated by version 3, if python version large or equal than 3,
 		# we need not change the sources.
 		return
-	
+		
 	for folder_name in directories:
 		for root, dirs, files in os.walk(os.path.join(destination_path, folder_name)):
 			for afile in files:
-				if fnmatch.fnmatch(afile, '*.py') or fnmatch.fnmatch(afile, '*.pyw'):
+				if fnmatch.fnmatch(afile, '*.py') or fnmatch.fnmatch(afile, '*.pyw'):					
 					file_path = os.path.join(root, afile)
 					source_file = open(file_path, 'rb+')
 					content = source_file.read()
 					match = re.search(tag_line, content, re.MULTILINE)
 					if match is not None:
 						source_file.seek(0) # Go to beginning of file ...
-						source_file.write(content[:match.start()]) # All things before tag line
+						source_file.write(content[:match.start() + 1]) # All things before tag line
 						# Import all future stuffs while we are using python 2.7.x
 						source_file.write('from __future__ import nested_scopes\n')
 						source_file.write('from __future__ import generators\n')
@@ -120,6 +114,6 @@ def preprocess_sources_for_compatible(source_path, destination_path):
 						source_file.write('from __future__ import unicode_literals\n')
 						source_file.write('range = xrange\n') # Emulate behaviors of range
 						# Import all exceptions that new introduced in python 3
-						source_file.write('from rabird.exceptions import *\n') 
+						source_file.write('from rabird.exceptions import *\n')
 						source_file.write(content[match.end():]) # Rest after tag line
 					source_file.close()
