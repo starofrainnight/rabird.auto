@@ -10,6 +10,7 @@ from six.moves import configparser
 import rabird.collections
 import StringIO 
 import io
+import os
 
 ##
 # An advance ConfigParser build on configparser.ConfigParser.
