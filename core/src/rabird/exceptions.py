@@ -11,7 +11,7 @@ python 2.x and new introduced in python 3.x.
 
 import sys
 
-if sys.version_info.major <= 2 :
+if sys.version_info[0] <= 2 :
 	class BlockingIOError(OSError):
 		pass
 	
