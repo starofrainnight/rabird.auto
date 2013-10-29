@@ -17,10 +17,15 @@ import os
 # 
 # It's new features:
 #  
-#    * set() will now automatic create section if there do not have section.
-#    * Support ini files that contained unnamed section.
+#  * set() will now automatic create section if there do not have section.
+#  * Support ini files that contained unnamed section.
+#  * Default to case sensitive, actually most ini files are case sensitive, 
+#    if you want case insensitive, just set like below:
+#        object.optionxform = rabird.ConfigParser.optionxform
 #
 class ConfigParser(configparser.ConfigParser):
+	UNNAMED_SECTION = '#--ConfigParser--INTERNAL--UNNAMED-SECTION--#'
+	
 	def __init__(self, *args, **kwargs): 
 		if (sys.version_info[0] <= 2) and (sys.version_info[1] <= 6):
 			# Fixed python 2.6.x dict_type not equal to OrderedDict
@@ -32,7 +37,8 @@ class ConfigParser(configparser.ConfigParser):
 		else:
 			configparser.ConfigParser.__init__(self, *args, **kwargs)
 			
-		self.UNNAMED_SECTION = '#--ConfigParser--INTERNAL--UNNAMED-SECTION--#'
+		# Default to case sensitive
+		self.optionxform = str
 		
 	def set(self, section, option, value):
 		if not self.has_section(section):
