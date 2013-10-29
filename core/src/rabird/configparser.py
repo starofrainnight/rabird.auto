@@ -32,7 +32,7 @@ class ConfigParser(configparser.ConfigParser):
 		else:
 			configparser.ConfigParser.__init__(self, *args, **kwargs)
 			
-		self.UNNAMED_SECTION = '#--ConfigParser--INTERNAL--DEFAULT-SECTION--#'
+		self.UNNAMED_SECTION = '#--ConfigParser--INTERNAL--UNNAMED-SECTION--#'
 		
 	def set(self, section, option, value):
 		if not self.has_section(section):
