@@ -11,17 +11,20 @@ import rabird.collections
 import StringIO 
 import io
 import os
+import re
 
 ##
 # An advance ConfigParser build on configparser.ConfigParser.
 # 
-# It's new features:
+# Features:
 #  
-#  * set() will now automatic create section if there do not have section.
+#  * set() will automatic create section if there do not have section.
 #  * Support ini files that contained unnamed section.
 #  * Default to case sensitive, actually most ini files are case sensitive, 
 #    if you want case insensitive, just set like below:
 #        object.optionxform = rabird.ConfigParser.optionxform
+#  * Removed spaces around '=', some ini parser do not accept the spaces 
+#    around '='.
 #
 class ConfigParser(configparser.ConfigParser):
 	UNNAMED_SECTION = '#--ConfigParser--INTERNAL--UNNAMED-SECTION--#'
@@ -71,7 +74,7 @@ class ConfigParser(configparser.ConfigParser):
 			
 	def write(self, fileobject):
 		string_io = StringIO.StringIO()
-
+		
 		# In 3.x, the ConfigParser is a newstyle object
 		if issubclass(ConfigParser, object):
 			super(ConfigParser, self).write(string_io)
@@ -80,7 +83,26 @@ class ConfigParser(configparser.ConfigParser):
 		
 		abuffer = string_io.getvalue()
 		string_io = StringIO.StringIO(abuffer)
+		# Remove unused UNNAMED section line. 
 		abuffer = abuffer[len(string_io.readline()):]
+		
+		# Rebuild the string io and strip spaces before and after '=' ( Avoid
+		# error happends to some strict ini format parsers )
+		string_io = StringIO.StringIO(abuffer)
+		
+		abuffer = ''
+		regexp = re.compile(r'([^\[][^=]*)=(.*)')
+		while True:
+			line = string_io.readline()
+			if len(line) <= 0:
+				break
+			
+			m = regexp.match(line)
+			if m is not None:
+				abuffer += '%s=%s%s' % (m.group(1).strip(), m.group(2).strip(), os.linesep) 
+			else:
+				abuffer += line
+		
 		fileobject.write(abuffer)		
 		
 			

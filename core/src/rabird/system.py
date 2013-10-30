@@ -4,6 +4,8 @@
 import sys
 import os
 
+logger = __import__('logging').getLogger('rabird.system')
+
 if sys.platform == "win32" :
 	from . import windows_api
 
@@ -35,4 +37,7 @@ if sys.platform == "win32" :
 	get_single_argument = get_single_argument_win32
 else:
 	get_single_argument = get_single_argument_others
-
+	
+def execute(command):
+	logger.info('Executing: %s' % command)
+	os.system(command)
