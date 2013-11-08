@@ -25,10 +25,16 @@ import re
 #        object.optionxform = rabird.ConfigParser.optionxform
 #  * Removed spaces around '=', some ini parser do not accept the spaces 
 #    around '='.
+#  * Support comments start with '#', ';'
+#  * Support empty lines
 #
 class ConfigParser(configparser.ConfigParser):
 	UNNAMED_SECTION = '#--ConfigParser--INTERNAL--UNNAMED-SECTION--#'
-	
+	# It will transfer to empty line
+	__EMPTY_OPTION = '--ConfigParser--INTERNAL--EMPTY-SECTION--'
+	# It will transfer to comment line
+	__COMMENT_OPTION = '--ConfigParser--INTERNAL--COMMENT-SECTION--'
+
 	def __init__(self, *args, **kwargs): 
 		if (sys.version_info[0] <= 2) and (sys.version_info[1] <= 6):
 			# Fixed python 2.6.x dict_type not equal to OrderedDict
@@ -58,11 +64,18 @@ class ConfigParser(configparser.ConfigParser):
 		# We could only use the readline() by definitions
 		abuffer = '[' + self.UNNAMED_SECTION +']' + os.linesep
 		
+		i = 0
 		while True:
 			line = fp.readline()
 			if len(line) <= 0:
 				break
 				
+			temp_line = line.strip()
+			print( temp_line )
+			if len(temp_line) <= 0:
+				line =  self.__EMPTY_OPTION + str(i) + '=#' + os.linesep
+			elif temp_line.startswith('#') or temp_line.startswith(';'):
+				line =  self.__COMMENT_OPTION + str(i) + '=#' + line
 			abuffer += line
 			
 		# In 3.x, the ConfigParser is a newstyle object
@@ -99,7 +112,13 @@ class ConfigParser(configparser.ConfigParser):
 			
 			m = regexp.match(line)
 			if m is not None:
-				abuffer += '%s=%s%s' % (m.group(1).strip(), m.group(2).strip(), os.linesep) 
+				if m.group(1).startswith(self.__EMPTY_OPTION):
+					# Emtpty line
+				elif m.group(1).startswith(self.__COMMENT_OPTION):
+					# Remove the prefix ' #', the rest is comments !
+					abuffer += m.group(2)[2:] + os.linesep
+				else:					
+					abuffer += '%s=%s%s' % (m.group(1).strip(), m.group(2).strip(), os.linesep) 
 			else:
 				abuffer += line
 		
