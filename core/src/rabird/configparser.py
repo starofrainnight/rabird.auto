@@ -71,7 +71,6 @@ class ConfigParser(configparser.ConfigParser):
 				break
 				
 			temp_line = line.strip()
-			print( temp_line )
 			if len(temp_line) <= 0:
 				line =  self.__EMPTY_OPTION + str(i) + '=#' + os.linesep
 			elif temp_line.startswith('#') or temp_line.startswith(';'):
@@ -114,6 +113,7 @@ class ConfigParser(configparser.ConfigParser):
 			if m is not None:
 				if m.group(1).startswith(self.__EMPTY_OPTION):
 					# Emtpty line
+					pass
 				elif m.group(1).startswith(self.__COMMENT_OPTION):
 					# Remove the prefix ' #', the rest is comments !
 					abuffer += m.group(2)[2:] + os.linesep
