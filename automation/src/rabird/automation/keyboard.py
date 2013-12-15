@@ -90,12 +90,17 @@ key_contexts = {
 	'END':[win32con.VK_END, 0, 1],
 	'ESCAPE':[win32con.VK_ESCAPE, 0, 0],
 	'INSERT':[win32con.VK_INSERT, 0, 1],
+	'CLEAR':[win32con.VK_CLEAR, 0, 1],
+	'OEM_CLEAR':[win32con.VK_OEM_CLEAR, 0, 1],		
 	'PGUP':[win32con.VK_PRIOR, 0, 1],
 	'PGDN':[win32con.VK_NEXT, 0, 1],
 	'NUMLOCK':[win32con.VK_NUMLOCK, 0, 0],
 	'CAPSLOCK':[win32con.VK_CAPITAL, 0, 0],
 	'SCROLLLOCK':[win32con.VK_SCROLL, 0, 0],
+	'SELECT':[win32con.VK_SELECT, 0, 0],
 	'SLEEP':[0x5F, 0, 0],
+	'EXECUTE':[win32con.VK_EXECUTE, 0, 0],
+	'HELP':[win32con.VK_HELP, 0, 0],
 	'APPS':[win32con.VK_APPS, 0, 0],
 	'F1':[win32con.VK_F1, 0, 0],
 	'F2':[win32con.VK_F2, 0, 0],
@@ -145,6 +150,10 @@ key_contexts = {
 	'NUMPADDOT':[0xBE, 0, 0], # VK_OEM_PERIOD
 	'NUMPADENTER':[win32con.VK_RETURN, 0, 0],
 	
+	'PLAY':[win32con.VK_PLAY, 0, 0],
+	'ZOOM':[win32con.VK_ZOOM, 0, 0],
+	'PA1':[win32con.VK_PA1, 0, 0],
+	
 	'BROWSER_BACK':[win32con.VK_BROWSER_BACK, 0, 0],
 	'BROWSER_FORWARD':[win32con.VK_BROWSER_FORWARD, 0, 0],
 	'BROWSER_REFRESH':[0xA8, 0, 0],
@@ -166,6 +175,17 @@ key_contexts = {
 	'LAUNCH_MEDIA_SELECT':[0xB5, 0, 0],
 	'LAUNCH_APP1':[0xB6, 0, 0],
 	'LAUNCH_APP2':[0xB7, 0, 0],
+	
+	'IME_KANA':[win32con.VK_KANA, 0, 0],
+	'IME_HANGUL':[win32con.VK_HANGUL, 0, 0],
+	'IME_JUNJA':[win32con.VK_JUNJA, 0, 0],
+	'IME_FINAL':[win32con.VK_FINAL, 0, 0],
+	'IME_HANJA':[win32con.VK_HANJA, 0, 0],
+	'IME_KANJI':[win32con.VK_KANJI, 0, 0],
+	'IME_CONVERT':[win32con.VK_CONVERT, 0, 0],
+	'IME_NONCONVERT':[win32con.VK_NONCONVERT, 0, 0],
+	'IME_ACCEPT':[win32con.VK_ACCEPT, 0, 0],
+	'IME_MODECHANGE':[win32con.VK_MODECHANGE, 0, 0],
 	
 	# Double function keys : 
 	# for example : "[{", the "{" will appear while press Shift+[ .
