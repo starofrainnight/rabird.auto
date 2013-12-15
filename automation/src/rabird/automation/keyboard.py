@@ -37,22 +37,6 @@ __key_action_map['off'] = KA_OFF
 
 # Without keys listed below :
 #
-#	{NUMLOCK on} NUMLOCK (on/off/toggle) 
-#	{CAPSLOCK off} CAPSLOCK (on/off/toggle) 
-#	{SCROLLLOCK toggle} SCROLLLOCK (on/off/toggle) 
-#	{APPSKEY} Windows App key 
-#	{LALT} Left ALT key 
-#	{RALT} Right ALT key 
-#	{LCTRL} Left CTRL key 
-#	{RCTRL} Right CTRL key 
-#	{LSHIFT} Left Shift key 
-#	{RSHIFT} Right Shift key 
-#	{SLEEP} Computer SLEEP key 
-#	{ALTDOWN} Holds the ALT key down until {ALTUP} is sent 
-#	{SHIFTDOWN} Holds the SHIFT key down until {SHIFTUP} is sent 
-#	{CTRLDOWN} Holds the CTRL key down until {CTRLUP} is sent 
-#	{LWINDOWN} Holds the left Windows key down until {LWINUP} is sent 
-#	{RWINDOWN} Holds the right Windows key down until {RWINUP} is sent 
 #	{ASC nnnn} Send the ALT+nnnn key combination 
 #	{BROWSER_BACK} 2000/XP Only: Select the browser "back" button 
 #	{BROWSER_FORWARD} 2000/XP Only: Select the browser "forward" button 
@@ -111,6 +95,8 @@ key_contexts = {
 	'NUMLOCK':[win32con.VK_NUMLOCK, 0, 0],
 	'CAPSLOCK':[win32con.VK_CAPITAL, 0, 0],
 	'SCROLLLOCK':[win32con.VK_SCROLL, 0, 0],
+	'SLEEP':[0x5F, 0, 0],
+	'APPS':[win32con.VK_APPS, 0, 0],
 	'F1':[win32con.VK_F1, 0, 0],
 	'F2':[win32con.VK_F2, 0, 0],
 	'F3':[win32con.VK_F3, 0, 0],
