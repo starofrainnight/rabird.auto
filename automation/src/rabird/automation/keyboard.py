@@ -26,8 +26,7 @@ except ImportError as e:
 KA_DOWN,
 KA_PRESS,
 KA_ON,
-KA_OFF,
-KA_TOGGLE) = xrange(0, 6)
+KA_OFF) = xrange(0, 5)
 
 __key_action_map = dict()
 __key_action_map['up'] = KA_UP
@@ -35,7 +34,6 @@ __key_action_map['down'] = KA_DOWN
 __key_action_map['press'] = KA_PRESS
 __key_action_map['on'] = KA_ON
 __key_action_map['off'] = KA_OFF
-__key_action_map['toggle'] = KA_TOGGLE
 
 # Without keys listed below :
 #
@@ -89,7 +87,15 @@ key_contexts = {
 	#   is extended key?
 	'SPACE':[win32con.VK_SPACE, 0, 0],
 	'ENTER':[win32con.VK_RETURN, 0, 0],
+	'CTRL':[win32con.VK_CONTROL, 0, 0],
+	'LCTRL':[win32con.VK_LCONTROL, 0, 0],
+	'RCTRL':[win32con.VK_RCONTROL, 0, 0],
 	'ALT':[win32con.VK_MENU, 0, 0],
+	'LALT':[win32con.VK_LMENU, 0, 0],
+	'RALT':[win32con.VK_RMENU, 0, 0],
+	'SHIFT':[win32con.VK_SHIFT, 0, 0],
+	'LSHIFT':[win32con.VK_LSHIFT, 0, 0],
+	'RSHIFT':[win32con.VK_RSHIFT, 0, 0],
 	'BACKSPACE':[win32con.VK_BACK, 0, 1],
 	'DELETE':[win32con.VK_DELETE,  0, 1],
 	'UP':[win32con.VK_UP, 0, 1],
@@ -102,6 +108,9 @@ key_contexts = {
 	'INSERT':[win32con.VK_INSERT, 0, 1],
 	'PGUP':[win32con.VK_PRIOR, 0, 1],
 	'PGDN':[win32con.VK_NEXT, 0, 1],
+	'NUMLOCK':[win32con.VK_NUMLOCK, 0, 0],
+	'CAPSLOCK':[win32con.VK_CAPITAL, 0, 0],
+	'SCROLLLOCK':[win32con.VK_SCROLL, 0, 0],
 	'F1':[win32con.VK_F1, 0, 0],
 	'F2':[win32con.VK_F2, 0, 0],
 	'F3':[win32con.VK_F3, 0, 0],
@@ -128,6 +137,7 @@ key_contexts = {
 	'F24':[win32con.VK_F24, 0, 0],
 	'TAB':[win32con.VK_TAB, 0, 0],
 	'PRINTSCREEN':[win32con.VK_PRINT, 0, 0],
+	'WIN':[win32con.VK_LWIN, 0, 0],
 	'LWIN':[win32con.VK_LWIN, 0, 0],
 	'RWIN':[win32con.VK_RWIN, 0, 0],
 	'BREAK':[win32con.VK_CANCEL, 0, 0],
@@ -148,6 +158,28 @@ key_contexts = {
 	'NUMPADDIV':[win32con.VK_DIVIDE, 0, 0],
 	'NUMPADDOT':[0xBE, 0, 0], # VK_OEM_PERIOD
 	'NUMPADENTER':[win32con.VK_RETURN, 0, 0],
+	
+	'BROWSER_BACK':[win32con.VK_BROWSER_BACK, 0, 0],
+	'BROWSER_FORWARD':[win32con.VK_BROWSER_FORWARD, 0, 0],
+	'BROWSER_REFRESH':[0xA8, 0, 0],
+	'BROWSER_STOP':[0xA9, 0, 0],
+	'BROWSER_SEARCH':[0xAA, 0, 0],
+	'BROWSER_FAVORITES':[0xAB, 0, 0],
+	'BROWSER_HOME':[0xAC, 0, 0],
+	
+	'VOLUME_MUTE':[win32con.VK_VOLUME_MUTE, 0, 0],
+	'VOLUME_DOWN':[win32con.VK_VOLUME_DOWN, 0, 0],
+	'VOLUME_UP':[win32con.VK_VOLUME_UP, 0, 0],
+	
+	'MEDIA_NEXT_TRACK':[win32con.VK_MEDIA_NEXT_TRACK, 0, 0],
+	'MEDIA_PREV_TRACK':[win32con.VK_MEDIA_PREV_TRACK, 0, 0],
+	'MEDIA_STOP':[0xB2, 0, 0],
+	'MEDIA_PLAY_PAUSE':[0xB3, 0, 0],
+	
+	'LAUNCH_MAIL':[0xB4, 0, 0],
+	'LAUNCH_MEDIA_SELECT':[0xB5, 0, 0],
+	'LAUNCH_APP1':[0xB6, 0, 0],
+	'LAUNCH_APP2':[0xB7, 0, 0],
 	
 	# Double function keys : 
 	# for example : "[{", the "{" will appear while press Shift+[ .
