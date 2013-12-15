@@ -8,9 +8,18 @@ Created on 2013-7-7
 @author: "HongShe Liang <starofrainnight@gmail.com>"
 '''
 
-import win32api, win32con, win32gui
+import win32api
+import win32con
+import win32gui
 import struct
-from . import winio_keyboard
+
+try:
+	# Use pywinio to emulate our keyboard if existed. 
+	from . import winio_keyboard
+	
+	__send_method = winio_keyboard.keybd_event 
+except ImportError as e:
+	__send_method = win32api.keybd_event
 
 # Without keys listed below :
 #
@@ -262,7 +271,9 @@ def get_solo_key_series(keys, i=0):
 		
 	return key_series
 	
-def __send(keys, send_method, flags = 0):
+def __send(keys, flags = 0):
+	global __send_method
+	
 	i = 0
 	while i < len(keys):
 		key_series = get_solo_key_series(keys, i)
@@ -288,12 +299,12 @@ def __send(keys, send_method, flags = 0):
 				if is_holded:
 					command_end_queue.append([vkcode, scancode, flags | win32con.KEYEVENTF_KEYUP])
 				else:
-					send_method(vkcode, scancode, flags | win32con.KEYEVENTF_KEYUP)
+					__send_method(vkcode, scancode, flags | win32con.KEYEVENTF_KEYUP)
 			else:
-				send(vkcode, send_method, flags)
+				__send(vkcode, __send_method, flags)
 		
 		for command in command_end_queue:
-			send_method(command[0], command[1], command[2])
+			__send_method(command[0], command[1], command[2])
 
 def send(keys):
-	__send(keys, winio_keyboard.keybd_event)
+	__send(keys)
