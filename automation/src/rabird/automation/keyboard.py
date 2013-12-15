@@ -10,6 +10,7 @@ Created on 2013-7-7
 
 import win32api, win32con, win32gui
 import struct
+from . import winio_keyboard
 
 # Without keys listed below :
 #
@@ -261,7 +262,7 @@ def get_solo_key_series(keys, i=0):
 		
 	return key_series
 	
-def send(keys, flags = 0):
+def __send(keys, send_method, flags = 0):
 	i = 0
 	while i < len(keys):
 		key_series = get_solo_key_series(keys, i)
@@ -275,20 +276,24 @@ def send(keys, flags = 0):
 			
 			if int == type(vkcode):
 				scancode = win32api.MapVirtualKey(vkcode, 0)
+				# MAPVK_VK_TO_VSC_EX  = 4
 				extended_scancode = win32api.MapVirtualKey(vkcode, 4)
 				
 				flags = 0
 				if scancode != extended_scancode:
 					flags |= win32con.KEYEVENTF_EXTENDEDKEY
+					scancode = extended_scancode
 					
 				win32api.keybd_event(vkcode, scancode, flags)
 				if is_holded:
 					command_end_queue.append([vkcode, scancode, flags | win32con.KEYEVENTF_KEYUP])
 				else:
-					win32api.keybd_event(vkcode, scancode, flags | win32con.KEYEVENTF_KEYUP)
+					send_method(vkcode, scancode, flags | win32con.KEYEVENTF_KEYUP)
 			else:
-				send(vkcode, flags)
+				send(vkcode, send_method, flags)
 		
 		for command in command_end_queue:
-			win32api.keybd_event(command[0], command[1], command[2])
+			send_method(command[0], command[1], command[2])
 
+def send(keys):
+	__send(keys, winio_keyboard.keybd_event)

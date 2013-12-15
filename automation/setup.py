@@ -11,7 +11,6 @@ import logging
 import fnmatch
 import rabird.distutils
 import rabird.logging
-from src.rabird.automation import __version__  
 from setuptools import setup, find_packages
 
 from_package = 'src'
@@ -27,10 +26,9 @@ rabird.distutils.preprocess_sources_for_compatible(from_package, os.path.realpat
 our_packages = find_packages(exclude=[from_package, '{}.*'.format(from_package)])
 
 our_requires = []
-
 setup(
 	name=package_name,
-	version=__version__,
+	version='.'.join(map(str, (0, 0, 2))),
 	author='HongShe Liang',
 	author_email='starofrainnight@gmail.com',
 	url='',
