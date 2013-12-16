@@ -381,5 +381,4 @@ def __send(keys, flags=0):
 			__send_method(command[0], command[1], command[2])
 
 def send(keys):
-	print( 'test2')
 	__send(keys)
