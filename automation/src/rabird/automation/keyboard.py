@@ -189,6 +189,7 @@ key_contexts = {
 	
 	# Double function keys : 
 	# for example : "[{", the "{" will appear while press Shift+[ .
+	' ':[win32con.VK_SPACE, 0, 0],
 	';':[0xBA, 0, 0], # VK_OEM_1, ;:
 	':':['+;', 0, 0],
 	'/':[0xBF, 0, 0], # VK_OEM_2, /?
@@ -338,7 +339,7 @@ def get_solo_key_series(keys, i=0):
 		
 	return key_series
 	
-def __send(keys, flags = 0):
+def __send(keys, flags=0):
 	global __send_method
 	
 	i = 0
@@ -370,14 +371,15 @@ def __send(keys, flags = 0):
 					__send_method(vkcode, scancode, flags | win32con.KEYEVENTF_KEYUP)
 				elif action == KA_DOWN:
 					__send_method(vkcode, scancode, flags)
-				else: # press, toggle, and others.
+				else: # press and others.
 					__send_method(vkcode, scancode, flags)
 					command_end_queue.append([vkcode, scancode, flags | win32con.KEYEVENTF_KEYUP])
 			else:
-				__send(vkcode, __send_method, flags)
+				__send(vkcode, flags)
 		
 		for command in command_end_queue:
 			__send_method(command[0], command[1], command[2])
 
 def send(keys):
+	print( 'test2')
 	__send(keys)
