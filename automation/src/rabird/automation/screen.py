@@ -12,6 +12,9 @@ import sys
 import numpy
 import ImageGrab
 
+class ImageLookupError(LookupError):
+	pass
+
 ##
 # Find a specific image from screen
 #
@@ -50,12 +53,12 @@ def find(target_image, threshold=0.7, is_center_position=True):
 		match_value = max_value
 		
 	if match_value < threshold:
-		return None
-	else:
-		if is_center_position:
-			match_location = (
-				match_location[0] + template_image.shape[1] // 2,
-				match_location[1] + template_image.shape[0] // 2 )
-			
-		return match_location
+		raise ImageLookupError('Target image can\'t not found on screen !')
 		
+	if is_center_position:
+		match_location = (
+			match_location[0] + template_image.shape[1] // 2,
+			match_location[1] + template_image.shape[0] // 2 )
+		
+	return match_location
+	

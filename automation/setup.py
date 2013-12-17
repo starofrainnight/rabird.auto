@@ -28,7 +28,7 @@ our_packages = find_packages(exclude=[from_package, '{}.*'.format(from_package)]
 our_requires = []
 setup(
 	name=package_name,
-	version='.'.join(map(str, (0, 0, 3))),
+	version='.'.join(map(str, (0, 0, 4))),
 	author='HongShe Liang',
 	author_email='starofrainnight@gmail.com',
 	url='',
