@@ -19,9 +19,13 @@ import ImageGrab
 # 'str', this method will open an image by cv2.imread(). Otherwise, the 
 # target_image type should be an image stored in numpy.array.
 #
-# @return If successed, the location of specific image on screen will return, 
-# otherwise None will be return.
-def find(target_image, threshold=0.7):
+# @arg [in] is_center_position If True, the result point indicate the center
+# point of found image, otherwise the left-top point will be return. 
+#
+# @return If successed, the location of specific image on screen will 
+# return, otherwise None will be return. The return position could control 
+# by argument 'is_center_position'.
+def find(target_image, threshold=0.7, is_center_position=True):
 	match_method = cv2.TM_SQDIFF_NORMED
 	screen_image = ImageGrab.grab()
 
@@ -48,5 +52,10 @@ def find(target_image, threshold=0.7):
 	if match_value < threshold:
 		return None
 	else:
+		if is_center_position:
+			match_location = (
+				match_location[0] + template_image.shape[1] // 2,
+				match_location[1] + template_image.shape[0] // 2 )
+			
 		return match_location
 		
