@@ -50,11 +50,16 @@ def preprocess_sources_for_compatible(source_path, destination_path):
 		
 		# Read the source version, if the version not equal current python's version,
 		# we need do some change
-		source_version = open(source_file_path, 'rb+').read().strip()
-		if int(source_version) != sys.version_info[0]:
-			# Do convert
+		try:
+			source_version = open(source_file_path, 'rb+').read().strip()
+			if int(source_version) != sys.version_info[0]:
+				# Do convert
+				break
+		except ValueError:
+			# Content in source_file_path is invalid!
+			os.remove(source_file_path) 
 			break
-			
+		
 		is_need_convert = False
 		for root, dirs, files in os.walk(source_path):
 			for afile in files:
