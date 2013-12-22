@@ -7,7 +7,7 @@ Created on 2013-5-10
 #--IMPORT_ALL_FROM_FUTURE--#
 
 from six.moves import configparser
-import rabird.collections
+from . import collections
 import StringIO 
 import io
 import os
@@ -39,7 +39,7 @@ class ConfigParser(configparser.ConfigParser):
 		if (sys.version_info[0] <= 2) and (sys.version_info[1] <= 6):
 			# Fixed python 2.6.x dict_type not equal to OrderedDict
 			if (len(args) < 2) and ('dict_type' not in kwargs):
-				kwargs['dict_type'] = rabird.collections.OrderedDict
+				kwargs['dict_type'] = collections.OrderedDict
 				
 		if issubclass(ConfigParser, object):
 			super(ConfigParser, self).__init__(*args, **kwargs)

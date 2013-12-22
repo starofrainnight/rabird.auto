@@ -2,7 +2,7 @@
 
 from ez_setup import use_setuptools
 use_setuptools()
-    
+
 import os
 import os.path
 import sys

@@ -35,11 +35,12 @@ import os.path
 # * replace the stdout / stderr / stdin file object in sys with our fixed objects
 
 class StdoutThread(threading.Thread):
-	def __init__(self, file_descriptor, std_handle_type, old_stdout):
+	def __init__(self, std_handle_type, old_stdout):
 		threading.Thread.__init__(self)
 		# so that if the main thread exit, our thread will also exit
 		self.setDaemon(True)
-		self.file_descriptor = file_descriptor
+		self.stdout_pipe = os.pipe()
+		self.file_descriptor = self.stdout_pipe[0]
 		self.std_handle_type = std_handle_type
 		self.old_stdout = old_stdout
 		
@@ -50,56 +51,78 @@ class StdoutThread(threading.Thread):
 		# do not in the encoding scale, that will case a convertion error:
 		# 'ascii' codec can't encode character u'\xbb' in position ...
 		self.stdout = io.open(self.file_descriptor, mode='rb')
+		self.stdin = None
 		
 	def run(self):
-		end_mark = ord(".")
-		exit_mark = ord("@")
-
-		while True:
-			# it will be block here until any string coming ...
-			# we shoudl be read three lines for a unit ( the pickle format )
-			temp_line = ""
-			a_line = ""
+		self.stdin = StdioFile(self.stdout_pipe[1], "wb")
+		if self.std_handle_type == win32api.STD_OUTPUT_HANDLE:
+			sys.stdout = self.stdin 
+		elif self.std_handle_type == win32api.STD_ERROR_HANDLE:
+			sys.stderr = self.stdin 	
+		
+		try:
 			
+			end_mark = ord(".")
+			exit_mark = ord("@")
+	
 			while True:
-				temp_line = self.stdout.readline()				
-				a_line += temp_line
+				# it will be block here until any string coming ...
+				# we shoudl be read three lines for a unit ( the pickle format )
+				temp_line = ""
+				a_line = ""
 				
-				if len(temp_line) > 0:
-					if ord(temp_line[0]) == end_mark:
+				while True:
+					temp_line = self.stdout.readline()				
+					a_line += temp_line
+					
+					if len(temp_line) > 0:
+						#self.old_stdout.write('test end_mark \n')
+						if ord(temp_line[0]) == end_mark:
+							#self.old_stdout.write('end_mark! \n')
+							break
+					
+				# if outside need us to destroy our self, we exit ...
+				if len(temp_line) >= 2:
+					if ord(temp_line[1]) == exit_mark:
 						break
+	
+				if not a_line :
+					continue
+					
+				s = pickle.loads(a_line)
+				if len(s) <= 0 :
+					continue
 				
-			# if outside need us to destroy our self, we exit ...
-			if len(temp_line) >= 2:
-				if ord(temp_line[1]) == exit_mark:
-					break
-
-			if not a_line :
-				continue
+				#self.old_stdout.write('gogogo : %s,  %s\n' % (str(a_line), str(type(s))))
 				
-			s = pickle.loads(a_line)
-			if len(s) <= 0 :
-				continue
-				
-			if(type(s) == types.UnicodeType) :
-				if self.screen_buffer is not None:
-					# While debuging in Aptana Studio or some other situation, 
-					# the screen buffer will contain an invalid handle lead to 
-					# win32console.error be throw. We will use the old stdout 
-					# to output our informations instead.
-					try:
-						self.screen_buffer.WriteConsole(s)
-					except win32console.error:
-						self.screen_buffer = None
-						
-						# If we could not output through screen buffer, we 
-						# convert the unicode string to python native string, 
-						# and write directly to old stndard output.
-						self.old_stdout.write(str(s))
-				else:
-					self.old_stdout.write(str(s))						
-			else :
-				self.old_stdout.write(s)		
+				if(type(s) == types.UnicodeType) :
+					if self.screen_buffer is not None:
+						# While debuging in Aptana Studio or some other situation, 
+						# the screen buffer will contain an invalid handle lead to 
+						# win32console.error be throw. We will use the old stdout 
+						# to output our informations instead.
+						try:
+							self.screen_buffer.WriteConsole(s)
+						except win32console.error:
+							self.screen_buffer = None
+							
+							# If we could not output through screen buffer, we 
+							# convert the unicode string to python native string, 
+							# and write directly to old stndard output.
+							self.old_stdout.write(str(s))
+					else:
+						self.old_stdout.write(str(s))						
+				else :
+					self.old_stdout.write(s)
+		finally:
+			if self.std_handle_type == win32api.STD_OUTPUT_HANDLE:
+				sys.stdout = self.old_stdout
+			elif self.std_handle_type == win32api.STD_ERROR_HANDLE:
+				sys.stderr = self.old_stdout
+					
+	def stop(self):
+		os.write(self.stdin.fileno(), ".@\n")	
+		self.join()
 		
 class StdioFile(io.FileIO): 
 	def __init__(self, name, mode='r', closefd=True):
@@ -113,64 +136,40 @@ class StdioFile(io.FileIO):
 		value = str(pickle.dumps(value)) + os.linesep
 		io.FileIO.write(self, value)		
 		
-		
-def stop_stdout_thread( a_thread, a_stdout_file ):
-	os.write( a_stdout_file.fileno(), ".@\n" ) # break the read line operation in thread
-	a_thread.join()
-
-
 old_stdout = sys.stdout
-old_stderr = sys.stderr
-old_stdin = sys.stdin
-
-stdout_pipe = None
-stderr_pipe = None
-stdin_pipe = None
-
 stdout_thread = None
-stderr_thread = None
 
-our_stdout = None
-our_stderr = None
+old_stderr = sys.stderr
+stderr_thread = None
 
 # * finalize windows's unicode fix
 def __on_exit_rabird_module():
-	# wait for console finished their output
-	stop_stdout_thread( stdout_thread, our_stdout )
-	stop_stdout_thread( stderr_thread, our_stderr )
+	# Wait for console finished their output and restore original standard 
+	# input/output
+	stdout_thread.stop()
+	stderr_thread.stop()
 	
-	# restore original standard input/output 
-	sys.stderr = old_stderr
-	sys.stdout = old_stdout
-	sys.stdin = old_stdin
-
-	# close all pipes	
-	for i in stdin_pipe:
-		os.close(i)
-
 def monkey_patch():
+	global stdout_thread
+	global stderr_thread
+	
+	is_patched = False
+	
 	# Fixed the sys.argv list with GetCommandLine() api in win32
-	sys.argv = rabird.windows_api.CommandLineToArgv(rabird.windows_api.GetCommandLine())
+	sys.argv = windows_api.CommandLineToArgv(windows_api.GetCommandLine())
 	
-	# Replace 
-	stdout_pipe = os.pipe()
-	stderr_pipe = os.pipe()
-	stdin_pipe = os.pipe()
+	# The ez_setup.py will load the rabird library during setup, so we have
+	# to check the type string not the directly type.
+	if 'StdioFile' not in str(type(sys.stdout)):
+		stdout_thread = StdoutThread(win32api.STD_OUTPUT_HANDLE, old_stdout)
+		stdout_thread.start()
+		is_patched = True
 	
-	stdout_thread = StdoutThread(stdout_pipe[0], win32api.STD_OUTPUT_HANDLE, old_stdout)
-	stderr_thread = StdoutThread(stderr_pipe[0], win32api.STD_ERROR_HANDLE, old_stderr)
-	
-	stdout_thread.start()
-	stderr_thread.start()
-	
-	# to test our stdout with new stdout
-	our_stdout = StdioFile(stdout_pipe[1], "wb")
-	our_stderr = StdioFile(stderr_pipe[1], "wb")
-	
-	sys.stdout = our_stdout
-	# keep not to overwrite the sys.stderr for debug purpose
-	sys.stderr = our_stderr
-	
-	# we must restore original standard input/output file
-	atexit.register(__on_exit_rabird_module)
-
+	if 'StdioFile' not in str(type(sys.stderr)):
+		stderr_thread = StdoutThread(win32api.STD_ERROR_HANDLE, old_stderr)
+		stderr_thread.start()
+		is_patched = True
+		
+	if is_patched:
+		# we must restore original standard input/output file
+		atexit.register(__on_exit_rabird_module)
