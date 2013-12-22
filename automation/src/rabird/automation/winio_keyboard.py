@@ -16,24 +16,30 @@ KBC_KEY_CMD	= 0x64
 # Data port
 KBC_KEY_DATA = 0x60
 
-winio = pywinio.WinIO()
+__winio = None
 
-def __set_winio_to_none():
-	global winio
-	winio = None
+def __get_winio():
+	global __winio
 	
-atexit.register(__set_winio_to_none)
+	if __winio is None:
+		__winio = pywinio.WinIO()
+		def __clear_winio():
+			global __winio
+			__winio = None
+		atexit.register(__clear_winio)
+		
+	return __winio	
 
 # Wait keyboard buffer empty
 def wait_for_buffer_empty():
-	global winio
+	winio = __get_winio()
 	
 	dwRegVal = 0x02
 	while (dwRegVal & 0x02):
 		dwRegVal = winio.get_port_byte(KBC_KEY_CMD)
 		
 def key_down(scancode):
-	global winio
+	winio = __get_winio()
 	
 	wait_for_buffer_empty();
 	winio.set_port_byte(KBC_KEY_CMD, 0xd2);
@@ -41,7 +47,7 @@ def key_down(scancode):
 	winio.set_port_byte(KBC_KEY_DATA, scancode)
 
 def key_up(scancode):
-	global winio
+	winio = __get_winio()
 	
 	wait_for_buffer_empty();
 	winio.set_port_byte( KBC_KEY_CMD, 0xd2);
