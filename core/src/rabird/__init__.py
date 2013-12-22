@@ -5,11 +5,13 @@ __import__('pkg_resources').declare_namespace(__name__)
 
 import sys
 
-version_info = (0, 0, 0, 55)
+version_info = (0, 0, 0, 56)
 __version__ = '.'.join(map(str, version_info))
 __monkey_patched = False
 
 try:
+	import rabird
+	
 	if sys.platform == 'win32' :
 		from . import windows_api
 		from . import windows_fix
@@ -17,7 +19,11 @@ try:
 	def monkey_patch():
 		global __monkey_patched
 		
-		if __monkey_patched:
+		# During setup process, the ez_setup.py will load the rabird library
+		# already existed in python library. So we need to check the patched
+		# information to determine if we need to do again. 
+		existed_monkey_patched = rabird.__monkey_patched
+		if __monkey_patched or existed_monkey_patched:
 			return
 			
 		if sys.platform == 'win32' :
