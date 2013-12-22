@@ -44,6 +44,8 @@ Created on 2013-10-18
 # Import the global logging unit, not our logging .
 global_socket = __import__('socket')
 import struct
+from eventlet.green import SocketServer
+from eventlet.green import threading
 
 PROXY_TYPE_SOCKS4 = 1
 PROXY_TYPE_SOCKS5 = 2
@@ -398,4 +400,14 @@ class Socket(global_socket.socket):
 		else:
 			raise GeneralProxyError((4,_generalerrors[4]))
 
-	
+class RequestHandler(SocketServer.BaseRequestHandler):
+	def handle(self):
+		data = self.request.recv(1024)
+		cur_thread = threading.current_thread()
+		response = "{}: {}".format(cur_thread.name, data)
+		self.request.sendall(response)
+		
+class Server(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
+	def __init__(self, server_address, bind_and_activate=True):
+		SocketServer.TCPServer.__init__(self, server_address, RequestHandler, bind_and_activate)
+		
