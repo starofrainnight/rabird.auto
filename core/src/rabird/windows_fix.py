@@ -31,6 +31,7 @@ import pickle
 from . import windows_api
 import time
 import os.path
+import six
 
 # * replace the stdout / stderr / stdin file object in sys with our fixed objects
 
@@ -68,8 +69,8 @@ class StdoutThread(threading.Thread):
 			while True:
 				# it will be block here until any string coming ...
 				# we shoudl be read three lines for a unit ( the pickle format )
-				temp_line = ""
-				a_line = ""
+				temp_line = six.binary_type()
+				a_line = six.binary_type() 
 				
 				while True:
 					temp_line = self.stdout.readline()				
@@ -121,7 +122,7 @@ class StdoutThread(threading.Thread):
 				sys.stderr = self.old_stdout
 					
 	def stop(self):
-		os.write(self.stdin.fileno(), ".@\n")	
+		os.write(self.stdin.fileno(), ".@\n")
 		self.join()
 		
 class StdioFile(io.FileIO): 
