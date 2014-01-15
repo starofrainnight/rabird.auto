@@ -37,7 +37,6 @@ def display_escape(text):
 	return xml.sax.saxutils.escape(text, html_escape_table)
 	
 def display_unescape(text):	
-	text = xml.sax.saxutils.unescape(text)
 	output_text = ''
 	
 	i = 0
@@ -57,4 +56,4 @@ def display_unescape(text):
 		finally:
 			i += 1
 		
-	return output_text
+	return  xml.sax.saxutils.unescape(output_text)
