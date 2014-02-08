@@ -15,7 +15,8 @@ try:
 	if sys.platform == 'win32' :
 		from . import windows_api
 		from . import windows_fix
-		
+	
+	# Known Issues : Can't work with eventlet, Why?
 	def monkey_patch():
 		global __monkey_patched
 		
@@ -32,8 +33,6 @@ try:
 				
 		__monkey_patched = True
 		
-	monkey_patch()
-	
 except ImportError as e:
 	if 'rabird' not in str(e):
 		# any other exception should be printed
