@@ -384,7 +384,10 @@ def send(keys, is_raw=False):
 	if is_raw:
 		new_keys = ''
 		for c in keys:
-			new_keys += '{%s}' % (c)
+			if c == ' ': # Space use to split description parts
+				new_keys += c
+			else:
+				new_keys += '{%s}' % (c)
 		
 		__send(new_keys)
 	else:
