@@ -380,5 +380,12 @@ def __send(keys, flags=0):
 		for command in command_end_queue:
 			__send_method(command[0], command[1], command[2])
 
-def send(keys):
-	__send(keys)
+def send(keys, is_raw=False):
+	if is_raw:
+		new_keys = ''
+		for c in keys:
+			new_keys += '{%s}' % (c)
+		
+		__send(new_keys)
+	else:
+		__send(keys)
