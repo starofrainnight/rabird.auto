@@ -224,7 +224,7 @@ key_contexts = {
 	'*':['+8', 0, 0],
 	'9':[ord('9'), 0, 0], # char
 	'(':['+9', 0, 0],
-	'-':[win32con.VK_SUBTRACT, 0, 0], # -_
+	'-':[0xBD, 0, 0], # -_ , win32con.VK_SUBTRACT only means '-'
 	'_':['+-', 0, 0],
 	',':[0xBC, 0, 0], # VK_OEM_COMMA, ,<
 	'<':['+,', 0, 0],
