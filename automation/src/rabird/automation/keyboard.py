@@ -284,7 +284,7 @@ key_contexts = {
 	'W':['+w', 0, 0],
 	'X':['+x', 0, 0],
 	'Y':['+y', 0, 0],
-	'Z':['+a', 0, 0],
+	'Z':['+z', 0, 0],
 	}
 	# Other keys are pass by ord(k)
 	
@@ -350,7 +350,7 @@ def __send(keys, flags=0):
 			context = key_group[0]
 			i += key_group[1]
 			action = key_group[2]
-						
+			
 			vkcode = context[0]
 			is_holded = context[1]
 			
