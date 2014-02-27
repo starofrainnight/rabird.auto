@@ -41,47 +41,26 @@ def __copy_tree(src_dir, dest_dir):
 def preprocess_sources_for_compatible(source_path, destination_path):
 	# tag_line = r'^[ \t\f\v]*#--IMPORT_ALL_FROM_FUTURE--#[ \t\f\v]*$'
 	tag_line =  r'[\r\n][ \t\f\v]*#--IMPORT_ALL_FROM_FUTURE--#[ \t\f\v]*(?:(?:\r\n)|\r|\n)'
-	source_file_path = os.path.join(destination_path, 'source_version.txt')
 	
-	while os.path.exists(source_file_path):
-		# If there have any file in 'from_package' newer than source_version_file's 
-		# modify time, we do the complete convertion. 
-		status = os.stat(source_file_path)
-		
-		# Read the source version, if the version not equal current python's version,
-		# we need do some change
-		try:
-			source_version = open(source_file_path, 'rb+').read().strip()
-			if int(source_version) != sys.version_info[0]:
-				# Do convert
-				break
-		except ValueError:
-			# Content in source_file_path is invalid!
-			os.remove(source_file_path) 
-			break
-		
-		is_need_convert = False
-		for root, dirs, files in os.walk(source_path):
-			for afile in files:
-				file_path = os.path.join(root, afile)
-				if os.stat(file_path).st_mtime > status.st_ctime:
-					is_need_convert = True
-					break
-			
-			if is_need_convert:
-				break
-		
-		if not is_need_convert:
-			return
-			
-		# We must break here, otherwise we will run into infinite loop
-		break 
-			
 	# The 'build' and 'dist' folder sometimes will not update! So we need to 
 	# remove them all !
-	shutil.rmtree('build', ignore_errors=True)
-	shutil.rmtree('dist', ignore_errors=True)
+	shutil.rmtree(os.path.join(destination_path, 'build'), ignore_errors=True)
+	shutil.rmtree(os.path.join(destination_path, 'dist'), ignore_errors=True)
 	
+	# Remove all unused directories
+	directories = []
+	directory_patterns = ['__pycache__', '*.egg-info']
+	for root, dirs, files in os.walk(destination_path):
+		for adir in dirs:
+			for pattern in directory_patterns:
+				if fnmatch.fnmatch(adir, pattern):
+					directories.append(os.path.join(root, adir))
+					break
+					
+	for adir in directories:
+		shutil.rmtree(adir, ignore_errors=True)
+	
+	# Removed old preprocessed sources.
 	directories = []
 	for item in os.listdir(source_path):
 		path = os.path.join(source_path, item)
@@ -90,9 +69,7 @@ def preprocess_sources_for_compatible(source_path, destination_path):
 			destination_item_path = os.path.join(destination_path, item)
 			shutil.rmtree(destination_item_path, ignore_errors=True)
 			__copy_tree(path, destination_item_path)
-		
-	open(source_file_path, 'wb+').write(str(sys.version_info[0]))
-	
+			
 	if sys.version_info[0] >= 3:
 		# We wrote program implicated by version 3, if python version large or equal than 3,
 		# we need not change the sources.
