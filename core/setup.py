@@ -31,6 +31,8 @@ our_requires = [
 
 if sys.platform == "win32":
 	our_requires.append('pywin32>=218')
+else:
+	our_requires.append('linux-metrics')
 
 setup(
 	name=package_name,

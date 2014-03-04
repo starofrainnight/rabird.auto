@@ -11,6 +11,12 @@ import ctypes
 import copy
 import abc
 import sys
+import time
+
+if sys.platform == 'win32' :
+	import win32api
+else:
+	from linux_metrics import cpu_stat
 
 class CpuTimes(object):
 	def __init__(self):
@@ -62,16 +68,55 @@ class Win32CpuTimer(AbstractCpuTimer):
 		self._cpu_times.wall += ( delta_ticks / 1000.0 )
 		self.__old_ticks = new_ticks
 		return super(Win32CpuTimer, self).elapsed()
-	
+		
+	def stop(self):
+		self.elapsed()
+		
+		super(Win32CpuTimer, self).stop()
+		
 	def resume(self):
 		self.__old_ticks = win32api.GetTickCount()
 		super(Win32CpuTimer, self).resume()		
+	
+class UnixCpuTimer(AbstractCpuTimer):
+	def __init__(self):
+		super(UnixCpuTimer, self).__init__()
+		
+		self.__max_ticks = 0xFFFFFFFF
+		self.__old_ticks = self.__get_ticks()
+		self.__ticks_a_second = 100.0
+		
+	def __get_ticks(self):
+		cpu_times = cpu_stat.cpu_times()
+		total_ticks = 0
+		for i in xrange(0, 7):
+			total_ticks += cpu_times[i]		
+		return total_ticks
+		
+	def start(self):
+		super(UnixCpuTimer, self).start()
+		self.__old_ticks = self.__get_ticks()
+		
+	def elapsed(self):
+		new_ticks = self.__get_ticks()
+		delta_ticks = ( new_ticks - self.__old_ticks + self.__max_ticks ) % self.__max_ticks
+		self._cpu_times.wall += ( delta_ticks / self.__ticks_a_second )
+		self.__old_ticks = new_ticks
+		return super(UnixCpuTimer, self).elapsed()
+		
+	def stop(self):
+		self.elapsed()
+		
+		super(UnixCpuTimer, self).stop()
+		
+	def resume(self):
+		self.__old_ticks = self.__get_ticks()
+		super(UnixCpuTimer, self).resume()		
 		
 if sys.platform == 'win32' :
-	import win32api
 	CpuTimer = Win32CpuTimer
 else:
-	raise NotImplemented('The cpu_time_t not ready for unixs yet!')
+	CpuTimer = UnixCpuTimer
 
 ##
 # A class that determine if we need to sleep for a while to achieve 
