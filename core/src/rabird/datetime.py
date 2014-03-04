@@ -51,72 +51,71 @@ class AbstractCpuTimer(object):
 	def resume(self):
 		self.__is_stopped = False
 	
-class Win32CpuTimer(AbstractCpuTimer):
+class CpuTimer(AbstractCpuTimer):
 	def __init__(self):
-		super(Win32CpuTimer, self).__init__()
+		super(CpuTimer, self).__init__()
 		
-		self.__old_ticks = 0
-		self.__max_ticks = 0xFFFFFFFF
+		self.__max_ticks = get_cpu_ticks_max()
+		self.__old_ticks = get_cpu_ticks()
+		self.__ticks_per_second = get_cpu_ticks_per_second()
 		
 	def start(self):
-		super(Win32CpuTimer, self).start()
-		self.__old_ticks = win32api.GetTickCount()
+		super(CpuTimer, self).start()
+		self.__old_ticks = get_cpu_ticks()
 		
 	def elapsed(self):
-		new_ticks = win32api.GetTickCount()
-		delta_ticks = ( new_ticks - self.__old_ticks + self.__max_ticks ) % self.__max_ticks
-		self._cpu_times.wall += ( delta_ticks / 1000.0 )
+		new_ticks = get_cpu_ticks()
+		delta_ticks = get_cpu_ticks_different(self.__old_ticks, new_ticks)
+		self._cpu_times.wall += cpu_ticks_to_time(delta_ticks)		
 		self.__old_ticks = new_ticks
-		return super(Win32CpuTimer, self).elapsed()
+		return super(CpuTimer, self).elapsed()
 		
 	def stop(self):
 		self.elapsed()
 		
-		super(Win32CpuTimer, self).stop()
+		super(CpuTimer, self).stop()
 		
 	def resume(self):
-		self.__old_ticks = win32api.GetTickCount()
-		super(Win32CpuTimer, self).resume()		
+		self.__old_ticks = get_cpu_ticks()
+		super(CpuTimer, self).resume()		
+		
+		
+def __get_cpu_ticks_per_second_win32():
+	return 1000
 	
-class UnixCpuTimer(AbstractCpuTimer):
-	def __init__(self):
-		super(UnixCpuTimer, self).__init__()
-		
-		self.__max_ticks = 0xFFFFFFFF
-		self.__old_ticks = self.__get_ticks()
-		self.__ticks_a_second = 100.0
-		
-	def __get_ticks(self):
-		cpu_times = cpu_stat.cpu_times()
-		total_ticks = 0
-		for i in xrange(0, 7):
-			total_ticks += cpu_times[i]		
-		return total_ticks
-		
-	def start(self):
-		super(UnixCpuTimer, self).start()
-		self.__old_ticks = self.__get_ticks()
-		
-	def elapsed(self):
-		new_ticks = self.__get_ticks()
-		delta_ticks = ( new_ticks - self.__old_ticks + self.__max_ticks ) % self.__max_ticks
-		self._cpu_times.wall += ( delta_ticks / self.__ticks_a_second )
-		self.__old_ticks = new_ticks
-		return super(UnixCpuTimer, self).elapsed()
-		
-	def stop(self):
-		self.elapsed()
-		
-		super(UnixCpuTimer, self).stop()
-		
-	def resume(self):
-		self.__old_ticks = self.__get_ticks()
-		super(UnixCpuTimer, self).resume()		
+def __get_cpu_ticks_max_win32():
+	return 0xFFFFFFFF
+	
+def __get_cpu_ticks_win32():
+	return win32api.GetTickCount()
+
+def __get_cpu_ticks_per_second_unix():
+	return 100
+	
+def __get_cpu_ticks_max_unix():
+	return 0xFFFFFFFF
+
+def __get_cpu_ticks_unix():
+	cpu_times = cpu_stat.cpu_times()
+	total_ticks = 0
+	for i in xrange(0, 7):
+		total_ticks += cpu_times[i]		
+	return total_ticks
+	
+def get_cpu_ticks_different(ticks_before, ticks_after):
+	return (ticks_after - ticks_before + get_cpu_ticks_max()) % get_cpu_ticks_max()
+	
+def cpu_ticks_to_time(ticks):
+	return float(ticks) / get_cpu_ticks_per_second()
 		
 if sys.platform == 'win32' :
-	CpuTimer = Win32CpuTimer
+	get_cpu_ticks = __get_cpu_ticks_win32
+	get_cpu_ticks_per_second = __get_cpu_ticks_per_second_win32
+	get_cpu_ticks_max = __get_cpu_ticks_max_win32
 else:
-	CpuTimer = UnixCpuTimer
+	get_cpu_ticks = __get_cpu_ticks_unix
+	get_cpu_ticks_per_second = __get_cpu_ticks_per_second_unix
+	get_cpu_ticks_max = __get_cpu_ticks_max_unix
 
 ##
 # A class that determine if we need to sleep for a while to achieve 
