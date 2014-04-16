@@ -377,7 +377,8 @@ def __send(keys, flags=0):
 			else:
 				__send(vkcode, flags)
 		
-		for command in command_end_queue:
+		for command_index in xrange(len(command_end_queue) -1, -1, -1):
+			command = command_end_queue[command_index]
 			__send_method(command[0], command[1], command[2])
 
 def send(keys, is_raw=False):
