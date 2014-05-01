@@ -87,7 +87,10 @@ def __get_cpu_ticks_max_win32():
 	return 0xFFFFFFFF
 	
 def __get_cpu_ticks_win32():
-	return win32api.GetTickCount()
+	# FIXED: win32api.GetTickCount()'s value will be converted to an 32bits 
+	# integer ! It must be DWORD not integer! We convert it back to unsigned
+	# value.
+	return (win32api.GetTickCount() + 0x100000000) % 0x100000000
 
 def __get_cpu_ticks_per_second_unix():
 	return 100
