@@ -106,7 +106,7 @@ def __get_cpu_ticks_unix():
 	return total_ticks
 	
 def get_cpu_ticks_different(ticks_before, ticks_after):
-	return (ticks_after - ticks_before + get_cpu_ticks_max()) % get_cpu_ticks_max()
+	return (ticks_after - ticks_before + (get_cpu_ticks_max() + 1)) % (get_cpu_ticks_max() + 1)
 	
 def cpu_ticks_to_time(ticks):
 	return float(ticks) / get_cpu_ticks_per_second()
