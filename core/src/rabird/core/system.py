@@ -4,13 +4,13 @@
 import sys
 import os
 
-logger = __import__('logging').getLogger('rabird.system')
+logger = __import__('logging').getLogger('rabird.core.system')
 
 if sys.platform == "win32" :
 	from . import windows_api
 
 def get_single_argument_win32():
-	command_line = rabird.windows_api.GetCommandLine().strip()
+	command_line = rabird.core.windows_api.GetCommandLine().strip()
 
 	script_file_name = os.path.basename(sys.argv[0])
 	pos = command_line.rfind( script_file_name )

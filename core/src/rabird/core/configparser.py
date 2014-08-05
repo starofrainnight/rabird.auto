@@ -22,7 +22,7 @@ import re
 #  * Support ini files that contained unnamed section.
 #  * Default to case sensitive, actually most ini files are case sensitive, 
 #    if you want case insensitive, just set like below:
-#        object.optionxform = rabird.ConfigParser.optionxform
+#        object.optionxform = rabird.core.ConfigParser.optionxform
 #  * Removed spaces around '=', some ini parser do not accept the spaces 
 #    around '='.
 #  * Support comments start with '#', ';'

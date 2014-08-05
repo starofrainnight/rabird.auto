@@ -23,7 +23,7 @@ try:
 		# During setup process, the ez_setup.py will load the rabird library
 		# already existed in python library. So we need to check the patched
 		# information to determine if we need to do again. 
-		existed_monkey_patched = rabird.__monkey_patched
+		existed_monkey_patched = rabird.core.__monkey_patched
 		if __monkey_patched or existed_monkey_patched:
 			return
 			
