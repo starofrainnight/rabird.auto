@@ -29,7 +29,7 @@ rabird.logging.load_default_config()
 rabird.distutils.preprocess_sources_for_compatible(from_package, os.path.realpath(os.curdir))
 
 # Exclude the original source package, only accept the preprocessed package!
-our_packages = find_packages(exclude=[from_package, '{}.*'.format(from_package)])
+our_packages = find_packages(exclude=[from_package, '%s.*' % (from_package)])
 
 our_requires = [
 	'pyscreenshot',
@@ -46,7 +46,7 @@ setup(
 	author_email='starofrainnight@gmail.com',
 	url='',
 	py_modules=[to_package],
-	description='{} utilities'.format(package_name),
+	description='%s utilities' % package_name,
 	long_description=open('README', 'r').read(),
 	classifiers=[
 		'Programming Language :: Python :: 2',
