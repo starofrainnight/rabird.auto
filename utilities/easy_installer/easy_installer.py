@@ -76,6 +76,10 @@ def main():
 	except:
 		pass
 		
+	# Install pywinio 
+	if os.path.exists("pywinio-0.0.7-py2.7.egg"):
+		os.system("easy_install pywinio-0.0.7-py2.7.egg")
+		
 	shutil.copy(os.path.join(os.curdir, "cv2", "2.7", cv2_cpu_bits_text, "cv2.pyd"), site_packages_path)
 	
 	# Install pycurl, so that we could replace the wget utility.
