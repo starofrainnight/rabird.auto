@@ -9,8 +9,8 @@ import sys
 import shutil
 import logging
 import fnmatch
-import rabird.distutils
-import rabird.logging
+import rabird.core.distutils
+import rabird.core.logging
 from setuptools import setup, find_packages
 
 try:
@@ -41,7 +41,7 @@ our_requires = [
 	
 setup(
 	name=package_name,
-	version='.'.join(map(str, (0, 0, 7))),
+	version='.'.join(map(str, (0, 1, 0))),
 	author='HongShe Liang',
 	author_email='starofrainnight@gmail.com',
 	url='',

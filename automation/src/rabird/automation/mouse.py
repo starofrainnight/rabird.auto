@@ -5,8 +5,8 @@
 import win32api, win32con, win32gui
 import time
 import datetime
-import rabird.datetime
-from rabird.enum import Enum 
+import rabird.core.datetime
+from rabird.core.enum import Enum 
 
 # button types
 class ButtonType(Enum):
@@ -95,7 +95,7 @@ def move_to( x, y, process_time = 0.25  ):
 			break
 		
 		sleep_slice_time = process_time / step_count
-		timer = rabird.datetime.StepSleeper()
+		timer = rabird.core.datetime.StepSleeper()
 		timer.start(process_time, sleep_slice_time)
 		for i in range(0,step_count):			
 			temp_x += step_x
