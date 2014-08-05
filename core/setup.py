@@ -37,7 +37,7 @@ else:
 setup(
 	name=package_name,
 	version=__version__,
-	author='HongShe Liang',
+	author='Hong-she Liang',
 	author_email='starofrainnight@gmail.com',
 	url='',
 	py_modules=[to_package],
