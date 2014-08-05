@@ -37,6 +37,7 @@ our_requires = [
 	'scipy',
 	'pil',
 	'selenium',
+	'psutil',
 	]
 	
 setup(
