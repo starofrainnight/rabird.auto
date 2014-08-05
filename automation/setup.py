@@ -13,6 +13,12 @@ import rabird.distutils
 import rabird.logging
 from setuptools import setup, find_packages
 
+try:
+	import cv2
+except:
+	print("Required module 'cv2' do not existed!")
+	exit(-1)
+
 from_package = 'src'
 to_package = 'rabird'
 package_name = 'rabird.automation'
@@ -30,7 +36,6 @@ our_requires = [
 	'numpy', 
 	'scipy',
 	'pil',
-	'cv2', 
 	'selenium',
 	]
 	
