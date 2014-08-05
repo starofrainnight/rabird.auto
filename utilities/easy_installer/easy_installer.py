@@ -42,10 +42,10 @@ def pil_get_url(version):
 	return r"http://effbot.org/downloads/PIL-%s.win32-py%s.exe" % (version, "%s.%s" % (sys.version_info[0], sys.version_info[1]))
 
 def main():
-	wget_command = "%s --no-check-cert " % os.path.realpath(os.path.join(os.curdir, 'wget', 'wget.exe')) 
+	wget_command = "%s --no-check-cert " % os.path.realpath(os.path.join(os.curdir, "wget", "wget.exe")) 
 	
-	os.environ['PATH'] = "%s;%s" % (os.environ['PATH'], os.path.join(sys.exec_prefix, 'Scripts'))
-
+	os.environ["PATH"] = "%s;%s" % (os.environ["PATH"], os.path.join(sys.exec_prefix, "Scripts"))
+	
 	requirements = {
 		"pywin32": pywin32_get_url("219"),
 		"numpy": numpy_get_url("1.8.1"),
@@ -56,7 +56,7 @@ def main():
 	os.chdir("cache")
 	
 	# Install setuptools
-	if not os.path.exists('ez_setup.py'):
+	if not os.path.exists("ez_setup.py"):
 		os.system("%s %s" % (wget_command, "https://bootstrap.pypa.io/ez_setup.py"))
 	os.system("python ez_setup.py")
 	
@@ -64,7 +64,7 @@ def main():
 	os.system("easy_install pip")
 	os.system("easy_install wheel")
 	
-	# Install cv2 2.4.9, it's a special package that need to install manually
+	# Install cv2 2.4.9, it"s a special package that need to install manually
 	if get_cpu_bits() == 32:	
 		cv2_cpu_bits_text = "x86"
 	else:
@@ -77,6 +77,9 @@ def main():
 		pass
 		
 	shutil.copy(os.path.join(os.curdir, "cv2", "2.7", cv2_cpu_bits_text, "cv2.pyd"), site_packages_path)
+	
+	# Install pycurl, so that we could replace the wget utility.
+	os.system("easy_install pycurl")
 	
 	# Install all requirements
 	
@@ -104,6 +107,15 @@ def main():
 			afile = os.path.basename(url)
 			
 		os.system(afile)
+		
+	# Install all modules.
+	modules = ["core", "automation", "gts", "proxy"]
+		
+	for module in modules:
+		module_dir = os.path.join(os.path.dirname(__file__), "..", "..", module)
+		if os.path.exists(module_dir):
+			os.chdir(module_dir)
+			os.system("setup.py install")
 
 if __name__ == "__main__":
     main()
