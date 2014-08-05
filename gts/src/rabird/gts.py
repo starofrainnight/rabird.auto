@@ -10,7 +10,7 @@ Only supported in windows.
 @date: 2012-3-30
 '''
 
-version_info = (0, 0, 0, 3)
+version_info = (0, 1, 0)
 __version__ = '.'.join(map(str, version_info))
 
 try:
@@ -26,7 +26,7 @@ try:
 	import six
 	import random
 	import os.path
-	from rabird.configparser import ConfigParser
+	from rabird.core.configparser import ConfigParser
 	
 	PIPE_ACCESS_DUPLEX = 0x3
 	PIPE_TYPE_MESSAGE = 0x4
