@@ -9,8 +9,8 @@ import sys
 import shutil
 import logging
 import fnmatch
-import src.rabird.logging as rabird_logging
-from src.rabird import __version__, distutils
+import src.rabird.core.logging as rabird_logging
+from src.rabird.core import __version__, distutils
 from setuptools import setup, find_packages
 
 from_package = 'src'
