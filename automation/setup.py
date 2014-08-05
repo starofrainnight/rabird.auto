@@ -25,7 +25,15 @@ rabird.distutils.preprocess_sources_for_compatible(from_package, os.path.realpat
 # Exclude the original source package, only accept the preprocessed package!
 our_packages = find_packages(exclude=[from_package, '{}.*'.format(from_package)])
 
-our_requires = []
+our_requires = [
+	'pyscreenshot',
+	'numpy', 
+	'scipy',
+	'pil',
+	'cv2', 
+	'selenium',
+	]
+	
 setup(
 	name=package_name,
 	version='.'.join(map(str, (0, 0, 7))),
