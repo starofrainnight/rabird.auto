@@ -11,13 +11,13 @@ import rabird.gts
 import sys
 import os
 import logging
-import rabird.logging
+import rabird.core.logging
 
 def usage():
 	print('{} [scripter name]'.format(__file__))
 
 def main():
-	rabird.logging.load_default_config()
+	rabird.core.logging.load_default_config()
 	if len(sys.argv)<2:
 		usage()
 		return -1
