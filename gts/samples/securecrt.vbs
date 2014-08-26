@@ -183,7 +183,7 @@ Sub Main
 	' Get pipe names from gts.ini that client.py generated
 	ExceptionCount = 0
 	Do While True
-		crt.Sleep 100 ' Sleep 100ms to wait for pipe open
+		crt.Sleep 500 ' Sleep 100ms to wait for pipe open
 		If fso.FileExists( "gts.ini" ) Then
 			crt.Sleep 100 ' Wait for ini file write finished
 			PipeNames(0) = IniGetValue("gts.ini", "system", "input_pipe", Empty)
@@ -192,7 +192,7 @@ Sub Main
 		End If
 		
 		ExceptionCount = ExceptionCount + 1
-		If ExceptionCount * 100 > 3000 Then ' If timeout large than 3 seconds, we exit the script.
+		If ExceptionCount * 500 > 3000 Then ' If timeout large than 3 seconds, we exit the script.
 			Exit Sub
 		End If
 	Loop
