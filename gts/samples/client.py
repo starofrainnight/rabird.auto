@@ -12,6 +12,7 @@ import sys
 import os
 import logging
 import rabird.core.logging
+from rabird.core.exceptions import *
 
 def usage():
 	print('{} [scripter name]'.format(__file__))
