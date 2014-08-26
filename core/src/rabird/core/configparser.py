@@ -103,7 +103,6 @@ class ConfigParser(configparser.ConfigParser):
 		# For example : We new a ConfigParser, then just created named section,
 		# then write it to file. 
 		if self.UNNAMED_SECTION in first_line:
-			print('%s : %s' % (first_line, len(first_line)))
 			abuffer = abuffer[len(first_line):]
 			
 			# Eat all empty lines after unnamed section
