@@ -47,7 +47,9 @@ class ConfigParser(configparser.ConfigParser):
 			configparser.ConfigParser.__init__(self, *args, **kwargs)
 			
 		# Default to case sensitive
-		self.optionxform = str
+		self.optionxform = str		
+		# Added default unnamed section 
+		self.add_section(self.UNNAMED_SECTION)
 		
 	def set(self, section, option, value):
 		if not self.has_section(section):
@@ -100,13 +102,24 @@ class ConfigParser(configparser.ConfigParser):
 		# Sometimes UNNAMED section do not existed,
 		# For example : We new a ConfigParser, then just created named section,
 		# then write it to file. 
-		if self.UNNAMED_SECTION in first_line:			
+		if self.UNNAMED_SECTION in first_line:
+			print('%s : %s' % (first_line, len(first_line)))
 			abuffer = abuffer[len(first_line):]
-		
+			
+			# Eat all empty lines after unnamed section
+			while True:
+				first_line = string_io.readline()
+				if first_line not in ['\n', '\r', '\r\n']:
+					break
+				
+				abuffer = abuffer[len(first_line):]
+						
 		# Rebuild the string io and strip spaces before and after '=' ( Avoid
 		# error happends to some strict ini format parsers )
 		string_io = StringIO.StringIO(abuffer)
 		
+		# You must notice that we use "\n" not the os.linesep, because "\n" will
+		# be converted to '\r\n' in window while file be opened with text mode!
 		abuffer = ''
 		regexp = re.compile(r'([^\[][^=]*)=(.*)')
 		while True:
@@ -114,19 +127,22 @@ class ConfigParser(configparser.ConfigParser):
 			if len(line) <= 0:
 				break
 			
+			line = line.strip()
+						
 			m = regexp.match(line)
 			if m is not None:
 				if m.group(1).startswith(self.__EMPTY_OPTION):
 					# Emtpty line
-					pass
+					abuffer += '\n'
 				elif m.group(1).startswith(self.__COMMENT_OPTION):
 					# Remove the prefix ' #', the rest is comments !
-					abuffer += m.group(2)[2:] + os.linesep
+					abuffer += '%s\n' % m.group(2)[2:]
 				else:					
-					abuffer += '%s=%s%s' % (m.group(1).strip(), m.group(2).strip(), os.linesep) 
+					abuffer += '%s=%s\n' % (m.group(1).strip(), m.group(2).strip())
 			else:
-				abuffer += line
+				# Added a line separator to end of section name line.  
+				abuffer += "%s\n" % line
 		
-		fileobject.write(abuffer)		
+		fileobject.write(abuffer.strip())		
 		
 			
