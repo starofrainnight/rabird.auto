@@ -10,7 +10,7 @@ Only supported in windows.
 @date: 2012-3-30
 '''
 
-version_info = (0, 1, 0)
+version_info = (0, 1, 1)
 __version__ = '.'.join(map(str, version_info))
 
 try:
@@ -66,10 +66,8 @@ try:
 			# All buffers need to split into command lines
 			self.__raw_buffers = collections.deque()
 			
-		def _send(self, command):
-			win32file.WriteFile(self.__output_pipe, b'#')
-			win32file.WriteFile(self.__output_pipe, six.b(command))
-			win32file.WriteFile(self.__output_pipe, b'\n')
+		def _send(self, command):			
+			win32file.WriteFile(self.__output_pipe, b'#%s\n' % command.encode('ascii'))
 	
 		def _send_begin(self):
 			result = self.__id
@@ -180,12 +178,8 @@ try:
 						return False
 			
 			# Write the channel pair to ini file in current directory
-			if os.path.exists('gts.ini'):		
-				config_file = open('gts.ini', 'r+')
-			else:
-				config_file = open('gts.ini', 'w+')
-			parser = ConfigParser()
-			parser.read(config_file)
+			config_file = open('gts.ini', 'w+')
+			parser = ConfigParser()						
 			parser.set('system', 'input_pipe', self.__pipe_names[0])
 			parser.set('system', 'output_pipe', self.__pipe_names[1])
 			parser.write(config_file)
