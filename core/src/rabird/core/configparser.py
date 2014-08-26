@@ -96,7 +96,12 @@ class ConfigParser(configparser.ConfigParser):
 		abuffer = string_io.getvalue()
 		string_io = StringIO.StringIO(abuffer)
 		# Remove unused UNNAMED section line. 
-		abuffer = abuffer[len(string_io.readline()):]
+		first_line = string_io.readline()
+		# Sometimes UNNAMED section do not existed,
+		# For example : We new a ConfigParser, then just created named section,
+		# then write it to file. 
+		if self.UNNAMED_SECTION in first_line:			
+			abuffer = abuffer[len(first_line):]
 		
 		# Rebuild the string io and strip spaces before and after '=' ( Avoid
 		# error happends to some strict ini format parsers )
