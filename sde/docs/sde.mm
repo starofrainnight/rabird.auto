@@ -1,6 +1,6 @@
 <map version="freeplane 1.3.0">
 <!--To view this file, download free mind mapping software Freeplane from http://freeplane.sourceforge.net -->
-<node TEXT="RSDE" ID="ID_1723255651" CREATED="1283093380553" MODIFIED="1410688790237"><hook NAME="MapStyle">
+<node TEXT="SDE" ID="ID_1723255651" CREATED="1283093380553" MODIFIED="1410689498276"><hook NAME="MapStyle">
 
 <map_styles>
 <stylenode LOCALIZED_TEXT="styles.root_node">
@@ -52,7 +52,7 @@
 <hook NAME="AutomaticEdgeColor" COUNTER="7"/>
 <node TEXT="Where the abbreviation comes from?" POSITION="right" ID="ID_995384807" CREATED="1403436755183" MODIFIED="1403436775252">
 <edge COLOR="#ff0000"/>
-<node TEXT="Rabird Subversion Distributed Extension" ID="ID_26963160" CREATED="1403436776044" MODIFIED="1410688799908"/>
+<node TEXT="Subversion Distributed Extension" ID="ID_26963160" CREATED="1403436776044" MODIFIED="1410689503851"/>
 </node>
 <node TEXT="Why we need another SVK ?" POSITION="right" ID="ID_911783058" CREATED="1403439194526" MODIFIED="1403439206291">
 <edge COLOR="#0000ff"/>
