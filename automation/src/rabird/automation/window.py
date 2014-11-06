@@ -10,6 +10,7 @@ Created on 2013-8-14
 
 import win32gui
 import pywintypes
+import time
 
 # WindowTextMatchMode
 (
@@ -102,7 +103,7 @@ def exists(title=None):
 	
 	return len(result) > 0
 	
-def get_handle(title=None):
+def find(title=None):
 	result = []
 	
 	if title is None:
@@ -120,6 +121,9 @@ def get_handle(title=None):
 		if 0== e.winerror:
 			# No errors, just function break from EnumWindows()
 			pass
+		elif 2 == e.winerror:
+			# No errors, just function break from EnumWindows(), in win7 x64
+			pass
 		else:
 			raise e
 	
@@ -127,6 +131,20 @@ def get_handle(title=None):
 		return result[0]
 	else:
 		return None
+	
+def wait_for(title=None, timeout=-1):
+	sleep_interval = 0.1 # 100ms wake up a time. 
+	counter = 0.0	
+	handle = None
+	while True:
+		handle = find(title)
+		if (handle is None) and (timeout > 0.0) and (counter > timeout):
+			time.sleep(sleep_interval)
+			counter += sleep_interval
+		else:
+			break
+		
+	return handle		
 		
 def is_valid(handle):
 	return win32gui.IsWindow(handle)
