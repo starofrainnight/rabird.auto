@@ -72,11 +72,11 @@ def get_option(option_name):
 	
 def get_list(parent=None):
 	windows = []
-	def enum_window_callback(hwnd, extra):
+	def enum_window_callback(hwnd, windows):
 		windows.append(hwnd)
 		return True
 	
-	win32gui.EnumChildWindows(parent, enum_window_callback, None)
+	win32gui.EnumChildWindows(parent, enum_window_callback, windows)
 	
 	return windows
 	
