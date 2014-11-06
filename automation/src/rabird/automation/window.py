@@ -52,7 +52,7 @@ def __is_title_macth(hwnd, title):
 		return (target_title == title)
 		
 	return False
-	
+
 def set_option(option_name, option_value):
 	global __options
 	
@@ -70,20 +70,20 @@ def get_option(option_name):
 		
 	return __options[option_name]
 	
-def get_list():
+def get_list(parent=None):
 	windows = []
 	def enum_window_callback(hwnd, extra):
 		windows.append(hwnd)
 		return True
 	
-	win32gui.EnumWindows(enum_window_callback, None)
+	win32gui.EnumChildWindows(parent, enum_window_callback, None)
 	
 	return windows
 	
-def exists(title=None):
-	return (find(title) is not None)
+def exists(title=None, parent=None):
+	return (find(title, parent) is not None)
 	
-def find(title=None):
+def find(title=None, parent=None):
 	result = []
 	
 	if title is None:
@@ -92,17 +92,17 @@ def find(title=None):
 	def enum_window_callback(hwnd, result):
 		if __is_title_macth(hwnd, title):
 			result.append(hwnd)
-			return False # Break EnumWindows() process 
+			return False # Break EnumChildWindows() process 
 		return True
 	
 	try:
-		win32gui.EnumWindows(enum_window_callback, result)
+		win32gui.EnumChildWindows(parent, enum_window_callback, result)
 	except pywintypes.error as e:
 		if 0== e.winerror:
-			# No errors, just function break from EnumWindows()
+			# No errors, just function break from EnumChildWindows()
 			pass
 		elif 2 == e.winerror:
-			# No errors, just function break from EnumWindows(), in win7 x64
+			# No errors, just function break from EnumChildWindows(), in win7 x64
 			pass
 		else:
 			raise e
@@ -112,12 +112,12 @@ def find(title=None):
 	else:
 		return None
 	
-def wait_for(title=None, timeout=-1):
+def wait_for(title=None, timeout=-1, parent=None):
 	sleep_interval = 0.1 # 100ms wake up a time. 
 	counter = 0.0	
 	handle = None
 	while True:
-		handle = find(title)
+		handle = find(title, parent)
 		if (handle is None) and (timeout > 0.0) and (counter > timeout):
 			time.sleep(sleep_interval)
 			counter += sleep_interval
