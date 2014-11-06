@@ -25,10 +25,13 @@ WTMM2_FROM_START, ##< Match the title from the start (default)
 WTMM2_ANY, ##< Match any substring in the title
 WTMM2_EXACT, ##< Exact title match
 ) = range(0, 3)
-
+ 
 # If you want to ignore case during search window title, just mask this
 # flag with option value.
 WTMM2_IGNORE_CASE_FLAG = 256
+
+class FindContext():
+	pass
 
 __options = dict()
 __options['WindowTextMatchMode'] = WTMM_COMPLETE
@@ -37,7 +40,6 @@ __options['WindowTitleMatchMode'] = WTMM2_FROM_START
 def __is_title_macth(hwnd, title):
 	target_title = win32gui.GetWindowText(hwnd).decode(locale.getpreferredencoding())
 	title_match_option = get_option('WindowTitleMatchMode')
-	
 	if title_match_option & WTMM2_IGNORE_CASE_FLAG:
 		target_title = target_title.lower()
 		title = title.lower()
@@ -86,18 +88,21 @@ def exists(title=None, parent=None):
 	
 def find(title=None, parent=None):
 	result = []
-	
 	if title is None:
 		return True;
 	
-	def enum_window_callback(hwnd, result):
-		if __is_title_macth(hwnd, title):
-			result.append(hwnd)
+	context = FindContext()
+	context.result = result
+	context.title = title
+	
+	def enum_window_callback(hwnd, context):
+		if __is_title_macth(hwnd, context.title):
+			context.result.append(hwnd)
 			return False # Break EnumChildWindows() process 
 		return True
 	
 	try:
-		win32gui.EnumChildWindows(parent, enum_window_callback, result)
+		win32gui.EnumChildWindows(parent, enum_window_callback, context)
 	except pywintypes.error as e:
 		if 0== e.winerror:
 			# No errors, just function break from EnumChildWindows()
