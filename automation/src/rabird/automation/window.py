@@ -81,27 +81,7 @@ def get_list():
 	return windows
 	
 def exists(title=None):
-	result = []
-	
-	if title is None:
-		return True;
-	
-	def enum_window_callback(hwnd, result):
-		if __is_title_macth(hwnd, title):
-			result.append(hwnd)
-			return False # Break EnumWindows() process 
-		return True
-	
-	try:
-		win32gui.EnumWindows(enum_window_callback, result)
-	except pywintypes.error as e:
-		if 0== e.winerror:
-			# No errors, just function break from EnumWindows()
-			pass
-		else:
-			raise e
-	
-	return len(result) > 0
+	return (find(title) is not None)
 	
 def find(title=None):
 	result = []
