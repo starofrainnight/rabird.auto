@@ -11,6 +11,7 @@ Created on 2013-8-14
 import win32gui
 import pywintypes
 import time
+import locale
 
 # WindowTextMatchMode
 (
@@ -34,7 +35,7 @@ __options['WindowTextMatchMode'] = WTMM_COMPLETE
 __options['WindowTitleMatchMode'] = WTMM2_FROM_START
 
 def __is_title_macth(hwnd, title):
-	target_title = win32gui.GetWindowText(hwnd)
+	target_title = win32gui.GetWindowText(hwnd).decode(locale.getpreferredencoding())
 	title_match_option = get_option('WindowTitleMatchMode')
 	
 	if title_match_option & WTMM2_IGNORE_CASE_FLAG:
