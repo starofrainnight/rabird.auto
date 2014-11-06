@@ -56,6 +56,19 @@ def __is_title_macth(hwnd, title):
 		
 	return False
 
+def __enum_windows(parent, callback, extra):
+	try:
+		win32gui.EnumChildWindows(parent, callback, extra)
+	except pywintypes.error as e:
+		if 0== e.winerror:
+			# No errors, just function break from EnumChildWindows()
+			pass
+		elif 2 == e.winerror:
+			# No errors, just function break from EnumChildWindows(), in win7 x64
+			pass
+		else:
+			raise e
+
 def set_option(option_name, option_value):
 	global __options
 	
@@ -79,7 +92,7 @@ def get_list(parent=None):
 		windows.append(hwnd)
 		return True
 	
-	win32gui.EnumChildWindows(parent, enum_window_callback, windows)
+	__enum_windows(parent, enum_window_callback, windows)
 	
 	return windows
 	
@@ -101,17 +114,7 @@ def find(title=None, parent=None):
 			return False # Break EnumChildWindows() process 
 		return True
 	
-	try:
-		win32gui.EnumChildWindows(parent, enum_window_callback, context)
-	except pywintypes.error as e:
-		if 0== e.winerror:
-			# No errors, just function break from EnumChildWindows()
-			pass
-		elif 2 == e.winerror:
-			# No errors, just function break from EnumChildWindows(), in win7 x64
-			pass
-		else:
-			raise e
+	__enum_windows(parent, enum_window_callback, context)
 	
 	if len(result) > 0:
 		return result[0]
