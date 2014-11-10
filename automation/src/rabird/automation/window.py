@@ -38,7 +38,7 @@ __options['WindowTextMatchMode'] = WTMM_COMPLETE
 __options['WindowTitleMatchMode'] = WTMM2_FROM_START
 
 def __is_title_macth(hwnd, title):
-	target_title = win32gui.GetWindowText(hwnd).decode(locale.getpreferredencoding())
+	target_title = get_title(hwnd)
 	title_match_option = get_option('WindowTitleMatchMode')
 	if title_match_option & WTMM2_IGNORE_CASE_FLAG:
 		target_title = target_title.lower()
@@ -85,6 +85,9 @@ def get_option(option_name):
 		raise KeyError()
 		
 	return __options[option_name]
+
+def get_title(handle):
+	return win32gui.GetWindowText(handle).decode(locale.getpreferredencoding())
 	
 def get_list(parent=None):
 	windows = []
