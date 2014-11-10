@@ -30,7 +30,7 @@ WTMM2_EXACT, ##< Exact title match
 # flag with option value.
 WTMM2_IGNORE_CASE_FLAG = 256
 
-class FindContext():
+class FindContext(object):
 	pass
 
 __options = dict()
@@ -99,20 +99,26 @@ def get_list(parent=None):
 def exists(title=None, parent=None):
 	return (find(title, parent) is not None)
 	
-def find(title=None, parent=None):
+def find(title=None, id=None, parent=None):
 	result = []
-	if title is None:
-		return True;
-	
+
 	context = FindContext()
 	context.result = result
 	context.title = title
+	context.id = id
 	
 	def enum_window_callback(hwnd, context):
-		if __is_title_macth(hwnd, context.title):
-			context.result.append(hwnd)
-			return False # Break EnumChildWindows() process 
-		return True
+		if context.title is not None:
+			if not __is_title_macth(hwnd, context.title):
+				return True
+		
+		if context.id is not None:
+			if context.id != win32gui.GetDlgCtrlID(hwnd):
+				return True
+			
+		context.result.append(hwnd)
+		
+		return False # Break EnumChildWindows() process 
 	
 	__enum_windows(parent, enum_window_callback, context)
 	
@@ -133,7 +139,10 @@ def wait_for(title=None, timeout=-1, parent=None):
 		else:
 			break
 		
-	return handle		
+	return handle	
+
+def activate(handle):
+	win32gui.SetForegroundWindow(handle)	
 		
 def is_valid(handle):
 	return win32gui.IsWindow(handle)
