@@ -8,24 +8,9 @@ import time
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.remote.command import Command 
 
-def execute_script(self, script, *args):
-    """
-    Synchronously Executes JavaScript in the current window/frame.
-
-    :Args:
-     - script: The JavaScript to execute.
-     - \*args: Any applicable arguments for your JavaScript.
-
-    :Usage:
-        driver.execute_script('document.title')
-    """
-    converted_args = list(args)
-    return self._parent.execute(Command.EXECUTE_SCRIPT,
-        {'script': script, 'args':converted_args})['value']
-        
 def set_attribute(self, name, value):
     script = "arguments[0].setAttribute('%s', '%s')"  % (name, value)
-    self._execute_script(script)
+    self._parent.execute_script(script, self)
         
 def find_elements_by_attr(self, context, attributes, max_count=-1):
     """
@@ -90,7 +75,6 @@ def force_click(self):
     global_selenium.webdriver.ActionChains(self._parent).move_to_element(self).click(self).perform()
         
 def monkey_patch():
-    WebElement._execute_script = execute_script
     WebElement.set_attribute = set_attribute
     WebElement.find_elements_by_attr = find_elements_by_attr
     WebElement.wait_element = wait_element    
