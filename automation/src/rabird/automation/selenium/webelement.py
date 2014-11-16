@@ -16,11 +16,11 @@ def set_attribute(self, name, value):
     value = value.replace("\n", r"\n") 
     value = value.replace("\r", r"\r")
     value = value.replace("\t", r"\t")  
-    script = "arguments[0].setAttribute('%s', '%s')"  % (name, value)
+    script = "arguments[0].setAttribute('%s', '%s');"  % (name, value)
     self._parent.execute_script(script, self)
 
 def force_focus(self):
-    global_selenium.webdriver.ActionChains(self._parent).move_to_element(self).perform()
+    self._parent.execute_script("arguments[0].focus();", self);
 
 def force_click(self):
     self._parent.execute_script("arguments[0].click();", self);
