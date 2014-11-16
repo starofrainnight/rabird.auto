@@ -10,4 +10,6 @@ def monkey_patch():
     WebElement.set_attribute = webelement.set_attribute
     WebElement.force_focus = webelement.force_focus    
     WebElement.force_click = webelement.force_click
+    WebElement.wait_element = webelement.wait_element
+    WebDriver.wait_element = webelement.wait_element
     
