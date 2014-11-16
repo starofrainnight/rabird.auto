@@ -37,13 +37,11 @@ class Input(BaseEditor):
         
     @property
     def text(self):
-#         return self.element.get_attribute("value")
         script = "return arguments[0].value;"
         return self.element._parent.execute_script(script, self.element)
     
     @text.setter
     def text(self, value):
-#         self.element.set_attribute("value", value)
         value = utilities.js_string_encode(value)
         script= "return arguments[0].value = '%s';" % value
         self.element._parent.execute_script(script, self.element)
@@ -59,13 +57,11 @@ class TextArea(BaseEditor):
         
     @property
     def text(self):
-#         return self.element.get_attribute("value")
         script = "return arguments[0].value;"
         return self.element._parent.execute_script(script, self.element)
     
     @text.setter
     def text(self, value):
-#         self.element.set_attribute("value", value)
         value = utilities.js_string_encode(value)
         script= "return arguments[0].value = '%s';" % value
         self.element._parent.execute_script(script, self.element)
