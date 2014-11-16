@@ -1,14 +1,21 @@
 
 #--IMPORT_ALL_FROM_FUTURE--#
 
+'''
+@date 2014-11-16
+@author Hong-she Liang <starofrainnight@gmail.com>
+'''
+
 # Import the global selenium unit, not our selenium .
 global_selenium = __import__('selenium')
 import types
 import time
-from selenium.webdriver.remote.webelement import WebElement
-from selenium.webdriver.remote.command import Command 
 
 def set_attribute(self, name, value):
+    value = value.replace(r"'", r"\'") # Replace all r"'" with r"\'"
+    value = value.replace("\n", r"\n") 
+    value = value.replace("\r", r"\r")
+    value = value.replace("\t", r"\t")  
     script = "arguments[0].setAttribute('%s', '%s')"  % (name, value)
     self._parent.execute_script(script, self)
         
@@ -74,9 +81,3 @@ def force_focus(self):
 def force_click(self):
     global_selenium.webdriver.ActionChains(self._parent).move_to_element(self).click(self).perform()
         
-def monkey_patch():
-    WebElement.set_attribute = set_attribute
-    WebElement.find_elements_by_attr = find_elements_by_attr
-    WebElement.wait_element = wait_element    
-    WebElement.force_focus = force_focus    
-    WebElement.force_click = force_click
