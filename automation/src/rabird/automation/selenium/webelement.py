@@ -10,12 +10,10 @@
 global_selenium = __import__('selenium')
 import types
 import time
+from . import utilities
 
 def set_attribute(self, name, value):
-    value = value.replace(r"'", r"\'") # Replace all r"'" with r"\'"
-    value = value.replace("\n", r"\n") 
-    value = value.replace("\r", r"\r")
-    value = value.replace("\t", r"\t")  
+    value = utilities.js_string_encode(value)
     script = "arguments[0].setAttribute('%s', '%s');"  % (name, value)
     self._parent.execute_script(script, self)
 
