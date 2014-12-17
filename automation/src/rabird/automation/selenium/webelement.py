@@ -50,4 +50,13 @@ def force_focus(self):
 
 def force_click(self):
     self._parent.execute_script("arguments[0].click();", self);
-        
+
+def _execute(self, command, params=None):
+    if hasattr(self, '_parent_frame_path'):
+        self._parent.switch_to_frame(self._parent_frame_path)
+        result = self._old_execute(command, params)
+        self._parent.switch_to_default_content()
+    else:
+        result = self._old_execute(command, params)
+
+    return result
