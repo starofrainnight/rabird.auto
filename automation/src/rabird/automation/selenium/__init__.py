@@ -26,9 +26,21 @@ def monkey_patch():
     WebElement._old_execute = WebElement._execute 
     WebElement._execute = types.MethodType(webelement._execute, None, WebElement)
 
+    WebElement._old_find_element = WebElement.find_element
+    WebElement.find_element = types.MethodType(webelement.find_element, None, WebElement)
+    
+    WebElement._old_find_elements = WebElement.find_elements
+    WebElement.find_elements = types.MethodType(webelement.find_elements, None, WebElement)
+
     WebDriver._old_switch_to_frame = WebDriver.switch_to_frame
     WebDriver.switch_to_frame = types.MethodType(webdriver.switch_to_frame, None, WebDriver)
     
-    WebDriver.wait_element = types.MethodType(webelement.wait_element, None, WebDriver)
+    WebDriver._old_find_element = WebDriver.find_element
+    WebDriver.find_element = types.MethodType(webelement.find_element, None, WebDriver)
     
+    WebDriver._old_find_elements = WebDriver.find_elements
+    WebDriver.find_elements = types.MethodType(webelement.find_elements, None, WebDriver)
+    
+    WebDriver.wait_element = types.MethodType(webelement.wait_element, None, WebDriver)
+    WebDriver.is_find_element_recursively = False
     

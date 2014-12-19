@@ -3,5 +3,7 @@
 @author: Hong-she Liang <starofrainnight@gmail.com>
 '''
 
+from selenium.common.exceptions import * 
+
 class TimeoutError(RuntimeError):
     pass
