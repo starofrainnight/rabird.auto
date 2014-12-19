@@ -56,10 +56,22 @@ def wait_element(self, by, value, for_appear=True, timeout=-1):
     return element
 
 def force_focus(self):
-    self._parent.execute_script("arguments[0].focus();", self);
+    if hasattr(self, '_parent_frame_path'):
+        self._parent.switch_to_default_content()
+        self._parent.switch_to_frame(self._parent_frame_path)
+        self._parent.execute_script("arguments[0].focus();", self);
+        self._parent.switch_to_default_content()
+    else:
+        self._parent.execute_script("arguments[0].focus();", self);
 
 def force_click(self):
-    self._parent.execute_script("arguments[0].click();", self);
+    if hasattr(self, '_parent_frame_path'):
+        self._parent.switch_to_default_content()
+        self._parent.switch_to_frame(self._parent_frame_path)
+        self._parent.execute_script("arguments[0].click();", self);
+        self._parent.switch_to_default_content()
+    else:
+        self._parent.execute_script("arguments[0].click();", self);
 
 def _execute(self, command, params=None):
     if hasattr(self, '_parent_frame_path'):
