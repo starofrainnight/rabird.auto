@@ -19,14 +19,24 @@ def set_attribute(self, name, value):
     self._parent.execute_script(script, self)
     
 def wait_element(self, by, value, for_appear=True, timeout=-1):
+    """
+    Wait until the element appear or disappear.
+    
+    @param timeout: If timeout equal to < 0, it will loop infinite. Otherwise 
+    it will loop for timeout seconds and raise a NoSuchElementException 
+    exception if can not found any element! 
+    """
+    
     elapsed_time = 0
     element = None
+    last_exception = None
     while True:        
         try:
             element = self.find_element(by=by, value=value)
             if for_appear:
                 break
-        except exceptions.NoSuchElementException:
+        except exceptions.NoSuchElementException as e:
+            last_exception = e
             if not for_appear:
                 break
         
@@ -39,7 +49,7 @@ def wait_element(self, by, value, for_appear=True, timeout=-1):
         
         elapsed_time += 1
         if elapsed_time < timeout:
-            raise exceptions.TimeoutError()
+            raise last_exception
         
         break
     

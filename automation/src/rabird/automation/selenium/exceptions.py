@@ -5,5 +5,3 @@
 
 from selenium.common.exceptions import * 
 
-class TimeoutError(RuntimeError):
-    pass
