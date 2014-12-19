@@ -8,15 +8,28 @@
 
 import types
 import time
+import functools
 from . import exceptions
 from . import utilities
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
+def _execute_with_switch_frame(self, function):
+    if hasattr(self, '_parent_frame_path'):
+        self._parent.switch_to_default_content()
+        self._parent.switch_to_frame(self._parent_frame_path)
+        result = function()
+        self._parent.switch_to_default_content()
+    else:
+        result = function()
+    return result
+
 def set_attribute(self, name, value):
     value = utilities.js_string_encode(value)
     script = "arguments[0].setAttribute('%s', '%s');"  % (name, value)
-    self._parent.execute_script(script, self)
+    function = functools.partial(self._parent.execute_script, 
+                                 script, self)
+    return _execute_with_switch_frame(self, function)
     
 def wait_element(self, by, value, for_appear=True, timeout=-1):
     """
@@ -56,33 +69,18 @@ def wait_element(self, by, value, for_appear=True, timeout=-1):
     return element
 
 def force_focus(self):
-    if hasattr(self, '_parent_frame_path'):
-        self._parent.switch_to_default_content()
-        self._parent.switch_to_frame(self._parent_frame_path)
-        self._parent.execute_script("arguments[0].focus();", self);
-        self._parent.switch_to_default_content()
-    else:
-        self._parent.execute_script("arguments[0].focus();", self);
+    function = functools.partial(self._parent.execute_script, 
+                                 "arguments[0].focus();", self)
+    _execute_with_switch_frame(self, function)
 
 def force_click(self):
-    if hasattr(self, '_parent_frame_path'):
-        self._parent.switch_to_default_content()
-        self._parent.switch_to_frame(self._parent_frame_path)
-        self._parent.execute_script("arguments[0].click();", self);
-        self._parent.switch_to_default_content()
-    else:
-        self._parent.execute_script("arguments[0].click();", self);
+    function = functools.partial(self._parent.execute_script, 
+                                 "arguments[0].click();", self)
+    _execute_with_switch_frame(self, function)
 
 def _execute(self, command, params=None):
-    if hasattr(self, '_parent_frame_path'):
-        self._parent.switch_to_default_content()
-        self._parent.switch_to_frame(self._parent_frame_path)
-        result = self._old_execute(command, params)
-        self._parent.switch_to_default_content()
-    else:
-        result = self._old_execute(command, params)
-
-    return result
+    function = functools.partial(self._old_execute, command, params)
+    return _execute_with_switch_frame(self, function)
 
 def find_element(self, by=By.ID, value=None, parent_frame_path=[]):
     if isinstance(self, WebDriver):
