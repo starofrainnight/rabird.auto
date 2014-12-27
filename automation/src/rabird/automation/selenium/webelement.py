@@ -107,7 +107,11 @@ def find_element(self, by=By.ID, value=None, parent_frame_path=[]):
         driver.switch_to_default_content()
         driver.switch_to_frame(temporary_frame_path)
         try:
-            return self.find_element(by, value, temporary_frame_path)             
+            found_element = self.find_element(by, value, temporary_frame_path)
+            # Avoid stay in the specific frame after last find_element().
+            driver.switch_to_default_content()
+            
+            return found_element
         except exceptions.NoSuchElementException as e:
             last_exception = e
             
