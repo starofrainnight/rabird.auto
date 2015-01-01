@@ -79,11 +79,13 @@ class TinyMCE(BaseEditor):
         if id_value is None:
             raise UnexpectedTagNameException("Textarea without 'id' attribute!")
         
+        is_tinymce_editor = False
         for aeditor in editors:
             if aeditor == id_value:
+                is_tinymce_editor = True
                 break
             
-        if aeditor != id_value:
+        if not is_tinymce_editor:
             raise UnexpectedTagNameException("This textarea is not an TinyMCE editor !")
         
     def get_editors(self):
