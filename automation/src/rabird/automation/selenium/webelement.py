@@ -91,6 +91,11 @@ def find_element(self, by=By.ID, value=None, parent_frame_path=[]):
     else:
         driver = self._parent
         
+        # If "self" is an element and parent_frame_path do not have any 
+        # elements, we should inhert the frame path from "self".
+        if hasattr(self, "_parent_frame_path") and (len(parent_frame_path) <= 0):
+            parent_frame_path = self._parent_frame_path
+        
     last_exception = None
     try:
         founded_element = self._old_find_element(by, value)
@@ -101,7 +106,9 @@ def find_element(self, by=By.ID, value=None, parent_frame_path=[]):
             raise e
         last_exception = e
         
-    elements = driver._old_find_elements(By.TAG_NAME, 'iframe')
+    # You must invoke self's old find elements method, so that it could search
+    # in the element not spread all over the whole HTML.
+    elements = self._old_find_elements(By.TAG_NAME, 'iframe')
     if len(elements) <= 0:
         raise last_exception
     
@@ -111,7 +118,10 @@ def find_element(self, by=By.ID, value=None, parent_frame_path=[]):
             driver.switch_to_default_content()
             driver.switch_to_frame(temporary_frame_path)
             try:
-                found_element = self.find_element(by, value, temporary_frame_path)
+                # Here must use driver to find elements, because now it already
+                # switched into the frame, so we need to search the whole frame
+                # area.
+                found_element = driver.find_element(by, value, temporary_frame_path)
                 # Avoid stay in the specific frame after last find_element().
                 return found_element
             except exceptions.NoSuchElementException as e:
@@ -128,6 +138,11 @@ def find_elements(self, by=By.ID, value=None, parent_frame_path=[]):
     else:
         driver = self._parent
         
+        # If "self" is an element and parent_frame_path do not have any 
+        # elements, we should inhert the frame path from "self".
+        if hasattr(self, "_parent_frame_path") and (len(parent_frame_path) <= 0):
+            parent_frame_path = self._parent_frame_path
+        
     founded_elements = self._old_find_elements(by, value)
     for element in founded_elements:
         element._parent_frame_path = parent_frame_path
@@ -138,7 +153,10 @@ def find_elements(self, by=By.ID, value=None, parent_frame_path=[]):
     # You must invoke old find method, do not try to invoke something
     # like find_elements_by_xxx()! There will lead function be invoke 
     # recursively infinite.
-    elements = driver._old_find_elements(By.TAG_NAME, 'iframe')
+    
+    # You must invoke self's old find elements method, so that it could search
+    # in the element not spread all over the whole HTML.
+    elements = self._old_find_elements(By.TAG_NAME, 'iframe')
     if len(elements) <= 0:
         return founded_elements
     
@@ -146,7 +164,10 @@ def find_elements(self, by=By.ID, value=None, parent_frame_path=[]):
         temporary_frame_path = parent_frame_path + [element]
         driver.switch_to_default_content()
         driver.switch_to_frame(temporary_frame_path)
-        founded_elements += self.find_elements(by, value, temporary_frame_path)
+        # Here must use driver to find elements, because now it already
+        # switched into the frame, so we need to search the whole frame
+        # area.
+        founded_elements += driver.find_elements(by, value, temporary_frame_path)
     driver.switch_to_default_content()
     
     return founded_elements
