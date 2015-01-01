@@ -102,20 +102,21 @@ def find_element(self, by=By.ID, value=None, parent_frame_path=[]):
     if len(elements) <= 0:
         raise last_exception
     
-    for element in elements:
-        temporary_frame_path = parent_frame_path + [element]
-        driver.switch_to_default_content()
-        driver.switch_to_frame(temporary_frame_path)
-        try:
-            found_element = self.find_element(by, value, temporary_frame_path)
-            # Avoid stay in the specific frame after last find_element().
+    try:
+        for element in elements:
+            temporary_frame_path = parent_frame_path + [element]
             driver.switch_to_default_content()
+            driver.switch_to_frame(temporary_frame_path)
+            try:
+                found_element = self.find_element(by, value, temporary_frame_path)
+                # Avoid stay in the specific frame after last find_element().
+                return found_element
+            except exceptions.NoSuchElementException as e:
+                last_exception = e
+    finally:
+        driver.switch_to_default_content()
             
-            return found_element
-        except exceptions.NoSuchElementException as e:
-            last_exception = e
-            
-    # Can't find any element, we raise the last exception.    
+    # Can't find any element, we raise the last exception.
     raise last_exception
 
 def find_elements(self, by=By.ID, value=None, parent_frame_path=[]):
