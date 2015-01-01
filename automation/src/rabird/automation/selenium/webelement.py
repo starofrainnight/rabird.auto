@@ -15,11 +15,14 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
 def _execute_with_switch_frame(self, function):
-    if hasattr(self, '_parent_frame_path'):
+    if  (hasattr(self, '_parent_frame_path') and 
+        (len(self._parent_frame_path) > 0)):
         self._parent.switch_to_default_content()
-        self._parent.switch_to_frame(self._parent_frame_path)
-        result = function()
-        self._parent.switch_to_default_content()
+        try:
+            self._parent.switch_to_frame(self._parent_frame_path)
+            result = function()
+        finally:
+            self._parent.switch_to_default_content()
     else:
         result = function()
     return result
