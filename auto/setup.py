@@ -21,7 +21,7 @@ except:
 
 from_package = 'src'
 to_package = 'rabird'
-package_name = 'rabird.automation'
+package_name = 'rabird.auto'
 
 rabird.core.logging.load_default_config()
 
@@ -42,7 +42,7 @@ our_requires = [
 	
 setup(
 	name=package_name,
-	version='.'.join(map(str, (0, 2, 0))),
+	version='.'.join(map(str, (0, 2, 1))),
 	author='HongShe Liang',
 	author_email='starofrainnight@gmail.com',
 	url='',
