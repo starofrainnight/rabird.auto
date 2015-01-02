@@ -34,12 +34,6 @@ def set_attribute(self, name, value):
                                  script, self)
     return _execute_with_switch_frame(self, function)
 
-def wait_element_by_xpath(self, xpath, for_appear=True, timeout=-1):
-    return wait_element(self, By.XPATH, xpath, for_appear, timeout)
-
-def wait_element_by_css_selector(self, css_selector, for_appear=True, timeout=-1):
-    return wait_element(self, By.CSS_SELECTOR, css_selector, for_appear, timeout)
-    
 def wait_element(self, by, value, for_appear=True, timeout=-1):
     """
     Wait until the element appear or disappear.
@@ -76,6 +70,24 @@ def wait_element(self, by, value, for_appear=True, timeout=-1):
         break
     
     return element
+
+def xpath_select(self, *argv, **kwarg):
+    return self.find_element(By.XPATH, *argv, **kwarg)
+
+def xpath_select_all(self, *argv, **kwarg):
+    return self.find_elements(By.XPATH, *argv, **kwarg)
+
+def xpath_wait(self, *argv, **kwarg):
+    return self.wait_element(By.XPATH, *argv, **kwarg)
+
+def css_select(self, *argv, **kwarg):
+    return self.find_element(By.CSS_SELECTOR, *argv, **kwarg)
+
+def css_select_all(self, *argv, **kwarg):
+    return self.find_elements(By.CSS_SELECTOR, *argv, **kwarg)
+
+def css_wait(self, *argv, **kwarg):
+    return self.wait_element(By.CSS_SELECTOR, *argv, **kwarg)
 
 def force_focus(self):
     function = functools.partial(self._parent.execute_script, 
