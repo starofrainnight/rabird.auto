@@ -18,8 +18,10 @@ def monkey_patch():
 
     __is_monkey_patched = True
         
-    WebElement.set_attribute = types.MethodType(webelement.set_attribute, None, WebElement) 
-    WebElement.force_focus = types.MethodType(webelement.force_focus, None, WebElement)    
+    WebElement.set_attribute = types.MethodType(webelement.set_attribute, None, WebElement)
+    WebElement.focus = types.MethodType(webelement.force_focus, None, WebElement) 
+    WebElement.force_focus = types.MethodType(webelement.force_focus, None, WebElement)
+    WebElement.click = types.MethodType(webelement.force_click, None, WebElement)
     WebElement.force_click = types.MethodType(webelement.force_click, None, WebElement)
     WebElement.wait_element = types.MethodType(webelement.wait_element, None, WebElement)
     
