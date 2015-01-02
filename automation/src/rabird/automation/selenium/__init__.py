@@ -31,6 +31,12 @@ def monkey_patch():
     
     WebElement._old_find_elements = WebElement.find_elements
     WebElement.find_elements = types.MethodType(webelement.find_elements, None, WebElement)
+    
+    WebElement.wait_element_by_css_selector = types.MethodType(webelement.wait_element_by_css_selector, None, WebElement)
+    WebDriver.wait_element_by_css_selector = types.MethodType(webelement.wait_element_by_css_selector, None, WebDriver)
+
+    WebElement.wait_element_by_xpath = types.MethodType(webelement.wait_element_by_xpath, None, WebElement)
+    WebDriver.wait_element_by_xpath = types.MethodType(webelement.wait_element_by_xpath, None, WebDriver)
 
     WebDriver._old_switch_to_frame = WebDriver.switch_to_frame
     WebDriver.switch_to_frame = types.MethodType(webdriver.switch_to_frame, None, WebDriver)

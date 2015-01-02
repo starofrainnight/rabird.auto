@@ -33,6 +33,12 @@ def set_attribute(self, name, value):
     function = functools.partial(self._parent.execute_script, 
                                  script, self)
     return _execute_with_switch_frame(self, function)
+
+def wait_element_by_xpath(self, xpath, for_appear=True, timeout=-1):
+    return wait_element(self, By.XPATH, xpath, for_appear, timeout)
+
+def wait_element_by_css_selector(self, css_selector, for_appear=True, timeout=-1):
+    return wait_element(self, By.CSS_SELECTOR, css_selector, for_appear, timeout)
     
 def wait_element(self, by, value, for_appear=True, timeout=-1):
     """
