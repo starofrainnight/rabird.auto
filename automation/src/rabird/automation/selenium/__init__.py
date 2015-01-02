@@ -19,9 +19,10 @@ def monkey_patch():
     __is_monkey_patched = True
         
     WebElement.set_attribute = types.MethodType(webelement.set_attribute, None, WebElement)
-    WebElement.focus = types.MethodType(webelement.force_focus, None, WebElement) 
     WebElement.force_focus = types.MethodType(webelement.force_focus, None, WebElement)
-    WebElement.click = types.MethodType(webelement.force_click, None, WebElement)
+    # Do not try to override the WebElement.click(), that's a different method, 
+    # it will scroll to the element then click the element, if we use 
+    # force_click() instead, it will take no effect on <option>. 
     WebElement.force_click = types.MethodType(webelement.force_click, None, WebElement)
     WebElement.wait_element = types.MethodType(webelement.wait_element, None, WebElement)
     
