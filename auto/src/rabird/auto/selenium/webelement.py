@@ -13,6 +13,7 @@ from . import exceptions
 from . import utilities
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.common.action_chains import ActionChains
 
 def _execute_with_switch_frame(self, function):
     if  (hasattr(self, '_parent_frame_path') and 
@@ -87,6 +88,14 @@ def css_select_all(self, *argv, **kwarg):
 def css_wait(self, *argv, **kwarg):
     return self.wait_element(By.CSS_SELECTOR, *argv, **kwarg)
 
+def _force_hover(self):
+    hover = ActionChains(self._parent).move_to_element(self)
+    hover.perform()
+
+def force_hover(self):
+    function = functools.partial(_force_hover, self)
+    _execute_with_switch_frame(self, function)
+    
 def force_focus(self):
     function = functools.partial(self._parent.execute_script, 
                                  "arguments[0].focus();", self)

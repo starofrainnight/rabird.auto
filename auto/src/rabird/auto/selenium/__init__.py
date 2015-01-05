@@ -24,6 +24,7 @@ def monkey_patch():
     # it will scroll to the element then click the element, if we use 
     # force_click() instead, it will take no effect on <option>. 
     WebElement.force_click = types.MethodType(webelement.force_click, None, WebElement)
+    WebElement.force_hover = types.MethodType(webelement.force_hover, None, WebElement)
     WebElement.wait_element = types.MethodType(webelement.wait_element, None, WebElement)
     
     WebElement._old_execute = WebElement._execute 
