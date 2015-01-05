@@ -35,7 +35,7 @@ our_requires = [
 	'pyscreenshot',
 	'numpy', 
 	'scipy',
-	'pil',
+	'pillow',
 	'selenium',
 	'psutil',
 	]
