@@ -8,6 +8,7 @@
 
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException, UnexpectedTagNameException
+from selenium.webdriver.support.ui import *
 from . import utilities
 
 class BaseEditor(object):

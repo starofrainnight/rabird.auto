@@ -45,7 +45,7 @@ def wait_element(self, by, value, for_appear=True, timeout=-1):
     
     elapsed_time = 0
     element = None
-    last_exception = None
+    last_exception = exceptions.NoSuchElementException()
     while True:        
         try:
             element = self.find_element(by=by, value=value)
@@ -64,11 +64,9 @@ def wait_element(self, by, value, for_appear=True, timeout=-1):
             continue
         
         elapsed_time += 1
-        if elapsed_time < timeout:
+        if elapsed_time >= timeout:
             raise last_exception
         
-        break
-    
     return element
 
 def xpath_select(self, *argv, **kwarg):
