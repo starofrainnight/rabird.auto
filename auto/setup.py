@@ -48,12 +48,11 @@ setup(
 	url='',
 	py_modules=[to_package],
 	description='%s utilities' % package_name,
-	long_description=open('README', 'r').read(),
 	classifiers=[
 		'Programming Language :: Python :: 2',
 		'Programming Language :: Python :: 3',
 		'Intended Audience :: Developers',
-		'License :: OSI Approved :: BSD License',
+		'License :: OSI Approved :: MIT License',
 		'Topic :: Software Development :: Libraries',
 		'Topic :: Utilities',
 	],
