@@ -26,31 +26,30 @@ distutils.preprocess_sources_for_compatible(from_package, os.path.realpath(os.cu
 our_packages = find_packages(exclude=[from_package, '%s.*' % from_package])
 
 our_requires = [
-	'six>=1.3.0'
-	]
+    'six>=1.3.0'
+    ]
 
 if sys.platform == "win32":
-	our_requires.append('pywin32>=218')
+    our_requires.append('pywin32>=218')
 else:
-	our_requires.append('linux-metrics')
+    our_requires.append('linux-metrics')
 
 setup(
-	name=package_name,
-	version=__version__,
-	author='Hong-she Liang',
-	author_email='starofrainnight@gmail.com',
-	url='',
-	py_modules=[to_package],
-	description='%s utilities' % package_name,
-	classifiers=[
-		'Programming Language :: Python :: 2',
-		'Programming Language :: Python :: 3',
-		'Intended Audience :: Developers',
-		'License :: OSI Approved :: MIT License',
-		'Topic :: Software Development :: Libraries',
-	],
-	install_requires=our_requires,
+    name=package_name,
+    version=__version__,
+    author='Hong-she Liang',
+    author_email='starofrainnight@gmail.com',
+    url='',
+    py_modules=[to_package],
+    description='%s utilities' % package_name,
+    classifiers=[
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 3',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: MIT License',
+        'Topic :: Software Development :: Libraries',
+    ],
+    install_requires=our_requires,
     packages=our_packages,
     namespace_packages = ['rabird'],
-	)
-
+    )
