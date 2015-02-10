@@ -41,7 +41,7 @@ setup(
     author_email='starofrainnight@gmail.com',
     url='',
     py_modules=[to_package],
-    description='%s utilities' % package_name,
+    description='A series base utilities for the whole rabird package modules.',
     classifiers=[
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 3',
