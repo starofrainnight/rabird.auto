@@ -3,6 +3,7 @@
 
 import sys
 import os
+import glob
 
 logger = __import__('logging').getLogger('rabird.core.system')
 
@@ -33,11 +34,81 @@ def get_single_argument_others():
 		
 	return result
 	
-if sys.platform == "win32" :
-	get_single_argument = get_single_argument_win32
-else:
-	get_single_argument = get_single_argument_others
-	
 def execute(command):
 	logger.info('Executing: %s' % command)
 	os.system(command)
+	
+def whereis_win32(file_name):
+	result = []
+
+	file_name = os.path.splitext(file_name)[0]
+	
+	pathexts = os.environ["PATHEXT"].split(os.pathsep)	
+	original_paths = os.environ["PATH"].split(os.pathsep)
+	
+	# Make paths unique!
+	paths = []
+	for apath in original_paths:
+		apath = os.path.normpath(apath)
+		if apath not in paths:
+			paths.append(apath)
+	
+	for apath in paths:
+		if not os.path.exists(apath):
+			continue
+		
+		if not os.path.isdir(apath):
+			continue
+		
+		if os.path.normpath(apath) != os.path.normpath(r"d:/sb/AutoIt3/"):
+			continue
+		
+		for aext in pathexts:
+			exe_paths = glob.glob(os.path.join(apath, "%s%s" % (file_name, aext)))
+			for aexe_path in exe_paths:
+				splitted = os.path.splitext(os.path.basename(apath))
+				if splitted[0].lower() != file_name.lower():
+					continue
+				
+				result.append(aexe_path)
+				
+	return result		
+		
+def whereis_unix(file_name):
+	result = []
+
+	file_name= os.path.splitext(file_name)[0]
+	original_paths = os.environ["PATH"].split(os.pathsep)
+	
+	# Make paths unique!
+	paths = []
+	for apath in original_paths:
+		apath = os.path.normpath(apath)
+		if apath not in paths:
+			paths.append(apath)
+			
+	for apath in paths:
+		if not os.path.exists(apath):
+			continue
+		
+		if not os.path.isdir(apath):
+			continue
+		
+		if (os.stat(apath).st_mode & stat.S_IXUSR) == 0:
+			continue
+		
+		splitted = os.path.splitext(os.path.basename(apath))
+		if splitted[0].lower() != file_name:
+			continue
+		
+		result.append(apath)
+				
+	return result
+		
+if sys.platform == "win32":
+	whereis = whereis_win32
+	get_single_argument = get_single_argument_win32
+else:
+	whereis = whereis_unix
+	get_single_argument = get_single_argument_others
+
