@@ -38,6 +38,9 @@ our_requires = [
 	'pillow',
 	'selenium',
 	'psutil',
+	'simplejson',
+	'lxml',
+	'webdriverplus',
 	]
 	
 setup(
