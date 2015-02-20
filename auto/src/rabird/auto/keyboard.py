@@ -15,7 +15,7 @@ import struct
 
 try:
 	# Use pywinio to emulate our keyboard if existed. 
-	from . import winio_keyboard
+	from . import keyboard_winio
 	
 	__send_method = winio_keyboard.keybd_event 
 except ImportError as e:
