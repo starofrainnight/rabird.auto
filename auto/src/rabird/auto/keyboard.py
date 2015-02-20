@@ -17,7 +17,7 @@ try:
 	# Use pywinio to emulate our keyboard if existed. 
 	from . import keyboard_winio
 	
-	__send_method = winio_keyboard.keybd_event 
+	__send_method = keyboard_winio.keybd_event 
 except ImportError as e:
 	__send_method = win32api.keybd_event
 	
