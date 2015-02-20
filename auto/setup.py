@@ -45,7 +45,7 @@ our_requires = [
 	
 setup(
 	name=package_name,
-	version='.'.join(map(str, (0, 2, 1))),
+	version='.'.join(map(str, (0, 2, 2))),
 	author='HongShe Liang',
 	author_email='starofrainnight@gmail.com',
 	url='',

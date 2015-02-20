@@ -128,7 +128,7 @@ def __send(keys, flags=0):
 					__send_method(vkcode, scancode, flags)
 				else: # press and others.
 					__send_method(vkcode, scancode, flags)
-					command_end_queue.append([vkcode, scancode, flags | win32con.KEYEVENTF_KEYUP])
+					__send_method(vkcode, scancode, flags | win32con.KEYEVENTF_KEYUP)
 			else:
 				__send(vkcode, flags)
 		
