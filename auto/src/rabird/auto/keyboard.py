@@ -11,31 +11,15 @@ Created on 2013-7-7
 import struct
 import os
 import sys
+from .keyboard_constant import *
 
 if sys.platform == "win32":
-	import win32api
-	import win32con
-	import win32gui
 	from . import keyboard_win32
 	
-	try:
-		# Use pywinio to emulate our keyboard if existed. 
-		from . import keyboard_winio
-		
-		__send_method = keyboard_winio.keybd_event
-	except ImportError as e:
-		__send_method = win32api.keybd_event
-		
+	__send_method = keyboard_win32.send
 	special_key_contexts = keyboard_win32.special_key_contexts
 	key_contexts = keyboard_win32.key_contexts
 	
-# Key Actions
-(KA_UP, 
-KA_DOWN,
-KA_PRESS,
-KA_ON,
-KA_OFF) = xrange(0, 5)
-
 __key_action_map = dict()
 __key_action_map['up'] = KA_UP
 __key_action_map['down'] = KA_DOWN
@@ -84,7 +68,7 @@ def get_solo_key_series(keys, i=0):
 			return key_series
 		elif key in special_key_contexts:
 			context = special_key_contexts[key] 
-			key_series.append([context, len(key), KA_PRESS])
+			key_series.append([context, len(key), KA_PRESS_HOLD])
 			i += len(key)
 		else:
 			context = key_contexts[key]
@@ -106,35 +90,16 @@ def __send(keys):
 			i += key_group[1]
 			action = key_group[2]
 			
-			vkcode = context[0]
-			is_holded = context[1]
-			
-			if int == type(vkcode):
-				scancode = win32api.MapVirtualKey(vkcode, 0)
-				# MAPVK_VK_TO_VSC_EX  = 4
-				extended_scancode = win32api.MapVirtualKey(vkcode, 4)
-				
-				flags = 0
-				if scancode != extended_scancode:
-					flags |= win32con.KEYEVENTF_EXTENDEDKEY
-					scancode = extended_scancode
-				
-				if is_holded:
-					__send_method(vkcode, scancode, flags)
-					command_end_queue.append([vkcode, scancode, flags | win32con.KEYEVENTF_KEYUP])
-				elif action == KA_UP:
-					__send_method(vkcode, scancode, flags | win32con.KEYEVENTF_KEYUP)
-				elif action == KA_DOWN:
-					__send_method(vkcode, scancode, flags)
-				else: # press and others.
-					__send_method(vkcode, scancode, flags)
-					__send_method(vkcode, scancode, flags | win32con.KEYEVENTF_KEYUP)
+			send_result = __send_method(action, context)
+			if send_result[0] == 0:
+				if action == KA_PRESS_HOLD:
+					command_end_queue.append([KA_UP, context])
 			else:
-				__send(vkcode)
+				__send(send_result[1])
 		
 		for command_index in xrange(len(command_end_queue) -1, -1, -1):
 			command = command_end_queue[command_index]
-			__send_method(command[0], command[1], command[2])
+			__send_method(*command)
 
 def send(keys, is_raw=False):
 	if is_raw:

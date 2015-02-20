@@ -4,6 +4,17 @@
 '''
 
 import win32con
+import win32api
+import win32gui
+from .keyboard_constant import *
+
+try:
+    # Use pywinio to emulate our keyboard if existed. 
+    from . import keyboard_winio
+    
+    __keybd_event = keyboard_winio.keybd_event
+except ImportError as e:
+    __keybd_event = win32api.keybd_event
 
 # Without keys listed below :
 #
@@ -257,3 +268,35 @@ key_contexts = {
     'Z':['+z', 0, 0],
     }
     # Other keys are pass by ord(k)
+    
+def send(action, context):
+    '''
+    @return If successed, return (0, None), otherwise return 
+    (1, Next Send Analyse Text) . 
+    '''
+    
+    vkcode = context[0]
+    is_holded = context[1]
+    
+    if int == type(vkcode):
+        scancode = win32api.MapVirtualKey(vkcode, 0)
+        # MAPVK_VK_TO_VSC_EX  = 4
+        extended_scancode = win32api.MapVirtualKey(vkcode, 4)
+        flags = 0
+        if scancode != extended_scancode:
+            flags |= win32con.KEYEVENTF_EXTENDEDKEY
+            scancode = extended_scancode
+        
+        if action == KA_PRESS_HOLD:
+            __keybd_event(vkcode, scancode, flags)
+        elif action == KA_UP:
+            __keybd_event(vkcode, scancode, flags | win32con.KEYEVENTF_KEYUP)
+        elif action == KA_DOWN:
+            __keybd_event(vkcode, scancode, flags)
+        else: # press and others.
+            __keybd_event(vkcode, scancode, flags)
+            __keybd_event(vkcode, scancode, flags | win32con.KEYEVENTF_KEYUP)
+        
+        return (0, None)
+    else:
+        return (1, vkcode)
