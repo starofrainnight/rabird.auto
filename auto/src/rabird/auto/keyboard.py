@@ -94,7 +94,7 @@ def get_solo_key_series(keys, i=0):
 		
 	return key_series
 	
-def __send(keys, flags=0):
+def __send(keys):
 	global __send_method
 	
 	i = 0
@@ -130,7 +130,7 @@ def __send(keys, flags=0):
 					__send_method(vkcode, scancode, flags)
 					__send_method(vkcode, scancode, flags | win32con.KEYEVENTF_KEYUP)
 			else:
-				__send(vkcode, flags)
+				__send(vkcode)
 		
 		for command_index in xrange(len(command_end_queue) -1, -1, -1):
 			command = command_end_queue[command_index]
