@@ -38,8 +38,8 @@ class Window(common.Window):
     def find(cls, **kwargs):
         result = []
     
-        if "found_limitation" not in kwargs:
-            kwargs["found_limitation"] = 1
+        if "is_find_all" not in kwargs:
+            kwargs["is_find_all"] = False
             
         if "parent" not in kwargs:
             kwargs["parent"] = None
@@ -57,10 +57,9 @@ class Window(common.Window):
 
             context.result.append(hwnd)
             
-            if kwargs["found_limitation"] > 0:
-                if len(result) >= kwargs["found_limitation"]:
-                    # Found all needed windows.
-                    return False # Break EnumChildWindows() process 
+            if not kwargs["is_find_all"]:
+                # Find only one window.
+                return False # Break EnumChildWindows() process 
             
             return True
         
