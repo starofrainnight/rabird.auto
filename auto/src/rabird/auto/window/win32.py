@@ -41,8 +41,8 @@ class Window(common.Window):
         return windows
     
     @classmethod
-    def exists(cls, *args, **kwargs):
-        return (cls.find(*args, **kwargs) is not None)
+    def exists(cls, **kwargs):
+        return (cls.find(**kwargs) is not None)
     
     @classmethod
     def find(cls, title=None, id=None, parent=None):
@@ -74,12 +74,12 @@ class Window(common.Window):
             return None
     
     @classmethod
-    def wait(cls, timeout=-1.0, *args, **kwargs):
+    def wait(cls, timeout=-1.0, **kwargs):
         sleep_interval = 0.1 # 100ms wake up a time. 
         counter = 0.0    
         handle = None
         while True:
-            handle = cls.find(*args, **kwargs)
+            handle = cls.find(**kwargs)
             if (handle is None) and (timeout > 0.0) and (counter > timeout):
                 time.sleep(sleep_interval)
                 counter += sleep_interval
