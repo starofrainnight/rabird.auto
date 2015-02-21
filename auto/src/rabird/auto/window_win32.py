@@ -68,7 +68,7 @@ def find(title=None, id=None, parent=None):
     else:
         return None
     
-def wait_for(title=None, timeout=-1, parent=None):
+def wait(title=None, timeout=-1, parent=None):
     sleep_interval = 0.1 # 100ms wake up a time. 
     counter = 0.0    
     handle = None
