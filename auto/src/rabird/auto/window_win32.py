@@ -85,5 +85,3 @@ def wait(title=None, timeout=-1, parent=None):
 def activate(handle):
     win32gui.SetForegroundWindow(handle)    
         
-def is_valid(handle):
-    return win32gui.IsWindow(handle)
