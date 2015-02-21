@@ -45,7 +45,7 @@ class Window(common.Window):
         return (cls.find(**kwargs) is not None)
     
     @classmethod
-    def find(cls, title=None, id=None, parent=None):
+    def find(cls, title=None, id=None, parent=None, found_limitation=1):
         result = []
     
         context = common.FindContext()
@@ -55,7 +55,7 @@ class Window(common.Window):
         
         def enum_window_callback(hwnd, context):
             if context.title is not None:
-                if re.match(context.title, cls.get_title(hwnd)) is not None:
+                if re.match(context.title, cls.get_title(hwnd)) is None:
                     return True
             
             if context.id is not None:
