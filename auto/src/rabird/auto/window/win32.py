@@ -29,6 +29,7 @@ class Window(common.Window):
     def get_title(cls, handle):
         return win32gui.GetWindowText(handle).decode(locale.getpreferredencoding())
     
+    
     @classmethod
     def exists(cls, **kwargs):
         return len(cls.find(**kwargs)) > 0
@@ -73,8 +74,8 @@ class Window(common.Window):
         counter = 0.0    
         handle = None
         while True:
-            handle = cls.find(**kwargs)
-            if (handle is None) and (timeout > 0.0) and (counter > timeout):
+            handles = cls.find(**kwargs)
+            if (len(handles) <= 0) and (timeout > 0.0) and (counter > timeout):
                 time.sleep(sleep_interval)
                 counter += sleep_interval
             else:
