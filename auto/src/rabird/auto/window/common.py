@@ -9,6 +9,8 @@ class FindContext(object):
 
 __options = dict()
 
+class Window(object):
+    pass
 
 def set_option(option_name, option_value):
     global __options

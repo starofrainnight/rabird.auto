@@ -8,7 +8,7 @@ import pywintypes
 import time
 import locale
 import re
-from .common import *
+from . import common
 
 def __enum_windows(parent, callback, extra):
     try:
@@ -23,65 +23,72 @@ def __enum_windows(parent, callback, extra):
         else:
             raise e
 
-
-def get_title(handle):
-    return win32gui.GetWindowText(handle).decode(locale.getpreferredencoding())
+class Window(common.Window):
     
-def get_list(parent=None):
-    windows = []
-    def enum_window_callback(hwnd, windows):
-        windows.append(hwnd)
-        return True
+    @classmethod
+    def get_title(cls, handle):
+        return win32gui.GetWindowText(handle).decode(locale.getpreferredencoding())
     
-    __enum_windows(parent, enum_window_callback, windows)
-    
-    return windows
-    
-def exists(title=None, parent=None):
-    return (find(title, parent) is not None)
-    
-def find(title=None, id=None, parent=None):
-    result = []
-
-    context = FindContext()
-    context.result = result
-    context.title = title
-    context.id = id
-    
-    def enum_window_callback(hwnd, context):
-        if context.title is not None:
-            if re.match(context.title, get_title(hwnd)) is not None:
-                return True
+    @classmethod
+    def get_list(cls, parent=None):
+        windows = []
+        def enum_window_callback(hwnd, windows):
+            windows.append(hwnd)
+            return True
         
-        if context.id is not None:
-            if context.id != win32gui.GetDlgCtrlID(hwnd):
-                return True
+        __enum_windows(parent, enum_window_callback, windows)
+        
+        return windows
+    
+    @classmethod
+    def exists(cls, title=None, parent=None):
+        return (cls.find(title, parent) is not None)
+    
+    @classmethod
+    def find(cls, title=None, id=None, parent=None):
+        result = []
+    
+        context = common.FindContext()
+        context.result = result
+        context.title = title
+        context.id = id
+        
+        def enum_window_callback(hwnd, context):
+            if context.title is not None:
+                if re.match(context.title, cls.get_title(hwnd)) is not None:
+                    return True
             
-        context.result.append(hwnd)
+            if context.id is not None:
+                if context.id != win32gui.GetDlgCtrlID(hwnd):
+                    return True
+                
+            context.result.append(hwnd)
+            
+            return False # Break EnumChildWindows() process 
         
-        return False # Break EnumChildWindows() process 
-    
-    __enum_windows(parent, enum_window_callback, context)
-    
-    if len(result) > 0:
-        return result[0]
-    else:
-        return None
-    
-def wait(title=None, timeout=-1, parent=None):
-    sleep_interval = 0.1 # 100ms wake up a time. 
-    counter = 0.0    
-    handle = None
-    while True:
-        handle = find(title, parent)
-        if (handle is None) and (timeout > 0.0) and (counter > timeout):
-            time.sleep(sleep_interval)
-            counter += sleep_interval
+        __enum_windows(parent, enum_window_callback, context)
+        
+        if len(result) > 0:
+            return result[0]
         else:
-            break
-        
-    return handle    
-
-def activate(handle):
-    win32gui.SetForegroundWindow(handle)    
+            return None
+    
+    @classmethod
+    def wait(cls, title=None, timeout=-1, parent=None):
+        sleep_interval = 0.1 # 100ms wake up a time. 
+        counter = 0.0    
+        handle = None
+        while True:
+            handle = cls.find(title, parent)
+            if (handle is None) and (timeout > 0.0) and (counter > timeout):
+                time.sleep(sleep_interval)
+                counter += sleep_interval
+            else:
+                break
+            
+        return handle    
+    
+    @classmethod
+    def activate(cls, handle):
+        win32gui.SetForegroundWindow(handle)    
         
