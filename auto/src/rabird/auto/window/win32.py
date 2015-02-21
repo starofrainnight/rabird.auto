@@ -36,14 +36,8 @@ class Window(common.Window):
     
     @classmethod
     def find(cls, **kwargs):
-        result = []
+        result = super(Window, cls).find(**kwargs)
     
-        if "is_find_all" not in kwargs:
-            kwargs["is_find_all"] = False
-            
-        if "parent" not in kwargs:
-            kwargs["parent"] = None
-        
         def enum_window_callback(hwnd, context):
             result, kwargs = context
             
@@ -55,32 +49,17 @@ class Window(common.Window):
                 if kwargs["id"] != win32gui.GetDlgCtrlID(hwnd):
                     return True
 
-            context.result.append(hwnd)
+            result.append(hwnd)
             
-            if not kwargs["is_find_all"]:
-                # Find only one window.
-                return False # Break EnumChildWindows() process 
+            if kwargs["find_count"] > 0:
+                if len(result) >= kwargs["find_count"]:
+                    return False # Break EnumChildWindows() process 
             
             return True
         
         __enum_windows(kwargs["parent"], enum_window_callback, [result, kwargs])
         
         return result
-    
-    @classmethod
-    def wait(cls, timeout=-1.0, **kwargs):
-        sleep_interval = 0.1 # 100ms wake up a time. 
-        counter = 0.0    
-        handle = None
-        while True:
-            handles = cls.find(**kwargs)
-            if (len(handles) <= 0) and (timeout > 0.0) and (counter > timeout):
-                time.sleep(sleep_interval)
-                counter += sleep_interval
-            else:
-                break
-            
-        return handle    
     
     @classmethod
     def activate(cls, handle):
