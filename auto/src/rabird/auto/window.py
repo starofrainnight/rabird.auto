@@ -1,7 +1,6 @@
 '''
-Created on 2013-8-14
-
-@author: "HongShe Liang <starofrainnight@gmail.com>"
+@date 2013-8-14
+@author HongShe Liang <starofrainnight@gmail.com>
 '''
 
 # -*- coding: UTF-8 -*-
@@ -13,11 +12,7 @@ import pywintypes
 import time
 import locale
 import re
-
-class FindContext(object):
-	pass
-
-__options = dict()
+from .window_constant import *
 
 def __enum_windows(parent, callback, extra):
 	try:
@@ -32,22 +27,6 @@ def __enum_windows(parent, callback, extra):
 		else:
 			raise e
 
-def set_option(option_name, option_value):
-	global __options
-	
-	if option_name not in __options:
-		raise KeyError()
-		
-	__options[option_name] = option_value
-	
-	
-def get_option(option_name):
-	global __options
-	
-	if option_name not in __options:
-		raise KeyError()
-		
-	return __options[option_name]
 
 def get_title(handle):
 	return win32gui.GetWindowText(handle).decode(locale.getpreferredencoding())
