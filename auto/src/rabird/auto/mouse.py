@@ -2,23 +2,14 @@
 
 #--IMPORT_ALL_FROM_FUTURE--#
 
-import win32api, win32con, win32gui
 import time
 import datetime
 import rabird.core.datetime
+import sys
 from .mouse_constant import *
 
-##
-# send event to system 
-#
-# @param event_id see win32con.MOUSEEVENTF_XXX or search in MSDN
-# @param event_data: only related to wheel event and xbutton up / down 
-def send_event( event_id, event_data = 0 ):
-	win32api.mouse_event( event_id, 0, 0, event_data )
-
-## return current mouse absolute position
-def position():
-	return win32api.GetCursorPos()
+if sys.platform == "win32":
+	from .mouse_win32 import Mouse
 
 ## move to target position 
 # @param x: 
@@ -27,7 +18,7 @@ def position():
 # mouse move operation. Default to 0.25 second
 def move_to( x, y, process_time = 0.25  ):
 	while 0 <= process_time  :
-		start_pos = position()
+		start_pos = Mouse.position()
 		start_x = start_pos[0]
 		start_y = start_pos[1]
 		
@@ -79,42 +70,19 @@ def move_to( x, y, process_time = 0.25  ):
 		for i in range(0,step_count):			
 			temp_x += step_x
 			temp_y += step_y
-			win32api.SetCursorPos( [int(temp_x), int(temp_y)] )
+			Mouse.move([int(temp_x), int(temp_y)])
 			timer.step()
 		timer.stop()
 		
 		break # We must break the while!
 		
 	# anyway, we will move the mouse to correct position
-	win32api.SetCursorPos( [x, y] )
+	Mouse.move(x, y)
 	time.sleep( 0.001 )
 
-##  
-def button_up( button_type = ButtonType.LEFT ):
-	if ButtonType.LEFT == button_type:
-		send_event( win32con.MOUSEEVENTF_LEFTUP )
-	elif ButtonType.RIGHT == button_type:
-		send_event( win32con.MOUSEEVENTF_RIGHTUP )
-	elif ButtonType.MIDDLE == button_type:
-		send_event( win32con.MOUSEEVENTF_MIDDLEUP )
-		
-def button_down( button_type = ButtonType.LEFT ):
-	if ButtonType.LEFT == button_type:
-		send_event( win32con.MOUSEEVENTF_LEFTDOWN )
-	elif ButtonType.RIGHT == button_type:
-		send_event( win32con.MOUSEEVENTF_RIGHTDOWN )
-	elif ButtonType.MIDDLE == button_type:
-		send_event( win32con.MOUSEEVENTF_MIDDLEDOWN )
-		
 def click( button_type = ButtonType.LEFT, clicks = 1 ):
-	
-	if clicks > 1:
-		double_click_time = float(win32gui.GetDoubleClickTime()) / 2000
-	else:
-		double_click_time = 0 
-	
 	for i in xrange(0, clicks):
-		button_down( button_type )
-		time.sleep( options.click_down_delay )
-		button_up( button_type )
-		time.sleep(double_click_time)
+		Mouse.button_down( button_type )
+		time.sleep(options.click_down_delay)
+		Mouse.button_up( button_type )
+		time.sleep(options.click_down_delay)
