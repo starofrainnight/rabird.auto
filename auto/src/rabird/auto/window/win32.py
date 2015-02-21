@@ -8,7 +8,7 @@ import pywintypes
 import time
 import locale
 import re
-from .constant import *
+from .common import *
 
 def __enum_windows(parent, callback, extra):
     try:
