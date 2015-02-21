@@ -10,6 +10,8 @@ from .mouse_constant import *
 
 if sys.platform == "win32":
 	from .mouse_win32 import Mouse
+else:
+	from .mouse_xdotool import Mouse
 
 ## move to target position 
 # @param x: 
