@@ -12,6 +12,7 @@ import win32gui
 import pywintypes
 import time
 import locale
+import re
 
 # WindowTextMatchMode
 (
@@ -25,7 +26,7 @@ WTMM2_FROM_START, ##< Match the title from the start (default)
 WTMM2_ANY, ##< Match any substring in the title
 WTMM2_EXACT, ##< Exact title match
 ) = range(0, 3)
- 
+
 # If you want to ignore case during search window title, just mask this
 # flag with option value.
 WTMM2_IGNORE_CASE_FLAG = 256
@@ -36,25 +37,6 @@ class FindContext(object):
 __options = dict()
 __options['WindowTextMatchMode'] = WTMM_COMPLETE
 __options['WindowTitleMatchMode'] = WTMM2_FROM_START
-
-def __is_title_macth(hwnd, title):
-	target_title = get_title(hwnd)
-	title_match_option = get_option('WindowTitleMatchMode')
-	if title_match_option & WTMM2_IGNORE_CASE_FLAG:
-		target_title = target_title.lower()
-		title = title.lower()
-	
-	# Extrac only the option value, excluded all flags	
-	title_match_option = title_match_option & 0xff
-	
-	if title_match_option == WTMM2_FROM_START:
-		return target_title.startswith(title)
-	elif title_match_option == WTMM2_ANY:
-		return (title in target_title)
-	elif title_match_option == WTMM2_EXACT:
-		return (target_title == title)
-		
-	return False
 
 def __enum_windows(parent, callback, extra):
 	try:
@@ -112,7 +94,7 @@ def find(title=None, id=None, parent=None):
 	
 	def enum_window_callback(hwnd, context):
 		if context.title is not None:
-			if not __is_title_macth(hwnd, context.title):
+			if re.match(context.title, get_title(hwnd)) is not None:
 				return True
 		
 		if context.id is not None:
