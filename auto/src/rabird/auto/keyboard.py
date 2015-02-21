@@ -19,6 +19,12 @@ if sys.platform == "win32":
 	__send_method = keyboard_win32.send
 	special_key_contexts = keyboard_win32.special_key_contexts
 	key_contexts = keyboard_win32.key_contexts
+else:
+	from . import keyboard_xdotool
+	
+	__send_method = keyboard_xdotool.send
+	special_key_contexts = keyboard_xdotool.special_key_contexts
+	key_contexts = keyboard_xdotool.key_contexts 
 	
 __key_action_map = dict()
 __key_action_map['up'] = KA_UP
