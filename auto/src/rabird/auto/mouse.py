@@ -18,7 +18,10 @@ else:
 # @param y:
 # @param process_time: How much seconds you want to process the whole
 # mouse move operation. Default to 0.25 second
-def move( x, y, process_time = 0.25  ):
+def move(position, process_time = 0.25  ):
+	x = position[0]
+	y = position[1]
+	
 	while 0 <= process_time  :
 		start_pos = Mouse.position()
 		start_x = start_pos[0]
@@ -79,7 +82,7 @@ def move( x, y, process_time = 0.25  ):
 		break # We must break the while!
 		
 	# anyway, we will move the mouse to correct position
-	Mouse.move([x, y])
+	Mouse.move(position)
 	time.sleep( 0.001 )
 
 def click( button_type = ButtonType.LEFT, clicks = 1 ):
