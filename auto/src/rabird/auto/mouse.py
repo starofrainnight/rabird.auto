@@ -79,7 +79,7 @@ def move_to( x, y, process_time = 0.25  ):
 		break # We must break the while!
 		
 	# anyway, we will move the mouse to correct position
-	Mouse.move(x, y)
+	Mouse.move([x, y])
 	time.sleep( 0.001 )
 
 def click( button_type = ButtonType.LEFT, clicks = 1 ):
