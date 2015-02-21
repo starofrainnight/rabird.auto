@@ -10,4 +10,4 @@
 import sys
 
 if sys.platform == "win32":
-	from .window_win32 import *
+	from .win32 import *
