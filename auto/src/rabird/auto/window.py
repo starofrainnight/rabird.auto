@@ -14,29 +14,10 @@ import time
 import locale
 import re
 
-# WindowTextMatchMode
-(
-WTMM_COMPLETE, ##< Complete / Slow mode (default)
-WTMM_QUICK, ##< Quick mode 
-) = range(0, 2)
-
-# WindowTitleMatchMode
-(
-WTMM2_FROM_START, ##< Match the title from the start (default)
-WTMM2_ANY, ##< Match any substring in the title
-WTMM2_EXACT, ##< Exact title match
-) = range(0, 3)
-
-# If you want to ignore case during search window title, just mask this
-# flag with option value.
-WTMM2_IGNORE_CASE_FLAG = 256
-
 class FindContext(object):
 	pass
 
 __options = dict()
-__options['WindowTextMatchMode'] = WTMM_COMPLETE
-__options['WindowTitleMatchMode'] = WTMM2_FROM_START
 
 def __enum_windows(parent, callback, extra):
 	try:
