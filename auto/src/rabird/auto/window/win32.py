@@ -30,48 +30,42 @@ class Window(common.Window):
         return win32gui.GetWindowText(handle).decode(locale.getpreferredencoding())
     
     @classmethod
-    def get_list(cls, parent=None):
-        windows = []
-        def enum_window_callback(hwnd, windows):
-            windows.append(hwnd)
-            return True
-        
-        __enum_windows(parent, enum_window_callback, windows)
-        
-        return windows
-    
-    @classmethod
     def exists(cls, **kwargs):
-        return (cls.find(**kwargs) is not None)
+        return len(cls.find(**kwargs)) > 0
     
     @classmethod
-    def find(cls, title=None, id=None, parent=None, found_limitation=1):
+    def find(cls, **kwargs):
         result = []
     
-        context = common.FindContext()
-        context.result = result
-        context.title = title
-        context.id = id
+        if "found_limitation" not in kwargs:
+            kwargs["found_limitation"] = 1
+            
+        if "parent" not in kwargs:
+            kwargs["parent"] = None
         
         def enum_window_callback(hwnd, context):
-            if context.title is not None:
-                if re.match(context.title, cls.get_title(hwnd)) is None:
+            result, kwargs = context
+            
+            if "title" in kwargs:
+                if re.match(kwargs["title"], cls.get_title(hwnd)) is None:
                     return True
             
-            if context.id is not None:
-                if context.id != win32gui.GetDlgCtrlID(hwnd):
+            if "id" in kwargs:
+                if kwargs["id"] != win32gui.GetDlgCtrlID(hwnd):
                     return True
-                
+
             context.result.append(hwnd)
             
-            return False # Break EnumChildWindows() process 
+            if kwargs["found_limitation"] > 0:
+                if len(result) >= kwargs["found_limitation"]:
+                    # Found all needed windows.
+                    return False # Break EnumChildWindows() process 
+            
+            return True
         
-        __enum_windows(parent, enum_window_callback, context)
+        __enum_windows(kwargs["parent"], enum_window_callback, [result, kwargs])
         
-        if len(result) > 0:
-            return result[0]
-        else:
-            return None
+        return result
     
     @classmethod
     def wait(cls, timeout=-1.0, **kwargs):
