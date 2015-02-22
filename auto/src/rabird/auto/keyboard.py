@@ -3,9 +3,8 @@
 #--IMPORT_ALL_FROM_FUTURE--#
 
 '''
-Created on 2013-7-7
-
-@author: "HongShe Liang <starofrainnight@gmail.com>"
+@date 2013-7-7
+@author Hong-She Liang <starofrainnight@gmail.com>
 '''
 
 import struct
