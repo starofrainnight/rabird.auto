@@ -32,8 +32,8 @@ class Window(common.Window):
     @property
     def title(self):
         text = win32gui.GetWindowText(self.__handle)
-        return text.decode(locale.getpreferredencoding())    
-        
+        return text.decode(locale.getpreferredencoding())
+    
     def raise_(self):
         win32gui.SetForegroundWindow(self.__handle)
         
@@ -41,6 +41,10 @@ class Manager(common.Manager):
     
     def __init__(self):
         super(Manager, self).__init__()
+    
+    @property
+    def active_window(self):
+        return Window(win32gui.GetActiveWindow())
     
     def find(self, **kwargs):
         result = super(Manager, self).find(**kwargs)

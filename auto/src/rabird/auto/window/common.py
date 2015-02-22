@@ -9,22 +9,26 @@ class Window(object):
     def __init__(self):
         pass
     
-    def raise_(self):
-        '''
-        Raise the window to top most .
-        '''
-        raise NotImplemented()
-    
     @property
     def title(self):
         '''
         Get the window's title.
         '''
         raise NotImplemented()
+    
+    def raise_(self):
+        '''
+        Raise the window to top most .
+        '''
+        raise NotImplemented()
 
 class Manager(object):
     def __init__(self):
         self.__options = dict()
+        
+    @property
+    def active_window(self):
+        raise NotImplemented()
         
     def set_option(self, option_name, option_value):
         if option_name not in self.__options:
@@ -63,4 +67,4 @@ class Manager(object):
                 break
             
         return handles    
-
+    
