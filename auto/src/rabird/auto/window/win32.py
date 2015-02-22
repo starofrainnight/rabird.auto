@@ -70,8 +70,8 @@ class Manager(common.Manager):
                 if re.match(kwargs["title"], window.title) is None:
                     return True
             
-            if "id" in kwargs:
-                if kwargs["id"] != win32gui.GetDlgCtrlID(hwnd):
+            if "win32_control_id" in kwargs:
+                if int(kwargs["win32_control_id"]) != win32gui.GetDlgCtrlID(hwnd):
                     return True
 
             result.append(window)
