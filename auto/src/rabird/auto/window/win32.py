@@ -31,10 +31,6 @@ class Window(common.Window):
     
     
     @classmethod
-    def exists(cls, **kwargs):
-        return len(cls.find(**kwargs)) > 0
-    
-    @classmethod
     def find(cls, **kwargs):
         result = super(Window, cls).find(**kwargs)
     

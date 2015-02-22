@@ -19,6 +19,10 @@ class Window(object):
         return []
     
     @classmethod
+    def exists(cls, **kwargs):
+        return len(cls.find(**kwargs)) > 0
+    
+    @classmethod
     def wait(cls, timeout=-1.0, **kwargs):
         sleep_interval = 0.1 # 100ms wake up a time. 
         counter = 0.0    
