@@ -22,30 +22,42 @@ def __enum_windows(parent, callback, extra):
             pass
         else:
             raise e
-
+        
+class Window(common.Window):
+    def __init__(self, handle):
+        super(Window, self).__init__()
+        
+        self.__handle = handle
+        
+    @property
+    def title(self):
+        text = win32gui.GetWindowText(self.__handle)
+        return text.decode(locale.getpreferredencoding())    
+        
+    def raise_(self):
+        win32gui.SetForegroundWindow(self.__handle)
+        
 class Manager(common.Manager):
     
     def __init__(self):
         super(Manager, self).__init__()
-    
-    def get_title(self, handle):
-        return win32gui.GetWindowText(handle).decode(locale.getpreferredencoding())
     
     def find(self, **kwargs):
         result = super(Manager, self).find(**kwargs)
     
         def enum_window_callback(hwnd, context):
             result, kwargs = context
+            window = Window(hwnd)
             
             if "title" in kwargs:
-                if re.match(kwargs["title"], self.get_title(hwnd)) is None:
+                if re.match(kwargs["title"], window.title) is None:
                     return True
             
             if "id" in kwargs:
                 if kwargs["id"] != win32gui.GetDlgCtrlID(hwnd):
                     return True
 
-            result.append(hwnd)
+            result.append(window)
             
             if kwargs["find_count"] > 0:
                 if len(result) >= kwargs["find_count"]:
@@ -57,9 +69,4 @@ class Manager(common.Manager):
         
         return result
     
-    def raise_(self, handle):
-        '''
-        Raise the window to top most .
-        '''
-        win32gui.SetForegroundWindow(handle)
         

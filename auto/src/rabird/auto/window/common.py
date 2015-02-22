@@ -5,6 +5,23 @@
 
 import time
 
+class Window(object):
+    def __init__(self):
+        pass
+    
+    def raise_(self):
+        '''
+        Raise the window to top most .
+        '''
+        raise NotImplemented()
+    
+    @property
+    def title(self):
+        '''
+        Get the window's title.
+        '''
+        raise NotImplemented()
+
 class Manager(object):
     def __init__(self):
         self.__options = dict()
@@ -13,8 +30,7 @@ class Manager(object):
         if option_name not in self.__options:
             raise KeyError()
             
-        self.__options[option_name] = option_value
-        
+        self.__options[option_name] = option_value        
         
     def get_option(self, option_name):
         if option_name not in self.__options:
