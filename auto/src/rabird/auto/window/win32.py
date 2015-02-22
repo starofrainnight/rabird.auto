@@ -35,6 +35,11 @@ class Window(common.Window):
         return text.decode(locale.getpreferredencoding())
     
     @property
+    def class_name(self):
+        text = win32gui.GetClassName(self.__handle)
+        return text.decode(locale.getpreferredencoding())
+    
+    @property
     def geometry(self):
         # FIXME : While the window minimized, here return a wrong
         # result. 
@@ -67,12 +72,16 @@ class Manager(common.Manager):
             window = Window(hwnd)
             
             if "title" in kwargs:
-                if re.match(kwargs["title"], window.title) is None:
+                if re.match(str(kwargs["title"]), window.title) is None:
                     return True
             
             if "win32_control_id" in kwargs:
                 if int(kwargs["win32_control_id"]) != win32gui.GetDlgCtrlID(hwnd):
                     return True
+                
+            if "class_name" in kwargs:
+                if re.match(str(kwargs["class_name"]), window.class_name) is None:
+                    return True 
 
             result.append(window)
             

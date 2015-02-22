@@ -53,10 +53,13 @@ class Manager(common.Manager):
         command.append("--sync")
         
         if "title" in kwargs:
-            command += ["--name", kwargs["title"]]
+            command += ["--name", str(kwargs["title"])]
 
         if kwargs["limit"] > 0:
             command += ["--limit", str(kwargs["limit"])]
+            
+        if "class_name" in kwargs:
+            command += ["--classname", str(kwargs["class_name"])]
             
         output = subprocess.call(command)
         window_ids = re.findall("\d+", output, re.M)

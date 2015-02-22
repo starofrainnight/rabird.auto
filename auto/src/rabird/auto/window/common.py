@@ -17,6 +17,13 @@ class Window(object):
         raise NotImplemented()
     
     @property
+    def class_name(self):
+        '''
+        Get the window's class name.
+        '''
+        raise NotImplemented()
+    
+    @property
     def geometry(self):
         '''
         Get the window geometry.
