@@ -55,8 +55,8 @@ class Manager(common.Manager):
         if "title" in kwargs:
             command += ["--name", kwargs["title"]]
 
-        if kwargs["find_count"] > 0:
-            command += ["--limit", str(kwargs["find_count"])]
+        if kwargs["limit"] > 0:
+            command += ["--limit", str(kwargs["limit"])]
             
         output = subprocess.call(command)
         window_ids = re.findall("\d+", output, re.M)

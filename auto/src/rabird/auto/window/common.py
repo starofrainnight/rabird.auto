@@ -64,8 +64,8 @@ class Manager(object):
         return self.__options[option_name]
     
     def find(self, **kwargs):
-        if "find_count" not in kwargs:
-            kwargs["find_count"] = 1
+        if "limit" not in kwargs:
+            kwargs["limit"] = 1
             
         if "parent" not in kwargs:
             kwargs["parent"] = None

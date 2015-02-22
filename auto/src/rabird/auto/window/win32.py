@@ -76,8 +76,8 @@ class Manager(common.Manager):
 
             result.append(window)
             
-            if kwargs["find_count"] > 0:
-                if len(result) >= kwargs["find_count"]:
+            if kwargs["limit"] > 0:
+                if len(result) >= kwargs["limit"]:
                     return False # Break EnumChildWindows() process 
             
             return True
