@@ -11,7 +11,7 @@ class Window(common.Window):
     def __init__(self, handle):
         super(Window, self).__init__()
         
-        self.__handle = handle
+        self.__handle = int(handle)
         
     @property
     def title(self):
@@ -55,17 +55,38 @@ class Manager(common.Manager):
         command.append("--all")
         command.append("--sync")
         
-        if "title" in kwargs:
-            command += ["--name", str(kwargs["title"])]
-
-        if kwargs["limit"] > 0:
-            command += ["--limit", str(kwargs["limit"])]
-            
-        if "class_name" in kwargs:
+        if ("class_name" in kwargs) and ("title" in kwargs):
+            # Seems xdotool can't work if class name and title 
+            # at the sametime. So we search by ourself.
             command += ["--classname", str(kwargs["class_name"])]
             
-        output = subprocess.call(command)
-        window_ids = re.findall("\d+", output, re.M)
-        result += [int(window_id) for window_id in window_ids] 
+            output = subprocess.check_output(command)
+            window_ids = re.findall("\d+", output, re.M)
+            window_ids = [int(window_id) for window_id in window_ids]
+            
+            for window_id in window_ids:
+                window = Window(window_id)
+                if re.match(str(kwargs["title"]), window.title) is None:
+                    continue
+    
+                result.append(window)
+                
+                if kwargs["limit"] > 0:
+                    if len(result) >= kwargs["limit"]:
+                        break 
+        else:
+            if kwargs["limit"] > 0:
+                command += ["--limit", str(kwargs["limit"])]
+
+            if "title" in kwargs:
+                command += ["--name", str(kwargs["title"])]
+                
+            if "class_name" in kwargs:
+                command += ["--classname", str(kwargs["class_name"])]
+            
+            output = subprocess.check_output(command)
+            window_ids = re.findall("\d+", output, re.M)
+            result += [Window(int(window_id)) for window_id in window_ids] 
         
         return result
+    
