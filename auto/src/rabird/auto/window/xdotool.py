@@ -6,6 +6,7 @@
 import re
 import subprocess
 from . import common
+from ..mouse import Mouse
 
 class Window(common.Window):
     def __init__(self, handle):
@@ -40,11 +41,26 @@ class Manager(common.Manager):
     
     def __init__(self):
         super(Manager, self).__init__()
+        self.__mouse = Mouse()
     
     @property
     def active_window(self):
         output = subprocess.check_output(["xdotool", "getactivewindow"])
         return Window(int(output.strip('\r\n').strip()))
+    
+    def get_from_position(self, position):
+        old_position = None
+        
+        if position != self.__mouse.position():
+            old_position = self.__mouse.position()
+            self.__mouse.move(position)
+        try:
+            output = subprocess.check_output(["xdotool", "getmouselocation"])
+            matched = re.match("(?:\n|.)*window:(\d+)*(?:\n|.)*", output)
+            return Window(int(matched.group(1)))
+        finally:
+            if old_position is not None:
+                self.__mouse.move(old_position)        
     
     def find(self, **kwargs):
         self._prepare_find_arguments(kwargs)

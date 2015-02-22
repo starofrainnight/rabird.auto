@@ -57,7 +57,10 @@ class Manager(object):
     @property
     def active_window(self):
         raise NotImplemented()
-        
+    
+    def get_from_position(self, position):
+        raise NotImplemented()
+    
     def set_option(self, option_name, option_value):
         if option_name not in self.__options:
             raise KeyError()
@@ -96,4 +99,5 @@ class Manager(object):
                 break
             
         return handles    
+    
     

@@ -64,6 +64,9 @@ class Manager(common.Manager):
     def active_window(self):
         return Window(win32gui.GetActiveWindow())
     
+    def get_from_position(self, position):
+        return Window(win32gui.WindowFromPoint(position))
+    
     def find(self, **kwargs):
         self._prepare_find_arguments(kwargs)
         
