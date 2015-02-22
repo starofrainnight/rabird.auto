@@ -10,7 +10,11 @@ Created on 2013-12-17
 import cv2
 import sys
 import numpy
-import ImageGrab
+
+if sys.platform == "win32":
+	import ImageGrab
+else:
+	import pyscreenshot as ImageGrab
 
 class ImageLookupError(LookupError):
 	pass
