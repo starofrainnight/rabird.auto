@@ -5,7 +5,7 @@
 
 import time
 
-class Window(object):
+class Manager(object):
     def __init__(self):
         self.__options = dict()
         

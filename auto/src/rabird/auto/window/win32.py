@@ -23,16 +23,16 @@ def __enum_windows(parent, callback, extra):
         else:
             raise e
 
-class Window(common.Window):
+class Manager(common.Manager):
     
     def __init__(self):
-        super(Window, self).__init__()
+        super(Manager, self).__init__()
     
     def get_title(self, handle):
         return win32gui.GetWindowText(handle).decode(locale.getpreferredencoding())
     
     def find(self, **kwargs):
-        result = super(Window, self).find(**kwargs)
+        result = super(Manager, self).find(**kwargs)
     
         def enum_window_callback(hwnd, context):
             result, kwargs = context

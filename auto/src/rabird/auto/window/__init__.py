@@ -10,6 +10,6 @@
 import sys
 
 if sys.platform == "win32":
-    from .win32 import Window
+    from .win32 import Manager
     
 
