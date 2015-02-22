@@ -60,8 +60,7 @@ class Manager(common.Manager):
     def __init__(self):
         super(Manager, self).__init__()
     
-    @property
-    def active_window(self):
+    def get_active(self):
         return Window(win32gui.GetActiveWindow())
     
     def get_from_position(self, position):

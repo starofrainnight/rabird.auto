@@ -43,8 +43,7 @@ class Manager(common.Manager):
         super(Manager, self).__init__()
         self.__mouse = Mouse()
     
-    @property
-    def active_window(self):
+    def get_active(self):
         output = subprocess.check_output(["xdotool", "getactivewindow"])
         return Window(int(output.strip('\r\n').strip()))
     

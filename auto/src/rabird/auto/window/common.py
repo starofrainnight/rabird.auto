@@ -54,8 +54,7 @@ class Manager(object):
     def __init__(self):
         self.__options = dict()
         
-    @property
-    def active_window(self):
+    def get_active(self):
         raise NotImplemented()
     
     def get_from_position(self, position):
