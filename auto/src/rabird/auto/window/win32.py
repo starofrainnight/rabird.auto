@@ -65,7 +65,9 @@ class Manager(common.Manager):
         return Window(win32gui.GetActiveWindow())
     
     def find(self, **kwargs):
-        result = super(Manager, self).find(**kwargs)
+        self._prepare_find_arguments(kwargs)
+        
+        result = []
     
         def enum_window_callback(hwnd, context):
             result, kwargs = context

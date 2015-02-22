@@ -47,7 +47,10 @@ class Manager(common.Manager):
         return Window(int(output.strip('\r\n').strip()))
     
     def find(self, **kwargs):
-        result = super(Manager, self).find(**kwargs)
+        self._prepare_find_arguments(kwargs)
+        
+        result = []
+        
         command = ["xdotool", "search"]
         command.append("--all")
         command.append("--sync")

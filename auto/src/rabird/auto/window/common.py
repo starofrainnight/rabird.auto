@@ -70,14 +70,15 @@ class Manager(object):
             
         return self.__options[option_name]
     
-    def find(self, **kwargs):
+    def _prepare_find_arguments(self, kwargs):
         if "limit" not in kwargs:
             kwargs["limit"] = 1
             
         if "parent" not in kwargs:
             kwargs["parent"] = None
-            
-        return []
+    
+    def find(self, **kwargs):
+        raise NotImplemented()
     
     def exists(self, **kwargs):
         return len(self.find(**kwargs)) > 0
