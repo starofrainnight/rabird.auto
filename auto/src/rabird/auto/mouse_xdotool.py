@@ -13,18 +13,15 @@ class Mouse(common.Mouse):
         super(Mouse, self).__init__()
         
     ## return current mouse absolute position
-    @classmethod
-    def position(cls):
+    def position(self):
         output = subprocess.check_output(["xdotool", "getmouselocation"])
         matched = re.match(".*x:(\d+)\s*y:(\d+)\s*.*", output)
         return [int(matched.group(1)), int(matched.group(2))]
     
-    @classmethod
-    def move(cls, position):
+    def move(self, position):
         subprocess.call(["xdotool", "mousemove", "--sync", position[0], position[1]])
     
-    @classmethod
-    def button_up(cls, button_type = common.ButtonType.LEFT ):
+    def button_up(self, button_type = common.ButtonType.LEFT ):
         if common.ButtonType.LEFT == button_type:
             subprocess.call(["xdotool", "mouseup", "1"]) 
         elif common.ButtonType.RIGHT == button_type:
@@ -32,8 +29,7 @@ class Mouse(common.Mouse):
         elif common.ButtonType.MIDDLE == button_type:
             subprocess.call(["xdotool", "mouseup", "2"])
             
-    @classmethod
-    def button_down(cls, button_type = common.ButtonType.LEFT ):
+    def button_down(self, button_type = common.ButtonType.LEFT ):
         if common.ButtonType.LEFT == button_type:
             subprocess.call(["xdotool", "mousedown", "1"])
         elif common.ButtonType.RIGHT == button_type:

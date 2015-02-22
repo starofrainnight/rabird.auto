@@ -15,35 +15,30 @@ class Mouse(common.Mouse):
     #
     # @param event_id see win32con.MOUSEEVENTF_XXX or search in MSDN
     # @param event_data: only related to wheel event and xbutton up / down
-    @classmethod 
-    def send_event(cls, event_id, event_data = 0 ):
+    def send_event(self, event_id, event_data = 0 ):
         win32api.mouse_event( event_id, 0, 0, event_data )
     
     ## return current mouse absolute position
-    @classmethod
-    def position(cls):
+    def position(self):
         return win32api.GetCursorPos()
     
-    @classmethod
-    def move(cls, position):
+    def move(self, position):
         win32api.SetCursorPos([int(position[0]), int(position[1])])
     
     ##  
-    @classmethod
-    def button_up(cls, button_type = common.ButtonType.LEFT ):
+    def button_up(self, button_type = common.ButtonType.LEFT ):
         if common.ButtonType.LEFT == button_type:
-            cls.send_event( win32con.MOUSEEVENTF_LEFTUP )
+            self.send_event( win32con.MOUSEEVENTF_LEFTUP )
         elif common.ButtonType.RIGHT == button_type:
-            cls.send_event( win32con.MOUSEEVENTF_RIGHTUP )
+            self.send_event( win32con.MOUSEEVENTF_RIGHTUP )
         elif common.ButtonType.MIDDLE == button_type:
-            cls.send_event( win32con.MOUSEEVENTF_MIDDLEUP )
+            self.send_event( win32con.MOUSEEVENTF_MIDDLEUP )
             
-    @classmethod
-    def button_down(cls, button_type = common.ButtonType.LEFT ):
+    def button_down(self, button_type = common.ButtonType.LEFT ):
         if common.ButtonType.LEFT == button_type:
-            cls.send_event( win32con.MOUSEEVENTF_LEFTDOWN )
+            self.send_event( win32con.MOUSEEVENTF_LEFTDOWN )
         elif common.ButtonType.RIGHT == button_type:
-            cls.send_event( win32con.MOUSEEVENTF_RIGHTDOWN )
+            self.send_event( win32con.MOUSEEVENTF_RIGHTDOWN )
         elif common.ButtonType.MIDDLE == button_type:
-            cls.send_event( win32con.MOUSEEVENTF_MIDDLEDOWN )
+            self.send_event( win32con.MOUSEEVENTF_MIDDLEDOWN )
             
