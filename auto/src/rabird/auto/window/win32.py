@@ -25,20 +25,20 @@ def __enum_windows(parent, callback, extra):
 
 class Window(common.Window):
     
-    @classmethod
-    def get_title(cls, handle):
+    def __init__(self):
+        super(Window, self).__init__()
+    
+    def get_title(self, handle):
         return win32gui.GetWindowText(handle).decode(locale.getpreferredencoding())
     
-    
-    @classmethod
-    def find(cls, **kwargs):
-        result = super(Window, cls).find(**kwargs)
+    def find(self, **kwargs):
+        result = super(Window, self).find(**kwargs)
     
         def enum_window_callback(hwnd, context):
             result, kwargs = context
             
             if "title" in kwargs:
-                if re.match(kwargs["title"], cls.get_title(hwnd)) is None:
+                if re.match(kwargs["title"], self.get_title(hwnd)) is None:
                     return True
             
             if "id" in kwargs:
@@ -57,7 +57,6 @@ class Window(common.Window):
         
         return result
     
-    @classmethod
-    def activate(cls, handle):
+    def activate(self, handle):
         win32gui.SetForegroundWindow(handle)    
         
