@@ -16,12 +16,33 @@ class Window(object):
         '''
         raise NotImplemented()
     
+    @property
+    def geometry(self):
+        '''
+        Get the window geometry.
+        
+        @return (x, y, width, height, additional informations...)
+        '''
+        raise NotImplemented()
+    
     def raise_(self):
         '''
         Raise the window to top most .
         '''
         raise NotImplemented()
-
+    
+    def activate(self):
+        '''
+        Activate the window
+        '''
+        raise NotImplemented()
+    
+    def close(self):
+        '''
+        Close the window
+        '''
+        raise NotImplemented()
+    
 class Manager(object):
     def __init__(self):
         self.__options = dict()

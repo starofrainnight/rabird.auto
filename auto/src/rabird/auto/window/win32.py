@@ -34,8 +34,21 @@ class Window(common.Window):
         text = win32gui.GetWindowText(self.__handle)
         return text.decode(locale.getpreferredencoding())
     
+    @property
+    def geometry(self):
+        # FIXME : While the window minimized, here return a wrong
+        # result. 
+        result = win32gui.GetWindowRect(self.__handle)
+        return (result[0], result[1], result[2] - result[0], result[3] - result[1])
+    
     def raise_(self):
         win32gui.SetForegroundWindow(self.__handle)
+        
+    def activate(self):
+        win32gui.SetForegroundWindow(self.__handle)
+        
+    def close(self):
+        win32gui.CloseWindow(self.__handle)
         
 class Manager(common.Manager):
     
