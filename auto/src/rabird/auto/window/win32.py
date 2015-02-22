@@ -57,6 +57,9 @@ class Window(common.Window):
         
         return result
     
-    def activate(self, handle):
-        win32gui.SetForegroundWindow(handle)    
+    def raise_(self, handle):
+        '''
+        Raise the window to top most .
+        '''
+        win32gui.SetForegroundWindow(handle)
         
