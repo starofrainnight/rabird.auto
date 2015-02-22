@@ -4,9 +4,12 @@
 '''
 
 import win32api, win32con, win32gui
-from .mouse_constant import *
+from . import mouse_constant as common
 
-class Mouse(object):
+class Mouse(common.Mouse):
+    def __init__(self):
+        super(Mouse, self).__init__()
+        
     ##
     # send event to system 
     #
@@ -27,20 +30,20 @@ class Mouse(object):
     
     ##  
     @classmethod
-    def button_up(cls, button_type = ButtonType.LEFT ):
-        if ButtonType.LEFT == button_type:
+    def button_up(cls, button_type = common.ButtonType.LEFT ):
+        if common.ButtonType.LEFT == button_type:
             cls.send_event( win32con.MOUSEEVENTF_LEFTUP )
-        elif ButtonType.RIGHT == button_type:
+        elif common.ButtonType.RIGHT == button_type:
             cls.send_event( win32con.MOUSEEVENTF_RIGHTUP )
-        elif ButtonType.MIDDLE == button_type:
+        elif common.ButtonType.MIDDLE == button_type:
             cls.send_event( win32con.MOUSEEVENTF_MIDDLEUP )
             
     @classmethod
-    def button_down(cls, button_type = ButtonType.LEFT ):
-        if ButtonType.LEFT == button_type:
+    def button_down(cls, button_type = common.ButtonType.LEFT ):
+        if common.ButtonType.LEFT == button_type:
             cls.send_event( win32con.MOUSEEVENTF_LEFTDOWN )
-        elif ButtonType.RIGHT == button_type:
+        elif common.ButtonType.RIGHT == button_type:
             cls.send_event( win32con.MOUSEEVENTF_RIGHTDOWN )
-        elif ButtonType.MIDDLE == button_type:
+        elif common.ButtonType.MIDDLE == button_type:
             cls.send_event( win32con.MOUSEEVENTF_MIDDLEDOWN )
             
