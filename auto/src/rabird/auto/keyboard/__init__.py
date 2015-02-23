@@ -10,7 +10,7 @@
 import sys
 
 if sys.platform == "win32":
-    from .keyboard_win32 import Keyboard
+    from .win32 import Keyboard
 else:
-    from .keyboard_xdotool import Keyboard
+    from .xdotool import Keyboard
     

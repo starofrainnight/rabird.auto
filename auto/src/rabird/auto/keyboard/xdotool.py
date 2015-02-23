@@ -3,7 +3,7 @@
 @author Hong-She Liang <starofrainnight@gmail.com>
 '''
 
-from . import keyboard_constant as common
+from . import common
 import os
 
 class Keyboard(common.Keyboard):

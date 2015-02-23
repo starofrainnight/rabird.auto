@@ -6,7 +6,7 @@
 import win32con
 import win32api
 import win32gui
-from . import keyboard_constant as common
+from . import common
 
 try:
     # Use pywinio to emulate our keyboard if existed. 
