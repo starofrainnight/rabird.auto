@@ -33,6 +33,9 @@ if sys.platform == "win32":
     our_requires.append('pywin32>=218')
 else:
     our_requires.append('linux-metrics')
+    
+if sys.version_info[0] == 2:
+    our_requires.append('enum34')
 
 setup(
     name=package_name,
