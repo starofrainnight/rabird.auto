@@ -4,7 +4,7 @@
 '''
 
 import win32api, win32con, win32gui
-from . import mouse_constant as common
+from . import common
 
 class Mouse(common.Mouse):
     def __init__(self):

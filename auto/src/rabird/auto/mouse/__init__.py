@@ -5,7 +5,7 @@
 import sys
 
 if sys.platform == "win32":
-	from .mouse_win32 import Mouse
+	from .win32 import Mouse
 else:
-	from .mouse_xdotool import Mouse
+	from .xdotool import Mouse
 
