@@ -7,7 +7,7 @@ import time
 import datetime
 import sys
 import rabird.core.datetime
-from rabird.core.enum import Enum 
+from enum import Enum
 
 # button types
 class ButtonType(Enum):
