@@ -18,27 +18,30 @@ except ImportError as e:
     __keybd_event = win32api.keybd_event
     
 class Keyboard(common.Keyboard):
-    # Without keys listed below :
-    #
-    #    {ASC nnnn} Send the ALT+nnnn key combination 
-    #    {BROWSER_BACK} 2000/XP Only: Select the browser "back" button 
-    #    {BROWSER_FORWARD} 2000/XP Only: Select the browser "forward" button 
-    #    {BROWSER_REFRESH} 2000/XP Only: Select the browser "refresh" button 
-    #    {BROWSER_STOP} 2000/XP Only: Select the browser "stop" button 
-    #    {BROWSER_SEARCH} 2000/XP Only: Select the browser "search" button 
-    #    {BROWSER_FAVORITES} 2000/XP Only: Select the browser "favorites" button 
-    #    {BROWSER_HOME} 2000/XP Only: Launch the browser and go to the home page 
-    #    {VOLUME_MUTE} 2000/XP Only: Mute the volume 
-    #    {VOLUME_DOWN} 2000/XP Only: Reduce the volume 
-    #    {VOLUME_UP} 2000/XP Only: Increase the volume 
-    #    {MEDIA_NEXT} 2000/XP Only: Select next track in media player 
-    #    {MEDIA_PREV} 2000/XP Only: Select previous track in media player 
-    #    {MEDIA_STOP} 2000/XP Only: Stop media player 
-    #    {MEDIA_PLAY_PAUSE} 2000/XP Only: Play/pause media player 
-    #    {LAUNCH_MAIL} 2000/XP Only: Launch the email application 
-    #    {LAUNCH_MEDIA} 2000/XP Only: Launch media player 
-    #    {LAUNCH_APP1} 2000/XP Only: Launch user app1 
-    #    {LAUNCH_APP2} 2000/XP Only: Launch user app2
+    '''
+    Without keys listed below :
+    
+       {ASC nnnn} Send the ALT+nnnn key combination 
+       {BROWSER_BACK} 2000/XP Only: Select the browser "back" button 
+       {BROWSER_FORWARD} 2000/XP Only: Select the browser "forward" button 
+       {BROWSER_REFRESH} 2000/XP Only: Select the browser "refresh" button 
+       {BROWSER_STOP} 2000/XP Only: Select the browser "stop" button 
+       {BROWSER_SEARCH} 2000/XP Only: Select the browser "search" button 
+       {BROWSER_FAVORITES} 2000/XP Only: Select the browser "favorites" button 
+       {BROWSER_HOME} 2000/XP Only: Launch the browser and go to the home page 
+       {VOLUME_MUTE} 2000/XP Only: Mute the volume 
+       {VOLUME_DOWN} 2000/XP Only: Reduce the volume 
+       {VOLUME_UP} 2000/XP Only: Increase the volume 
+       {MEDIA_NEXT} 2000/XP Only: Select next track in media player 
+       {MEDIA_PREV} 2000/XP Only: Select previous track in media player 
+       {MEDIA_STOP} 2000/XP Only: Stop media player 
+       {MEDIA_PLAY_PAUSE} 2000/XP Only: Play/pause media player 
+       {LAUNCH_MAIL} 2000/XP Only: Launch the email application 
+       {LAUNCH_MEDIA} 2000/XP Only: Launch media player 
+       {LAUNCH_APP1} 2000/XP Only: Launch user app1 
+       {LAUNCH_APP2} 2000/XP Only: Launch user app2
+    '''
+    
     __special_key_contexts = { 
         '!':[win32con.VK_MENU],
         '+':[win32con.VK_SHIFT],

@@ -6,7 +6,10 @@
 import enum
 
 class KeyAction(enum.IntEnum):
-    # Key Actions
+    '''
+    Key Actions
+    '''
+    
     (up, 
     down,
     press,
@@ -39,11 +42,13 @@ class Keyboard(object):
     def string_to_action(self, astr):
         return self.__key_action_map[astr.lower()]
 
-    ##
-    # Split a solo key series from keys beginning .
-    #
-    # @return [[context, length, action], ...]
     def get_solo_key_series(self, keys, i=0):
+        '''
+        Split a solo key series from keys beginning .
+        
+        @return [[context, length, action], ...]
+        '''
+        
         key_series = []
             
         while i < len(keys):

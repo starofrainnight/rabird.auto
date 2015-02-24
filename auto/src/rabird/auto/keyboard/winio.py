@@ -1,7 +1,6 @@
 '''
-Created on 2013-12-14
-
-@author: "HongShe Liang <starofrainnight@gmail.com>"
+@date 2013-12-14
+@author Hong-She Liang <starofrainnight@gmail.com>
 '''
 
 import pywinio
@@ -30,8 +29,11 @@ def __get_winio():
 		
 	return __winio	
 
-# Wait keyboard buffer empty
 def wait_for_buffer_empty():
+	'''
+	Wait keyboard buffer empty
+	'''
+	
 	winio = __get_winio()
 	
 	dwRegVal = 0x02

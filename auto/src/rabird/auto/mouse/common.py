@@ -9,20 +9,29 @@ import sys
 import rabird.core.datetime
 from enum import Enum
 
-# button types
 class ButtonType(Enum):
+    '''
+    button types
+    '''
+    
     LEFT = 0
     MIDDLE = 1
     RIGHT = 2
 
-# button status
 class ButtonStatus(Enum):
+    '''
+    button status
+    '''
+    
     UP = 0
     DOWN = 1
 
-## all time related unit are second, see description about sleep() function 
-# of module time.
+
 class ButtonOptions():
+    '''
+    All time related unit are second, see description about sleep() function 
+    of module time.
+    '''
     click_delay = 0.010
     click_down_delay = 0.010
     click_drag_delay = 0.250
@@ -32,12 +41,15 @@ class Mouse(object):
         pass
     
         
-    ## move to target position 
-    # @param x: 
-    # @param y:
-    # @param process_time: How much seconds you want to process the whole
-    # mouse move operation. Default to 0.25 second
     def move(self, position, process_time = 0.25  ):
+        '''
+        Move to target position
+         
+        @param x: 
+        @param y:
+        @param process_time: How much seconds you want to process the whole
+        mouse move operation. Default to 0.25 second
+        '''
         x = position[0]
         y = position[1]
         
@@ -100,7 +112,7 @@ class Mouse(object):
             
             break # We must break the while!
             
-        # anyway, we will move the mouse to correct position
+        # Anyway, we will move the mouse to correct position
         self.move(position)
         time.sleep( 0.001 )
     
@@ -111,6 +123,6 @@ class Mouse(object):
             self.button_up( button_type )
             time.sleep(options.click_down_delay)
     
-## options of mouse related functions
+## Options of mouse related functions
 options = ButtonOptions()
 
