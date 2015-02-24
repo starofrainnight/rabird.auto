@@ -3,8 +3,9 @@
 @author Hong-She Liang <starofrainnight@gmail.com>
 '''
 
-from . import common
 import os
+from . import common
+from .common import KeyAction
 
 class Keyboard(common.Keyboard):
     # Without keys listed below :
@@ -277,11 +278,11 @@ class Keyboard(common.Keyboard):
         
         key_text = context[0]
         
-        if action == common.KA_PRESS_HOLD:
+        if action == KeyAction.press_hold:
             os.system("xdotool keydown %s" % key_text)
-        elif action == common.KA_UP:
+        elif action == KeyAction.up:
             os.system("xdotool keyup %s" % key_text)
-        elif action == common.KA_DOWN:
+        elif action == KeyAction.down:
             os.system("xdotool keydown %s" % key_text)
         else: # press and others.
             os.system("xdotool keydown %s" % key_text)

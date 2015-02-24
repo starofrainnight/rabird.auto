@@ -7,6 +7,7 @@ import win32con
 import win32api
 import win32gui
 from . import common
+from .common import KeyAction
 
 try:
     # Use pywinio to emulate our keyboard if existed. 
@@ -296,11 +297,11 @@ class Keyboard(common.Keyboard):
                 flags |= win32con.KEYEVENTF_EXTENDEDKEY
                 scancode = extended_scancode
             
-            if action == common.KA_PRESS_HOLD:
+            if action == KeyAction.press_hold:
                 __keybd_event(vkcode, scancode, flags)
-            elif action == common.KA_UP:
+            elif action == KeyAction.up:
                 __keybd_event(vkcode, scancode, flags | win32con.KEYEVENTF_KEYUP)
-            elif action == common.KA_DOWN:
+            elif action == KeyAction.down:
                 __keybd_event(vkcode, scancode, flags)
             else: # press and others.
                 __keybd_event(vkcode, scancode, flags)

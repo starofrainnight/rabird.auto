@@ -3,21 +3,24 @@
 @author Hong-She Liang <starofrainnight@gmail.com>
 '''
 
-# Key Actions
-(KA_UP, 
-KA_DOWN,
-KA_PRESS,
-KA_ON,
-KA_OFF,
-KA_PRESS_HOLD) = xrange(0, 6)
+import enum
+
+class KeyAction(enum.IntEnum):
+    # Key Actions
+    (up, 
+    down,
+    press,
+    on,
+    off,
+    press_hold) = xrange(0, 6)
 
 class Keyboard(object):
     __key_action_map = dict()
-    __key_action_map['up'] = KA_UP
-    __key_action_map['down'] = KA_DOWN
-    __key_action_map['press'] = KA_PRESS
-    __key_action_map['on'] = KA_ON
-    __key_action_map['off'] = KA_OFF
+    __key_action_map['up'] = KeyAction.up
+    __key_action_map['down'] = KeyAction.down
+    __key_action_map['press'] = KeyAction.press
+    __key_action_map['on'] = KeyAction.on
+    __key_action_map['off'] = KeyAction.off
         
     def __init__(self):
         pass
@@ -72,11 +75,11 @@ class Keyboard(object):
                 return key_series
             elif key in self.special_key_contexts:
                 context = self.special_key_contexts[key] 
-                key_series.append([context, len(key), KA_PRESS_HOLD])
+                key_series.append([context, len(key), KeyAction.press_hold])
                 i += len(key)
             else:
                 context = self.key_contexts[key]
-                key_series.append([context, len(key), KA_PRESS])
+                key_series.append([context, len(key), KeyAction.press])
                 i += len(key)
                 return key_series
             
@@ -94,8 +97,8 @@ class Keyboard(object):
                 
                 send_result = self._send_method(action, context)
                 if send_result[0] == 0:
-                    if action == KA_PRESS_HOLD:
-                        command_end_queue.append([KA_UP, context])
+                    if action == KeyAction.press_hold:
+                        command_end_queue.append([KeyAction.up, context])
                 else:
                     self.__send(send_result[1])
             
