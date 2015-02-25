@@ -60,9 +60,6 @@ def whereis_win32(file_name):
 		if not os.path.isdir(apath):
 			continue
 		
-		if os.path.normpath(apath) != os.path.normpath(r"d:/sb/AutoIt3/"):
-			continue
-		
 		for aext in pathexts:
 			exe_paths = glob.glob(os.path.join(apath, "%s%s" % (file_name, aext)))
 			for aexe_path in exe_paths:
