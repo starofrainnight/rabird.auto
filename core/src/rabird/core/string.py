@@ -4,6 +4,12 @@
 '''
 
 def cstring_encode(text):
+    '''
+    Encode the input text as a c style string . 
+    
+    Convert something like "\" to "\\", new line symbol to "\n",
+    carriage return symbol to "\r", etc.       
+    '''
     result = []
     convert_table = {'\\':'\\\\', '\n':'\\n', '\r':'\\r', '\t':'\\t', 
                      '"':'\\"', "'":"\\'"}
