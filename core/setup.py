@@ -19,7 +19,7 @@ package_name = 'rabird.core'
 
 rabird_logging.load_default_config()
 
-# Convert source to v2.x if we are using python 3.x.
+# Convert source to v2.x if we are using python 2.x.
 distutils.preprocess_sources_for_compatible(from_package, os.path.realpath(os.curdir))
 
 # Exclude the original source package, only accept the preprocessed package!

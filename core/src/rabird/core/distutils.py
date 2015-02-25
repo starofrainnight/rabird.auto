@@ -13,6 +13,7 @@ import shutil
 import sys
 import fnmatch
 import re
+from lib3to2.main import main as lib3to2_main
 
 # The shutil.copytree() or distutils.dir_util.copy_tree() will happen to report
 # error list below if we invoke it again and again ( at least in python 2.7.4 ):
@@ -74,28 +75,6 @@ def preprocess_sources_for_compatible(source_path, destination_path):
 		# We wrote program implicated by version 3, if python version large or equal than 3,
 		# we need not change the sources.
 		return
-		
+	
 	for folder_name in directories:
-		for root, dirs, files in os.walk(os.path.join(destination_path, folder_name)):
-			for afile in files:
-				if fnmatch.fnmatch(afile, '*.py') or fnmatch.fnmatch(afile, '*.pyw'):					
-					file_path = os.path.join(root, afile)
-					source_file = open(file_path, 'rb+')
-					content = source_file.read()
-					match = re.search(tag_line, content, re.MULTILINE)
-					if match is not None:
-						source_file.seek(0) # Go to beginning of file ...
-						source_file.write(content[:match.start() + 1]) # All things before tag line
-						# Import all future stuffs while we are using python 2.7.x
-						source_file.write('from __future__ import nested_scopes\n')
-						source_file.write('from __future__ import generators\n')
-						source_file.write('from __future__ import division\n')
-						source_file.write('from __future__ import absolute_import\n')
-						source_file.write('from __future__ import with_statement\n')
-						source_file.write('from __future__ import print_function\n')
-						source_file.write('from __future__ import unicode_literals\n')
-						source_file.write('range = xrange\n') # Emulate behaviors of range
-						# Import all exceptions that new introduced in python 3
-						source_file.write('from rabird.core.exceptions import *\n')
-						source_file.write(content[match.end():]) # Rest after tag line
-					source_file.close()
+		lib3to2_main("lib3to2.fixes", [os.path.join(destination_path, folder_name)])
