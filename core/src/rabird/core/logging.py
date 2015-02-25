@@ -1,7 +1,7 @@
 '''
-Created on 2013-5-9
+@date 2013-5-9
 
-@author: HongShe Liang <starofrainnight@gmail.com>
+@author Hong-She Liang <starofrainnight@gmail.com>
 '''
 
 import sys

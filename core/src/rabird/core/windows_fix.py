@@ -16,7 +16,7 @@
 # 4. may be there have more we have not found yet! ...
 #
 # @date 2011-1-25
-# @author: HongShe Liang <starofrainnight@gmail.com>
+# @author Hong-She Liang <starofrainnight@gmail.com>
 #  
 import sys
 import os

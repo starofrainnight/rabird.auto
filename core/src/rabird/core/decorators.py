@@ -1,7 +1,7 @@
 '''
-Created on 2013-8-14
+@date 2013-8-14
 
-@author: "HongShe Liang <starofrainnight@gmail.com>"
+@author "Hong-She Liang <starofrainnight@gmail.com>"
 
 @ref http://blog.mathieu-leplatre.info/python-check-arguments-types.html
 @ref http://www.python.org/dev/peps/pep-0318/

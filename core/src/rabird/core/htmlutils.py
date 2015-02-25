@@ -2,11 +2,11 @@
 #--IMPORT_ALL_FROM_FUTURE--#
 
 '''
-Created on 2014-4-14
+@date 2014-4-14
 
 Some helpful utilities use with html.
 
-@author: HongShe Liang <starofrainnight@gmail.com>
+@author Hong-She Liang <starofrainnight@gmail.com>
 '''
 
 from six.moves import html_entities
