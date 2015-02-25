@@ -9,7 +9,7 @@
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException, UnexpectedTagNameException
 from selenium.webdriver.support.ui import *
-from . import utilities
+from rabird.core.string import cstring_encode
 
 class BaseEditor(object):
     def __init__(self, webelement):
@@ -43,7 +43,7 @@ class Input(BaseEditor):
     
     @text.setter
     def text(self, value):
-        value = utilities.js_string_encode(value)
+        value = cstring_encode(value)
         script= "arguments[0].value = '%s';" % value
         self.element._parent.execute_script(script, self.element)
         
@@ -63,7 +63,7 @@ class TextArea(BaseEditor):
     
     @text.setter
     def text(self, value):
-        value = utilities.js_string_encode(value)
+        value = cstring_encode(value)
         script= "arguments[0].value = '%s';" % value
         self.element._parent.execute_script(script, self.element)
         
@@ -106,7 +106,7 @@ class TinyMCE(BaseEditor):
     
     @text.setter
     def text(self, value):
-        value = utilities.js_string_encode(value)
+        value = cstring_encode(value)
         script= "tinymce.get('%s').setContent('%s', {format: 'raw'});" % (self.element.get_attribute("id"), value)
         self.element._parent.execute_script(script)
         
