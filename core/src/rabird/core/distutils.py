@@ -5,7 +5,7 @@
 
 '''
 
-#--IMPORT_ALL_FROM_FUTURE--#
+
 
 import os
 import os.path
@@ -40,8 +40,6 @@ def __copy_tree(src_dir, dest_dir):
 # python version during installation time.
 #
 def preprocess_sources_for_compatible(source_path, destination_path):
-	# tag_line = r'^[ \t\f\v]*#--IMPORT_ALL_FROM_FUTURE--#[ \t\f\v]*$'
-	tag_line =  r'[\r\n][ \t\f\v]*#--IMPORT_ALL_FROM_FUTURE--#[ \t\f\v]*(?:(?:\r\n)|\r|\n)'
 	
 	# The 'build' and 'dist' folder sometimes will not update! So we need to 
 	# remove them all !

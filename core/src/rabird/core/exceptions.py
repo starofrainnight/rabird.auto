@@ -7,7 +7,7 @@ python 2.x and new introduced in python 3.x.
 @author Hong-She Liang <starofrainnight@gmail.com>
 '''
 
-#--IMPORT_ALL_FROM_FUTURE--#
+
 
 import sys
 

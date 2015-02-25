@@ -4,7 +4,7 @@
 @author "Hong-She Liang <starofrainnight@gmail.com>"
 '''
 
-#--IMPORT_ALL_FROM_FUTURE--#
+
 
 from six.moves import configparser
 import StringIO 

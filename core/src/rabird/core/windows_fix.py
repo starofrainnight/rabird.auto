@@ -1,5 +1,5 @@
 
-#--IMPORT_ALL_FROM_FUTURE--#
+
 
 ##
 # import this unit to fixed multilanguage read /write problems, 

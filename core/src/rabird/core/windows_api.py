@@ -1,5 +1,5 @@
 
-#--IMPORT_ALL_FROM_FUTURE--#
+
 
 ##
 # pywin32 actially do not support unicode version of windows api, just as if 
