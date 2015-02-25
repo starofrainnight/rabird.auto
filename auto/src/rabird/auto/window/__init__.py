@@ -1,6 +1,6 @@
 '''
 @date 2013-8-14
-@author HongShe Liang <starofrainnight@gmail.com>
+@author Hong-She Liang <starofrainnight@gmail.com>
 '''
 
 # -*- coding: UTF-8 -*-

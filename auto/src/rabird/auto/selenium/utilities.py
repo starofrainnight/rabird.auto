@@ -1,6 +1,6 @@
 '''
 @date 2014-11-16
-@author: Hong-she Liang <starofrainnight@gmail.com>
+@author Hong-she Liang <starofrainnight@gmail.com>
 '''
 
 def js_string_encode(text):

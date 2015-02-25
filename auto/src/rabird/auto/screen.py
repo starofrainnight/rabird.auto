@@ -2,9 +2,9 @@
 #--IMPORT_ALL_FROM_FUTURE--#
 
 '''
-Created on 2013-12-17
+@date 2013-12-17
 
-@author: "HongShe Liang <starofrainnight@gmail.com>"
+@author "Hong-She Liang <starofrainnight@gmail.com>"
 '''
 
 import cv2
