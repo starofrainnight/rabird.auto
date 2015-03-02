@@ -4,7 +4,7 @@
 '''
 @date 2013-12-17
 
-@author "Hong-She Liang <starofrainnight@gmail.com>"
+@author Hong-She Liang <starofrainnight@gmail.com>
 '''
 
 import cv2
