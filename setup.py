@@ -36,11 +36,9 @@ our_requires = [
 	'numpy', 
 	'scipy',
 	'pillow',
-	'selenium',
 	'psutil',
 	'simplejson',
 	'lxml',
-	'webdriverplus',
 	]
 	
 setup(
