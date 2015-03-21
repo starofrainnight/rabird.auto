@@ -11,9 +11,9 @@ from .common import KeyAction
 
 try:
     # Use pywinio to emulate our keyboard if existed. 
-    from . import keyboard_winio
+    from . import winio
     
-    __keybd_event = keyboard_winio.keybd_event
+    __keybd_event = winio.keybd_event
 except ImportError as e:
     __keybd_event = win32api.keybd_event
     
