@@ -13,9 +13,9 @@ try:
     # Use pywinio to emulate our keyboard if existed. 
     from . import winio
     
-    __keybd_event = winio.keybd_event
+    _keybd_event = winio.keybd_event
 except ImportError as e:
-    __keybd_event = win32api.keybd_event
+    _keybd_event = win32api.keybd_event
     
 class Keyboard(common.Keyboard):
     '''
@@ -301,14 +301,14 @@ class Keyboard(common.Keyboard):
                 scancode = extended_scancode
             
             if action == KeyAction.press_hold:
-                __keybd_event(vkcode, scancode, flags)
+                _keybd_event(vkcode, scancode, flags)
             elif action == KeyAction.up:
-                __keybd_event(vkcode, scancode, flags | win32con.KEYEVENTF_KEYUP)
+                _keybd_event(vkcode, scancode, flags | win32con.KEYEVENTF_KEYUP)
             elif action == KeyAction.down:
-                __keybd_event(vkcode, scancode, flags)
+                _keybd_event(vkcode, scancode, flags)
             else: # press and others.
-                __keybd_event(vkcode, scancode, flags)
-                __keybd_event(vkcode, scancode, flags | win32con.KEYEVENTF_KEYUP)
+                _keybd_event(vkcode, scancode, flags)
+                _keybd_event(vkcode, scancode, flags | win32con.KEYEVENTF_KEYUP)
             
             return (0, None)
         else:
