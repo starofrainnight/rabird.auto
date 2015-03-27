@@ -1,0 +1,7 @@
+*.pyc
+*.pyo
+rabird/*
+build/*
+dist/*
+*.egg-info
+.settings/*
