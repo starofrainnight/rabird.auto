@@ -39,7 +39,11 @@ our_requires = [
 	'psutil',
 	'simplejson',
 	'lxml',
+	'cv2',
 	]
+
+if sys.platform == 'win32':
+	our_requires.append('rabird.winio')
 	
 setup(
 	name=package_name,
