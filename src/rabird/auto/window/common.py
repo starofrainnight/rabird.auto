@@ -86,17 +86,24 @@ class Manager(object):
         return len(self.find(**kwargs)) > 0
     
     def wait(self, timeout=-1.0, **kwargs):
-        sleep_interval = 0.1 # 100ms wake up a time. 
+        sleep_interval = 0.1  # 100ms wake up a time. 
         counter = 0.0    
         handles = []
         while True:
             handles = self.find(**kwargs)
-            if (len(handles) <= 0) and (timeout > 0.0) and (counter > timeout):
+            
+            if len(handles) <= 0:
+                if timeout <= 0.0:
+                    # Infinite loop to wait for the window 
+                    continue
+                
+                if counter > timeout:
+                    break
+                                    
                 time.sleep(sleep_interval)
                 counter += sleep_interval
             else:
                 break
             
-        return handles    
-    
+        return handles   
     
