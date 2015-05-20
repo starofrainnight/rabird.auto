@@ -22,7 +22,12 @@ class Window(common.Window):
     @property
     def geometry(self):
         output = subprocess.check_output(["xdotool", "getwindowgeometry", str(self.__handle)])
-        matched = re.match("(?:\n|.)*:[^\d]*(\d+),(\d+)(?:\n|.)*:[^\d]*(\d+)x(\d+)(?:\n|.)*", output, re.M)
+        matched = re.match(
+            "(?:\n|.)*"
+            "Absolute upper-left X:[^\d]*(\d+)[^\d]*(?:\n|.)*"
+            "Absolute upper-left Y:[^\d]*(\d+)[^\d]*(?:\n|.)*"
+            "idth:[^\d]*(\d+)[^\d]*(?:\n|.)*"
+            "eight:[^\d]*(\d+)[^\d]*(?:\n|.)*", output, re.M)
         return (int(matched.group(1)),
             int(matched.group(2)),
             int(matched.group(3)),
