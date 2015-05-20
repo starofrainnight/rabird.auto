@@ -19,7 +19,7 @@ class Mouse(common.Mouse):
         return [int(matched.group(1)), int(matched.group(2))]
     
     def move(self, position):
-        subprocess.call(["xdotool", "mousemove", "--sync", position[0], position[1]])
+        subprocess.call(["xdotool", "mousemove", "--sync", str(position[0]), str(position[1])])
     
     def button_up(self, button_type = common.ButtonType.LEFT ):
         if common.ButtonType.LEFT == button_type:
