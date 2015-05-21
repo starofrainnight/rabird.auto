@@ -40,7 +40,7 @@ class Window(common.Window):
         subprocess.call(["xdotool", "windowactivate", "--sync", str(self.__handle)])
         
     def close(self):
-        subprocess.call(["xdotool", "windowkill", "--sync", str(self.__handle)])
+        subprocess.call(["xdotool", "windowkill", str(self.__handle)])
         
 class Manager(common.Manager):
     
