@@ -13,6 +13,10 @@ class Window(common.Window):
         super(Window, self).__init__()
         
         self.__handle = int(handle)
+    
+    @property
+    def handle(self):
+        return self.__handle
         
     @property
     def title(self):
@@ -73,7 +77,8 @@ class Manager(common.Manager):
         
         command = ["xdotool", "search"]
         command.append("--all")
-        command.append("--sync")
+        # It will freeze the search behaviors
+        # command.append("--sync") 
         
         if ("class_name" in kwargs) and ("title" in kwargs):
             # Seems xdotool can't work if class name and title 

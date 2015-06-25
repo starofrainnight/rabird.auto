@@ -30,6 +30,10 @@ class Window(common.Window):
         self.__handle = handle
         
     @property
+    def handle(self):
+        return self.__handle
+        
+    @property
     def title(self):
         text = win32gui.GetWindowText(self.__handle)
         return text.decode(locale.getpreferredencoding())

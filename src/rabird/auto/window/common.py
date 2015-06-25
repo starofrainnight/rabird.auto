@@ -10,6 +10,13 @@ class Window(object):
         pass
     
     @property
+    def handle(self):
+        '''
+        Get the window's platform specific handle.
+        '''
+        raise NotImplemented()
+    
+    @property
     def title(self):
         '''
         Get the window's title.
