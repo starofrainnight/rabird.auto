@@ -117,7 +117,7 @@ class Mouse(object):
         time.sleep( 0.001 )
     
     def click(self, button_type = ButtonType.LEFT, clicks = 1 ):
-        for i in xrange(0, clicks):
+        for i in range(0, clicks):
             self.button_down( button_type )
             time.sleep(options.click_down_delay)
             self.button_up( button_type )

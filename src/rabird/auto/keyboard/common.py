@@ -15,7 +15,7 @@ class KeyAction(enum.IntEnum):
     press,
     on,
     off,
-    press_hold) = xrange(0, 6)
+    press_hold) = list(range(0, 6))
 
 class Keyboard(object):
     __key_action_map = dict()
@@ -107,7 +107,7 @@ class Keyboard(object):
                 else:
                     self.__send(send_result[1])
             
-            for command_index in xrange(len(command_end_queue) -1, -1, -1):
+            for command_index in range(len(command_end_queue) -1, -1, -1):
                 command = command_end_queue[command_index]
                 self._send_method(*command)
     
