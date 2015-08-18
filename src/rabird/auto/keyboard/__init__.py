@@ -12,5 +12,7 @@ import sys
 if sys.platform == "win32":
     from .win32 import Keyboard
 else:
-    from .xdotool import Keyboard
-    
+    try:
+        from .uinput import Keyboard
+    except ImportError:
+        from .xdotool import Keyboard    
