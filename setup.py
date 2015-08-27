@@ -28,11 +28,16 @@ our_requires = [
 	'psutil',
 	'simplejson',
 	'lxml',
-	'cv2',
 	]
 
 if sys.platform == 'win32':
 	our_requires.append('rabird.winio')
+	
+	# If don't have opencv support, we require one
+	try:
+		import cv2
+	except ImportError:
+		our_requires.append('opencv-python')	
 	
 long_description=(
      open("README.rst", "r").read()
