@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from ez_setup import use_setuptools
-use_setuptools()
+from rabird_bootstrap import use_rabird
+use_rabird()
 
 import os
 import os.path
@@ -47,7 +47,7 @@ long_description=(
 
 setup(
     name=package_name,
-    version='.'.join(map(str, (0, 3, 1))),
+    version='.'.join(map(str, (0, 3, 2))),
     author="Hong-She Liang",
     author_email="starofrainnight@gmail.com",
     url="https://github.com/starofrainnight/%s" % package_name,
