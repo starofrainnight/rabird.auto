@@ -12,7 +12,7 @@ import sys
 import numpy
 
 if sys.platform == "win32":
-	import ImageGrab
+	from PIL import ImageGrab
 else:
 	import pyscreenshot as ImageGrab
 
