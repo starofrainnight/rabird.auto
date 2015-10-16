@@ -25,7 +25,7 @@ our_requires = [
 	'numpy', 
 	'scipy',
 	'pillow',
-	'psutil',
+	'psutil>=3.2.2',
 	'simplejson',
 	'lxml',
 	]
@@ -47,7 +47,7 @@ long_description=(
 
 setup(
     name=package_name,
-    version='.'.join(map(str, (0, 3, 2))),
+    version='.'.join(map(str, (0, 3, 3))),
     author="Hong-She Liang",
     author_email="starofrainnight@gmail.com",
     url="https://github.com/starofrainnight/%s" % package_name,
