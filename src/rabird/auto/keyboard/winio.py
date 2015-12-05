@@ -67,10 +67,8 @@ def keybd_event(vkcode, scancode, flags):
 	is_key_up = ((flags & win32con.KEYEVENTF_KEYUP) > 0)
 	
 	if extend_code > 0:
-		if is_key_up:
-			key_up(extend_code)
-		else:
-			key_down(extend_code)
+		# Extend code must not mark with 0x80 (key up behavior)
+		key_down(extend_code)
 	
 	if is_key_up:
 		key_up(standard_code)
