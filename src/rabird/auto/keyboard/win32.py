@@ -272,6 +272,163 @@ class Keyboard(common.Keyboard):
         }
         # Other keys are pass by ord(k)
         
+    # http://www.computer-engineering.org/ps2keyboard/
+    # Scan Code Set 1 - Original XT scan code set; supported by some modern keyboards
+    __ps2_vk_to_sc = {
+        win32con.VK_SPACE:0x39,
+        win32con.VK_RETURN:0x1C,
+        win32con.VK_CONTROL:0x1D, 
+        win32con.VK_LCONTROL:0x1D,
+        win32con.VK_RCONTROL:0xE01D,
+        win32con.VK_MENU:0x38, # ALT
+        win32con.VK_LMENU:0x38, # ALT
+        win32con.VK_RMENU:0xE038,
+        win32con.VK_SHIFT:0x2A, # SHIFT
+        win32con.VK_LSHIFT:0x2A,
+        win32con.VK_RSHIFT:0x36,
+        win32con.VK_BACK:0x0E,
+        win32con.VK_DELETE:0xE053,
+        win32con.VK_UP:0xE048,
+        win32con.VK_DOWN:0xE050,
+        win32con.VK_LEFT:0xE04B,
+        win32con.VK_RIGHT:0xE04D,
+        win32con.VK_HOME:0xE047,
+        win32con.VK_END:0xE04F,
+        win32con.VK_ESCAPE:0x01,
+        win32con.VK_INSERT:0xE052,
+#         'CLEAR':[win32con.VK_CLEAR],
+#         'OEM_CLEAR':[win32con.VK_OEM_CLEAR],        
+        win32con.VK_PRIOR:0xE049, # Page Up
+        win32con.VK_NEXT:0xE051,
+        win32con.VK_NUMLOCK:0x45,
+        win32con.VK_CAPITAL:0x3A,
+        win32con.VK_SCROLL:0x46,
+#         'SELECT':[win32con.VK_SELECT],
+        0x5F:0xE05F, # 'SLEEP'
+#         'EXECUTE':[win32con.VK_EXECUTE],
+#         'HELP':[win32con.VK_HELP],
+        win32con.VK_APPS:0xE05D,
+        win32con.VK_F1:0x3B,
+        win32con.VK_F2:0x3C,
+        win32con.VK_F3:0x3D,
+        win32con.VK_F4:0x3E,
+        win32con.VK_F5:0x3F,
+        win32con.VK_F6:0x40,
+        win32con.VK_F7:0x41,
+        win32con.VK_F8:0x42,
+        win32con.VK_F9:0x43,
+        win32con.VK_F10:0x44,
+        win32con.VK_F11:0x57,
+        win32con.VK_F12:0x58,
+        win32con.VK_TAB:0x0F,
+        win32con.VK_PRINT:0xE02AE037,
+        win32con.VK_LWIN:0xE05B, # WIN
+        win32con.VK_RWIN:0xE05C,
+#         'BREAK':[win32con.VK_CANCEL],
+        win32con.VK_PAUSE:0xE11D45E19DC5,
+        win32con.VK_NUMPAD0:0x52,
+        win32con.VK_NUMPAD1:0x4F,
+        win32con.VK_NUMPAD2:0x50,
+        win32con.VK_NUMPAD3:0x51,
+        win32con.VK_NUMPAD4:0x4B,
+        win32con.VK_NUMPAD5:0x4C,
+        win32con.VK_NUMPAD6:0x4D,
+        win32con.VK_NUMPAD7:0x47,
+        win32con.VK_NUMPAD8:0x48,
+        win32con.VK_NUMPAD9:0x49,
+        win32con.VK_MULTIPLY:0x37, # NUMPADMULT
+        0xBB:0x4E, # VK_OEM_PLUS, win32con.VK_ADD
+        0xBD:0x4A, # VK_OEM_MINUS, win32con.VK_SUBTRACT
+        win32con.VK_DIVIDE:0xE035,
+        0xBE:0x53, # VK_OEM_PERIOD
+        win32con.VK_RETURN:0xE01C,
+                
+#         'PLAY':[win32con.VK_PLAY],
+#         'ZOOM':[win32con.VK_ZOOM],
+#         'PA1':[win32con.VK_PA1],
+        
+        win32con.VK_BROWSER_BACK:0xE06A, # BROWSER_BACK
+        win32con.VK_BROWSER_FORWARD:0xE069,
+        0xA8:0xE067, # BROWSER_REFRESH
+        0xA9:0xE068, # BROWSER_STOP
+        0xAA:0xE065, # BROWSER_SEARCH
+        0xAB:0xE066, # BROWSER_FAVORITES
+        0xAC:0xE032, # BROWSER_HOME
+        
+        win32con.VK_VOLUME_MUTE:0xE020,
+        win32con.VK_VOLUME_DOWN:0xE02E,
+        win32con.VK_VOLUME_UP:0xE030,
+        
+        win32con.VK_MEDIA_NEXT_TRACK:0xE019,
+        win32con.VK_MEDIA_PREV_TRACK:0xE010,
+        0xB2:0xE024, # MEDIA_STOP
+        0xB3:0xE022, # MEDIA_PLAY_PAUSE
+        
+        0xB4: 0xE06C, # LAUNCH_MAIL
+        0xB5: 0xE06D, # LAUNCH_MEDIA_SELECT
+#         'LAUNCH_APP1':[0xB6],
+#         'LAUNCH_APP2':[0xB7],
+        
+#         'IME_KANA':[win32con.VK_KANA],
+#         'IME_HANGUL':[win32con.VK_HANGUL],
+#         'IME_JUNJA':[win32con.VK_JUNJA],
+#         'IME_FINAL':[win32con.VK_FINAL],
+#         'IME_HANJA':[win32con.VK_HANJA],
+#         'IME_KANJI':[win32con.VK_KANJI],
+#         'IME_CONVERT':[win32con.VK_CONVERT],
+#         'IME_NONCONVERT':[win32con.VK_NONCONVERT],
+#         'IME_ACCEPT':[win32con.VK_ACCEPT],
+#         'IME_MODECHANGE':[win32con.VK_MODECHANGE],
+        
+        0xBA:0x27, # VK_OEM_1, ;:
+        0xBF:0x35, # VK_OEM_2, /?
+        0xC0:0x29, # VK_OEM_3, `~
+        ord('['):0x1A, # VK_OEM_4, [{
+        0xDC:0x2B, # VK_OEM_5, \|
+        0xDD:0x1B, # VK_OEM_6, ]}
+        ord('\''):0x2B, # VK_OEM_7, 'single-quote/double-quote'
+        ord('0'):0x0B, # char
+        ord('1'):0x02, # char
+        ord('2'):0x03, # char
+        ord('3'):0x04, # char
+        ord('4'):0x05, # char
+        ord('5'):0x06, # char
+        ord('6'):0x07, # char
+        ord('7'):0x08, # char
+        ord('8'):0x09, # char
+        ord('9'):0x0A, # char
+        ord('-'):0x0C, # -_ , win32con.VK_SUBTRACT only means '-'
+        0xBC:0x33, # VK_OEM_COMMA, ,<
+        0xBE:0x34, # VK_OEM_PERIOD, .>
+        ord('='):0x0D, # VK_OEM_PLUS, =+
+        ord('a'):0x1E,
+        ord('b'):0x30,
+        ord('c'):0x2E,
+        ord('d'):0x20,
+        ord('e'):0x12,
+        ord('f'):0x21,
+        ord('g'):0x22,
+        ord('h'):0x23,
+        ord('i'):0x17,
+        ord('j'):0x24,
+        ord('k'):0x25,
+        ord('l'):0x26,
+        ord('m'):0x32,
+        ord('n'):0x31,
+        ord('o'):0x18,
+        ord('p'):0x19,
+        ord('q'):0x10,
+        ord('r'):0x13,
+        ord('s'):0x1F,
+        ord('t'):0x14,
+        ord('u'):0x16,
+        ord('v'):0x2F,
+        ord('w'):0x11,
+        ord('x'):0x2D,
+        ord('y'):0x15,
+        ord('z'):0x2C,
+        }
+        
     def __init__(self):
         super(Keyboard, self).__init__()
 
@@ -282,6 +439,12 @@ class Keyboard(common.Keyboard):
     @property
     def key_contexts(self):
         return self.__key_contexts
+    
+    def _ps2_vk_to_sc(self, vkcode):
+        if vkcode in self.__ps2_vk_to_sc:
+            return self.__ps2_vk_to_sc[vkcode]
+        else:
+            return 0
     
     def _send_method(self, action, context):
         '''
