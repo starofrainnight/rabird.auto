@@ -462,6 +462,12 @@ class Keyboard(common.Keyboard):
             if scancode != extended_scancode:
                 flags |= win32con.KEYEVENTF_EXTENDEDKEY
                 scancode = extended_scancode
+                
+            if scancode == 0: # Situation in virtualbox, MapVirtualKey() return 0
+                extended_scancode = self._ps2_vk_to_sc(vkcode)
+                scancode = extended_scancode
+                if scancode > 255:
+                    flags |= win32con.KEYEVENTF_EXTENDEDKEY               
             
             if action == KeyAction.press_hold:
                 _keybd_event(vkcode, scancode, flags)
