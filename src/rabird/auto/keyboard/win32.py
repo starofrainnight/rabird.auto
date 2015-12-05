@@ -293,8 +293,8 @@ class Keyboard(common.Keyboard):
         
         if int == type(vkcode):
             scancode = win32api.MapVirtualKey(vkcode, 0)
-            # MAPVK_VK_TO_VSC_EX  = 4
-            extended_scancode = win32api.MapVirtualKey(vkcode, 4)
+            # MAPVK_VK_TO_VSC_EX  = 4, returned high byte will be 0xE0 or 0xE1
+            extended_scancode = win32api.MapVirtualKey(vkcode, 4, win32api.GetKeyboardLayout())
             flags = 0
             if scancode != extended_scancode:
                 flags |= win32con.KEYEVENTF_EXTENDEDKEY
