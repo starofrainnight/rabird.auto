@@ -62,14 +62,24 @@ def key_press(scancode, press_time = 0.2):
 	key_up( scancode )
 
 def keybd_event(vkcode, scancode, flags):
-	extend_code = ( scancode >> 8 ) & 0xff
+	extend_code = (scancode >> 8)
 	standard_code = scancode & 0xff
 	is_key_up = ((flags & win32con.KEYEVENTF_KEYUP) > 0)
 	
 	if extend_code > 0:
-		# Extend code must not mark with 0x80 (key up behavior)
-		key_down(extend_code)
-	
+		is_found_value = False
+		for shiftbits in range(56, 0, -8):
+			extend_code = (scancode >> shiftbits) & 0xff
+			
+			if not is_found_value:
+				if extend_code == 0:
+					continue
+				else:
+					is_found_value = True
+					
+			# Extend code must not mark with 0x80 (key up behavior)
+			key_down(extend_code)
+		
 	if is_key_up:
 		key_up(standard_code)
 	else:
