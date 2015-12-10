@@ -54,7 +54,7 @@ class Keyboard(common.Keyboard):
         'LSHIFT':[uinput.KEY_LEFTSHIFT],
         'RSHIFT':[uinput.KEY_RIGHTSHIFT],
         'BACKSPACE':[uinput.KEY_BACKSPACE],
-        'DELETE':[uinput.DELETE],
+        'DELETE':[uinput.KEY_DELETE],
         'UP':[uinput.KEY_UP],
         'DOWN':[uinput.KEY_DOWN],
         'LEFT':[uinput.KEY_LEFT],
@@ -175,7 +175,7 @@ class Keyboard(common.Keyboard):
         '|':['+\\'],
         ']':['+}'], # VK_OEM_6, ]}
         '}':[uinput.KEY_RIGHTBRACE],
-        '\'':[uinput.APOSTROPHE], # VK_OEM_7, 'single-quote/double-quote'
+        '\'':[uinput.KEY_APOSTROPHE], # VK_OEM_7, 'single-quote/double-quote'
         '"':['+\''],
         '0':[uinput.KEY_0], # char
         ')':[uinput.KEY_KPRIGHTPAREN],
@@ -204,7 +204,7 @@ class Keyboard(common.Keyboard):
         '.':[uinput.KEY_DOT], # VK_OEM_PERIOD, .>
         '>':['+.'],
         '=':[uinput.KEY_EQUAL], # VK_OEM_PLUS, =+
-        '+':[uinput.KEY_PLUS],
+        '+':['+='],
         'a':[uinput.KEY_A],
         'b':[uinput.KEY_B], 
         'c':[uinput.KEY_C], 
