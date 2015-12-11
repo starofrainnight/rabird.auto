@@ -268,7 +268,7 @@ class Keyboard(common.Keyboard):
         events = []
         for v in list(uinput.ev.__dict__.values()):
             if type(v) == tuple:
-                events.append(events)  
+                events.append(v)  
                 
         self.__device = uinput.Device(events)
         
