@@ -8,6 +8,7 @@ import os
 uinput = __import__('uinput')
 from . import common
 from .common import KeyAction
+import time
 
 class Keyboard(common.Keyboard):
     # Without keys listed below :
@@ -271,6 +272,9 @@ class Keyboard(common.Keyboard):
                 events.append(v)  
                 
         self.__device = uinput.Device(events)
+        # I don't know why need to wait a while, otherwise the uinput
+        # commands are invalid !
+        time.sleep(0.1) 
         
     @property
     def special_key_contexts(self):
