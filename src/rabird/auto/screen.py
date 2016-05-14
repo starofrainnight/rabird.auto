@@ -7,7 +7,6 @@
 @author Hong-She Liang <starofrainnight@gmail.com>
 '''
 
-import cv2
 import sys
 import numpy
 
@@ -35,6 +34,8 @@ def find(target_image, threshold=0.7, is_center_position=True):
 	by argument 'is_center_position'.
 	'''
 
+	import cv2
+	
 	match_method = cv2.TM_SQDIFF_NORMED
 	screen_image = ImageGrab.grab()
 
