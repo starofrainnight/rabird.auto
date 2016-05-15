@@ -40,6 +40,14 @@ class Window(common.Window):
             "Absolute upper-left Y:[^\d]*(\d+)[^\d]*(?:\n|.)*"
             "idth:[^\d]*(\d+)[^\d]*(?:\n|.)*"
             "eight:[^\d]*(\d+)[^\d]*(?:\n|.)*", output, re.M)
+        if matched is None:
+            # Return text different from original after upgraded to ubuntu 16.04
+            matched = re.match(
+                "(?:\n|.)*"
+                "osition:[^\d]*(\d+),(\d+)[^\d]*(?:\n|.)*"
+                "eometry:[^\d]*(\d+)x(\d+)[^\d]*(?:\n|.)*", output, re.M)
+            print(matched)
+            
         return (int(matched.group(1)),
             int(matched.group(2)),
             int(matched.group(3)),
