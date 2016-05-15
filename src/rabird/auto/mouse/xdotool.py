@@ -5,8 +5,16 @@
 
 import os
 import re
+import sys
+import six
 import subprocess
 from . import common
+
+def _check_output(*args, **kwargs):
+    output = subprocess.check_output(*args, **kwargs)
+    if six.PY3:
+        output = output.decode(sys.getdefaultencoding())
+    return output 
 
 class Mouse(common.Mouse):
     def __init__(self):
@@ -14,7 +22,7 @@ class Mouse(common.Mouse):
         
     ## return current mouse absolute position
     def position(self):
-        output = subprocess.check_output(["xdotool", "getmouselocation"])
+        output = _check_output(["xdotool", "getmouselocation"])
         matched = re.match(".*x:(\d+)\s*y:(\d+)\s*.*", output)
         return [int(matched.group(1)), int(matched.group(2))]
     

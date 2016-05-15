@@ -5,9 +5,17 @@
 
 import re
 import subprocess
+import six
+import sys
 from . import common
 from ..mouse import Mouse
 
+def _check_output(*args, **kwargs):
+    output = subprocess.check_output(*args, **kwargs)
+    if six.PY3:
+        output = output.decode(sys.getdefaultencoding())
+    return output 
+    
 class Window(common.Window):
     def __init__(self, handle):
         super(Window, self).__init__()
@@ -20,12 +28,12 @@ class Window(common.Window):
         
     @property
     def title(self):
-        output = subprocess.check_output(["xdotool", "getwindowname", str(self.__handle)])
+        output = _check_output(["xdotool", "getwindowname", str(self.__handle)])
         return output.strip('\r\n').strip()
     
     @property
     def geometry(self):
-        output = subprocess.check_output(["xdotool", "getwindowgeometry", str(self.__handle)])
+        output = _check_output(["xdotool", "getwindowgeometry", str(self.__handle)])
         matched = re.match(
             "(?:\n|.)*"
             "Absolute upper-left X:[^\d]*(\d+)[^\d]*(?:\n|.)*"
@@ -53,7 +61,7 @@ class Manager(common.Manager):
         self.__mouse = Mouse()
     
     def get_active(self):
-        output = subprocess.check_output(["xdotool", "getactivewindow"])
+        output = _check_output(["xdotool", "getactivewindow"])
         return Window(int(output.strip('\r\n').strip()))
     
     def get_from_position(self, position):
@@ -63,7 +71,7 @@ class Manager(common.Manager):
             old_position = self.__mouse.position()
             self.__mouse.move(position)
         try:
-            output = subprocess.check_output(["xdotool", "getmouselocation"])
+            output = _check_output(["xdotool", "getmouselocation"])
             matched = re.match("(?:\n|.)*window:(\d+)*(?:\n|.)*", output)
             return Window(int(matched.group(1)))
         finally:
@@ -85,7 +93,7 @@ class Manager(common.Manager):
             # at the sametime. So we search by ourself.
             command += ["--classname", str(kwargs["class_name"])]
             
-            output = subprocess.check_output(command)
+            output = _check_output(command)
             window_ids = re.findall("\d+", output, re.M)
             window_ids = [int(window_id) for window_id in window_ids]
             
@@ -109,7 +117,7 @@ class Manager(common.Manager):
             if "class_name" in kwargs:
                 command += ["--classname", str(kwargs["class_name"])]
             
-            output = subprocess.check_output(command)
+            output = _check_output(command)
             window_ids = re.findall("\d+", output, re.M)
             result += [Window(int(window_id)) for window_id in window_ids] 
         
