@@ -96,38 +96,30 @@ class Manager(common.Manager):
         # It will freeze the search behaviors
         # command.append("--sync") 
         
-        if ("class_name" in kwargs) and ("title" in kwargs):
-            # Seems xdotool can't work if class name and title 
-            # at the sametime. So we search by ourself.
-            command += ["--classname", str(kwargs["class_name"])]
+        # Seems xdotool can't work if class name and title 
+        # at the sametime. So we search by ourself.
+        command += ["--name", ''] # Search all windows 
+        
+        output = _check_output(command)
+        window_ids = re.findall("\d+", output, re.M)
+        window_ids = [int(window_id) for window_id in window_ids]
+        
+        for window_id in window_ids:
+            window = Window(window_id)
             
-            output = _check_output(command)
-            window_ids = re.findall("\d+", output, re.M)
-            window_ids = [int(window_id) for window_id in window_ids]
+            if (("title" in kwargs) and 
+                (re.match(str(kwargs["title"]), window.title) is None)):
+                continue
             
-            for window_id in window_ids:
-                window = Window(window_id)
-                if re.match(str(kwargs["title"]), window.title) is None:
-                    continue
-    
-                result.append(window)
-                
-                if kwargs["limit"] > 0:
-                    if len(result) >= kwargs["limit"]:
-                        break 
-        else:
-            if kwargs["limit"] > 0:
-                command += ["--limit", str(kwargs["limit"])]
+            if (("class_name" in kwargs) and 
+                (re.match(str(kwargs["class_name"]), window.class_name) is None)):
+                continue
 
-            if "title" in kwargs:
-                command += ["--name", str(kwargs["title"])]
-                
-            if "class_name" in kwargs:
-                command += ["--classname", str(kwargs["class_name"])]
+            result.append(window)
             
-            output = _check_output(command)
-            window_ids = re.findall("\d+", output, re.M)
-            result += [Window(int(window_id)) for window_id in window_ids] 
+            if kwargs["limit"] > 0:
+                if len(result) >= kwargs["limit"]:
+                    break
         
         return result
     
