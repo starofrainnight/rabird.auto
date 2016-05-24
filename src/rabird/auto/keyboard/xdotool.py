@@ -10,35 +10,35 @@ from .common import KeyAction
 class Keyboard(common.Keyboard):
     # Without keys listed below :
     #
-    #    {ASC nnnn} Send the ALT+nnnn key combination 
-    #    {BROWSER_BACK} 2000/XP Only: Select the browser "back" button 
-    #    {BROWSER_FORWARD} 2000/XP Only: Select the browser "forward" button 
-    #    {BROWSER_REFRESH} 2000/XP Only: Select the browser "refresh" button 
-    #    {BROWSER_STOP} 2000/XP Only: Select the browser "stop" button 
-    #    {BROWSER_SEARCH} 2000/XP Only: Select the browser "search" button 
-    #    {BROWSER_FAVORITES} 2000/XP Only: Select the browser "favorites" button 
-    #    {BROWSER_HOME} 2000/XP Only: Launch the browser and go to the home page 
-    #    {VOLUME_MUTE} 2000/XP Only: Mute the volume 
-    #    {VOLUME_DOWN} 2000/XP Only: Reduce the volume 
-    #    {VOLUME_UP} 2000/XP Only: Increase the volume 
-    #    {MEDIA_NEXT} 2000/XP Only: Select next track in media player 
-    #    {MEDIA_PREV} 2000/XP Only: Select previous track in media player 
-    #    {MEDIA_STOP} 2000/XP Only: Stop media player 
-    #    {MEDIA_PLAY_PAUSE} 2000/XP Only: Play/pause media player 
-    #    {LAUNCH_MAIL} 2000/XP Only: Launch the email application 
-    #    {LAUNCH_MEDIA} 2000/XP Only: Launch media player 
-    #    {LAUNCH_APP1} 2000/XP Only: Launch user app1 
+    #    {ASC nnnn} Send the ALT+nnnn key combination
+    #    {BROWSER_BACK} 2000/XP Only: Select the browser "back" button
+    #    {BROWSER_FORWARD} 2000/XP Only: Select the browser "forward" button
+    #    {BROWSER_REFRESH} 2000/XP Only: Select the browser "refresh" button
+    #    {BROWSER_STOP} 2000/XP Only: Select the browser "stop" button
+    #    {BROWSER_SEARCH} 2000/XP Only: Select the browser "search" button
+    #    {BROWSER_FAVORITES} 2000/XP Only: Select the browser "favorites" button
+    #    {BROWSER_HOME} 2000/XP Only: Launch the browser and go to the home page
+    #    {VOLUME_MUTE} 2000/XP Only: Mute the volume
+    #    {VOLUME_DOWN} 2000/XP Only: Reduce the volume
+    #    {VOLUME_UP} 2000/XP Only: Increase the volume
+    #    {MEDIA_NEXT} 2000/XP Only: Select next track in media player
+    #    {MEDIA_PREV} 2000/XP Only: Select previous track in media player
+    #    {MEDIA_STOP} 2000/XP Only: Stop media player
+    #    {MEDIA_PLAY_PAUSE} 2000/XP Only: Play/pause media player
+    #    {LAUNCH_MAIL} 2000/XP Only: Launch the email application
+    #    {LAUNCH_MEDIA} 2000/XP Only: Launch media player
+    #    {LAUNCH_APP1} 2000/XP Only: Launch user app1
     #    {LAUNCH_APP2} 2000/XP Only: Launch user app2
-    __special_key_contexts = { 
+    __special_key_contexts = {
         '!':['alt'],
         '+':['shift'],
         '^':['ctrl'],
         '#':['Meta'],
         }
-    
+
     __key_contexts = {
         # You must translate the virtual key code to scancdoe while using keybd_event.
-        # key symbol: 
+        # key symbol:
         #   win32 virtual key code
         'SPACE':['space'],
         'ENTER':['Return'],
@@ -62,7 +62,7 @@ class Keyboard(common.Keyboard):
         'ESCAPE':['Escape'],
         'INSERT':['Insert'],
         'CLEAR':['Clear'],
-    #     'OEM_CLEAR':['Clear'],        
+    #     'OEM_CLEAR':['Clear'],
         'PGUP':['Page_Up'],
         'PGDN':['Page_Down'],
         'NUMLOCK':['Num_Lock'],
@@ -120,11 +120,11 @@ class Keyboard(common.Keyboard):
         'NUMPADDIV':['KP_Divide'],
         'NUMPADDOT':['KP_Separator'], # VK_OEM_PERIOD
         'NUMPADENTER':['KP_Enter'],
-        
+
     #     'PLAY':[win32con.VK_PLAY],
     #     'ZOOM':[win32con.VK_ZOOM],
     #     'PA1':[win32con.VK_PA1],
-        
+
     #     'BROWSER_BACK':[win32con.VK_BROWSER_BACK],
     #     'BROWSER_FORWARD':[win32con.VK_BROWSER_FORWARD],
     #     'BROWSER_REFRESH':[0xA8],
@@ -132,21 +132,21 @@ class Keyboard(common.Keyboard):
     #     'BROWSER_SEARCH':[0xAA],
     #     'BROWSER_FAVORITES':[0xAB],
     #     'BROWSER_HOME':[0xAC],
-        
+
     #     'VOLUME_MUTE':[win32con.VK_VOLUME_MUTE],
     #     'VOLUME_DOWN':[win32con.VK_VOLUME_DOWN],
     #     'VOLUME_UP':[win32con.VK_VOLUME_UP],
-        
+
     #     'MEDIA_NEXT_TRACK':[win32con.VK_MEDIA_NEXT_TRACK],
     #     'MEDIA_PREV_TRACK':[win32con.VK_MEDIA_PREV_TRACK],
     #     'MEDIA_STOP':[0xB2],
     #     'MEDIA_PLAY_PAUSE':[0xB3],
-        
+
     #     'LAUNCH_MAIL':[0xB4],
     #     'LAUNCH_MEDIA_SELECT':[0xB5],
     #     'LAUNCH_APP1':[0xB6],
     #     'LAUNCH_APP2':[0xB7],
-        
+
     #     'IME_KANA':[win32con.VK_KANA],
     #     'IME_HANGUL':[win32con.VK_HANGUL],
     #     'IME_JUNJA':[win32con.VK_JUNJA],
@@ -157,8 +157,8 @@ class Keyboard(common.Keyboard):
     #     'IME_NONCONVERT':[win32con.VK_NONCONVERT],
     #     'IME_ACCEPT':[win32con.VK_ACCEPT],
     #     'IME_MODECHANGE':[win32con.VK_MODECHANGE],
-        
-        # Double function keys : 
+
+        # Double function keys :
         # for example : "[{", the "{" will appear while press Shift+[ .
         ' ':['space'],
         ';':['semicolon'], # VK_OEM_1, ;:
@@ -204,32 +204,32 @@ class Keyboard(common.Keyboard):
         '=':['equal'], # VK_OEM_PLUS, =+
         '+':['plus'],
         'a':['a'],
-        'b':['b'], 
-        'c':['c'], 
-        'd':['d'], 
-        'e':['e'], 
-        'f':['f'], 
-        'g':['g'], 
-        'h':['h'], 
-        'i':['i'], 
-        'j':['j'], 
-        'k':['k'], 
-        'l':['l'], 
-        'm':['m'], 
-        'n':['n'], 
+        'b':['b'],
+        'c':['c'],
+        'd':['d'],
+        'e':['e'],
+        'f':['f'],
+        'g':['g'],
+        'h':['h'],
+        'i':['i'],
+        'j':['j'],
+        'k':['k'],
+        'l':['l'],
+        'm':['m'],
+        'n':['n'],
         'o':['o'],
-        'p':['p'],  
-        'q':['q'],  
-        'r':['r'],  
-        's':['s'],  
-        't':['t'],  
-        'u':['u'],  
-        'v':['v'],  
-        'w':['w'],  
-        'x':['x'],  
+        'p':['p'],
+        'q':['q'],
+        'r':['r'],
+        's':['s'],
+        't':['t'],
+        'u':['u'],
+        'v':['v'],
+        'w':['w'],
+        'x':['x'],
         'y':['y'],
-        'z':['z'],  
-        
+        'z':['z'],
+
         'A':['A'],
         'B':['B'],
         'C':['C'],
@@ -258,34 +258,40 @@ class Keyboard(common.Keyboard):
         'Z':['Z'],
         }
         # Other keys are pass by ord(k)
-        
+
     def __init__(self):
         super(Keyboard, self).__init__()
-        
+        self._target_window = ""
+
     @property
     def special_key_contexts(self):
         return self.__special_key_contexts
-    
+
     @property
     def key_contexts(self):
         return self.__key_contexts
-    
-    def _send_method(self, action, context):
+
+    def _send_method(self, action, context, **kwargs):
         '''
-        @return If successed, return (0, None), otherwise return 
-        (1, Next Send Analyse Text) . 
+        @return If successed, return (0, None), otherwise return
+        (1, Next Send Analyse Text) .
         '''
-        
+
         key_text = context[0]
-        
+
+        options = ""
+        if ('window' in kwargs) and (kwargs['window'] is not None):
+            options = "--window %s" % kwargs['window']
+
         if action == KeyAction.press_hold:
-            os.system("xdotool keydown %s" % key_text)
+            os.system("xdotool keydown %s %s" % (options, key_text))
         elif action == KeyAction.up:
-            os.system("xdotool keyup %s" % key_text)
+            os.system("xdotool keyup %s %s" % (options, key_text))
         elif action == KeyAction.down:
-            os.system("xdotool keydown %s" % key_text)
+            os.system("xdotool keydown %s %s" % (options, key_text))
         else: # press and others.
-            os.system("xdotool keydown %s" % key_text)
-            os.system("xdotool keyup %s" % key_text)
-        
+            os.system("xdotool keydown %s %s" % (options, key_text))
+            os.system("xdotool keyup %s %s" % (options, key_text))
+
         return (0, None)
+
