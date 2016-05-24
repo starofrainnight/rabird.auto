@@ -8,7 +8,7 @@ import subprocess
 import six
 import sys
 from . import common
-from ..mouse import Mouse
+from ..mouse.xdotool import Mouse
 from ..keyboard.xdotool import Keyboard
 
 def _check_output(*args, **kwargs):
