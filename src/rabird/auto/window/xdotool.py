@@ -9,6 +9,7 @@ import six
 import sys
 from . import common
 from ..mouse import Mouse
+from ..keyboard.xdotool import Keyboard
 
 def _check_output(*args, **kwargs):
     output = subprocess.check_output(*args, **kwargs)
@@ -21,6 +22,7 @@ class Window(common.Window):
         super(Window, self).__init__()
 
         self.__handle = int(handle)
+        self._keyboard = Keyboard()
 
     @property
     def handle(self):

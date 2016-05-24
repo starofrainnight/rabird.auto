@@ -4,11 +4,10 @@
 '''
 
 import time
-from ..keyboard import Keyboard
 
 class Window(object):
     def __init__(self):
-        self._keyboard = Keyboard()
+        pass
 
     @property
     def handle(self):
@@ -59,9 +58,7 @@ class Window(object):
         raise NotImplemented()
 
     def send(self, *args, **kwargs):
-        # Default implementation of the send method
-        self.activate()
-        self._keyboard.send(*args, **kwargs, window=self.handle)
+        raise NotImplemented()
 
 class Manager(object):
     def __init__(self):
