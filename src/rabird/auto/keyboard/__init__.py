@@ -1,7 +1,6 @@
 # -*- coding: UTF-8 -*-
 
 
-
 '''
 @date 2013-7-7
 @author Hong-She Liang <starofrainnight@gmail.com>
@@ -15,4 +14,4 @@ else:
     try:
         from .uinput import Keyboard
     except ImportError:
-        from .xdotool import Keyboard    
+        from .xdotool import Keyboard

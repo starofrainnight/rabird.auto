@@ -5,7 +5,9 @@
 
 import time
 
+
 class Window(object):
+
     def __init__(self):
         pass
 
@@ -60,7 +62,9 @@ class Window(object):
     def send(self, *args, **kwargs):
         raise NotImplemented()
 
+
 class Manager(object):
+
     def __init__(self):
         self.__options = dict()
 
@@ -116,4 +120,3 @@ class Manager(object):
                 break
 
         return handles
-

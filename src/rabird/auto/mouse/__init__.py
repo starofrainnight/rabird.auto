@@ -1,11 +1,9 @@
 # -*- coding: UTF-8 -*-
 
 
-
 import sys
 
 if sys.platform == "win32":
-	from .win32 import Mouse
+    from .win32 import Mouse
 else:
-	from .xdotool import Mouse
-
+    from .xdotool import Mouse

@@ -11,13 +11,16 @@ from . import common
 from ..mouse.xdotool import Mouse
 from ..keyboard.xdotool import Keyboard
 
+
 def _check_output(*args, **kwargs):
     output = subprocess.check_output(*args, **kwargs)
     if six.PY3:
         output = output.decode(sys.getdefaultencoding())
     return output
 
+
 class Window(common.Window):
+
     def __init__(self, handle):
         super(Window, self).__init__()
 
@@ -30,12 +33,14 @@ class Window(common.Window):
 
     @property
     def title(self):
-        output = _check_output(["xdotool", "getwindowname", str(self.__handle)])
+        output = _check_output(
+            ["xdotool", "getwindowname", str(self.__handle)])
         return output.strip('\r\n').strip()
 
     @property
     def geometry(self):
-        output = _check_output(["xdotool", "getwindowgeometry", str(self.__handle)])
+        output = _check_output(
+            ["xdotool", "getwindowgeometry", str(self.__handle)])
         matched = re.match(
             "(?:\n|.)*"
             "Absolute upper-left X:[^\d]*(\d+)[^\d]*(?:\n|.)*"
@@ -43,28 +48,32 @@ class Window(common.Window):
             "idth:[^\d]*(\d+)[^\d]*(?:\n|.)*"
             "eight:[^\d]*(\d+)[^\d]*(?:\n|.)*", output, re.M)
         if matched is None:
-            # Return text different from original after upgraded to ubuntu 16.04
+            # Return text different from original after upgraded to ubuntu
+            # 16.04
             matched = re.match(
                 "(?:\n|.)*"
                 "osition:[^\d]*(\d+),(\d+)[^\d]*(?:\n|.)*"
                 "eometry:[^\d]*(\d+)x(\d+)[^\d]*(?:\n|.)*", output, re.M)
 
         return (int(matched.group(1)),
-            int(matched.group(2)),
-            int(matched.group(3)),
-            int(matched.group(4)))
+                int(matched.group(2)),
+                int(matched.group(3)),
+                int(matched.group(4)))
 
     def raise_(self):
-        subprocess.call(["xdotool", "windowraise", "--sync", str(self.__handle)])
+        subprocess.call(["xdotool", "windowraise",
+                         "--sync", str(self.__handle)])
 
     def activate(self):
-        subprocess.call(["xdotool", "windowactivate", "--sync", str(self.__handle)])
+        subprocess.call(["xdotool", "windowactivate",
+                         "--sync", str(self.__handle)])
 
     def close(self):
         subprocess.call(["xdotool", "windowkill", str(self.__handle)])
 
     def send(self, *args, **kwargs):
         self._keyboard.send(*args, **kwargs, window=self.handle)
+
 
 class Manager(common.Manager):
 
@@ -102,7 +111,7 @@ class Manager(common.Manager):
 
         # Seems xdotool can't work if class name and title
         # at the sametime. So we search by ourself.
-        command += ["--name", ''] # Search all windows
+        command += ["--name", '']  # Search all windows
 
         output = _check_output(command)
         window_ids = re.findall("\d+", output, re.M)
@@ -112,11 +121,11 @@ class Manager(common.Manager):
             window = Window(window_id)
 
             if (("title" in kwargs) and
-                (re.match(str(kwargs["title"]), window.title) is None)):
+                    (re.match(str(kwargs["title"]), window.title) is None)):
                 continue
 
             if (("class_name" in kwargs) and
-                (re.match(str(kwargs["class_name"]), window.class_name) is None)):
+                    (re.match(str(kwargs["class_name"]), window.class_name) is None)):
                 continue
 
             result.append(window)

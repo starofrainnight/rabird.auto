@@ -6,12 +6,9 @@
 # -*- coding: UTF-8 -*-
 
 
-
 import sys
 
 if sys.platform == "win32":
     from .win32 import Manager, Window
 else:
     from .xdotool import Manager, Window
-    
-

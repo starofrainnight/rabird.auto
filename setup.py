@@ -21,29 +21,29 @@ source_dir = rabird.core.distutils.preprocess_source()
 our_packages = find_packages(where=source_dir)
 
 our_requires = [
-	'pyscreenshot',
-	'numpy', 
-	'scipy',
-	'pillow',
-	'psutil>=3.2.2',
-	'simplejson',
-	'lxml',
-	]
+    'pyscreenshot',
+    'numpy',
+    'scipy',
+    'pillow',
+    'psutil>=3.2.2',
+    'simplejson',
+    'lxml',
+]
 
 if sys.platform == 'win32':
-	our_requires.append('rabird.winio')
-	
-	# If don't have opencv support, we require one
-	try:
-		import cv2
-	except ImportError:
-		our_requires.append('opencv-python')	
-	
-long_description=(
-     open("README.rst", "r").read()
-     + "\n" +
-     open("CHANGES.rst", "r").read()
-     )
+    our_requires.append('rabird.winio')
+
+    # If don't have opencv support, we require one
+    try:
+        import cv2
+    except ImportError:
+        our_requires.append('opencv-python')
+
+long_description = (
+    open("README.rst", "r").read()
+    + "\n" +
+    open("CHANGES.rst", "r").read()
+)
 
 setup(
     name=package_name,
@@ -55,21 +55,20 @@ setup(
     long_description=long_description,
     classifiers=[
         "Development Status :: 3 - Alpha",
-        "Intended Audience :: Developers",        
+        "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Independent", 
+        "Operating System :: OS Independent",
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: Implementation :: CPython",        
+        "Programming Language :: Python :: Implementation :: CPython",
         "Framework :: Rabird",
         "Topic :: Software Development :: Libraries",
-        "Topic :: Software Development :: Libraries :: Python Modules", 
+        "Topic :: Software Development :: Libraries :: Python Modules",
     ],
     install_requires=our_requires,
-    package_dir = {"": source_dir},
+    package_dir={"": source_dir},
     packages=our_packages,
     namespace_packages=[package_name.split(".")[0]],
     # If we don"t set the zip_safe to False, pip can"t find us.
     zip_safe=False,
-    )
-
+)

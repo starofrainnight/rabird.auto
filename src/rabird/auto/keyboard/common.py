@@ -5,17 +5,19 @@
 
 import enum
 
+
 class KeyAction(enum.IntEnum):
     '''
     Key Actions
     '''
 
     (up,
-    down,
-    press,
-    on,
-    off,
-    press_hold) = list(range(0, 6))
+     down,
+     press,
+     on,
+     off,
+     press_hold) = list(range(0, 6))
+
 
 class Keyboard(object):
     __key_action_map = dict()
@@ -58,12 +60,14 @@ class Keyboard(object):
                 # Search '}'
                 right_brace_pos = keys.find('}', i)
                 if right_brace_pos == -1:
-                    raise SyntaxError('''Can't find match brace "}" for "{" at ''' + str(i))
+                    raise SyntaxError(
+                        '''Can't find match brace "}" for "{" at ''' + str(i))
 
                 if (right_brace_pos - i) == 1:
                     right_brace_pos = keys.find('}', right_brace_pos + 1)
                     if right_brace_pos == -1:
-                        raise SyntaxError('''Can't find match brace "}" for "{" at ''' + str(i))
+                        raise SyntaxError(
+                            '''Can't find match brace "}" for "{" at ''' + str(i))
 
                 description = keys[i + 1:right_brace_pos]
                 description_parts = description.split()
@@ -107,7 +111,7 @@ class Keyboard(object):
                 else:
                     self.__send(send_result[1])
 
-            for command_index in range(len(command_end_queue) -1, -1, -1):
+            for command_index in range(len(command_end_queue) - 1, -1, -1):
                 command = command_end_queue[command_index]
                 self._send_method(*command)
 
@@ -115,7 +119,7 @@ class Keyboard(object):
         if is_raw:
             new_keys = ''
             for c in keys:
-                if c == ' ': # Space use to split description parts
+                if c == ' ':  # Space use to split description parts
                     new_keys += c
                 else:
                     new_keys += '{%s}' % (c)
@@ -123,4 +127,3 @@ class Keyboard(object):
             self.__send(new_keys, **kwargs)
         else:
             self.__send(keys, **kwargs)
-
