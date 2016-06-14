@@ -72,7 +72,7 @@ class Window(common.Window):
         subprocess.call(["xdotool", "windowkill", str(self.__handle)])
 
     def send(self, *args, **kwargs):
-        self._keyboard.send(*args, **kwargs, window=self.handle)
+        self._keyboard.send(*args, window=self.handle, **kwargs)
 
 
 class Manager(common.Manager):
