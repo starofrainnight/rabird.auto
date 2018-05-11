@@ -1,7 +1,7 @@
 '''
 The MIT License (MIT)
 
-Copyright (c) 2007 ~ 2015, Hong-She Liang <starofrainnight@gmail.com>. 
+Copyright (c) 2016-2018, Hong-She Liang <starofrainnight@gmail.com>.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -21,11 +21,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 '''
-
 '''
-Bootstrap rabird setup environment
+Bootstrap pydgutils setup environment
 
-@date 2015-08-20
 @author Hong-She Liang <starofrainnight@gmail.com>
 '''
 
@@ -58,7 +56,8 @@ def download_file_powershell(url, target):
     cmd = [
         'powershell',
         '-Command',
-        "(new-object System.Net.WebClient).DownloadFile(%(url)r, %(target)r)" % vars(),
+        "(new-object System.Net.WebClient).DownloadFile(%(url)r, %(target)r)" %
+        vars(),
     ]
     _clean_check(cmd, target)
 
@@ -76,6 +75,7 @@ def has_powershell():
     finally:
         devnull.close()
     return True
+
 
 download_file_powershell.viable = has_powershell
 
@@ -97,6 +97,7 @@ def has_curl():
         devnull.close()
     return True
 
+
 download_file_curl.viable = has_curl
 
 
@@ -116,6 +117,7 @@ def has_wget():
     finally:
         devnull.close()
     return True
+
 
 download_file_wget.viable = has_wget
 
@@ -142,6 +144,7 @@ def download_file_insecure(url, target):
             src.close()
         if dst:
             dst.close()
+
 
 download_file_insecure.viable = lambda: True
 
@@ -179,27 +182,14 @@ def use_pip():
         os.system("%s %s" % (sys.executable, filename))
 
 
-def use_rabird():
+def use_pydgutils():
     try:
-        import rabird.core
+        import pydgutils
     except:
         use_pip()
-        import pip
-        pip.main(["install", "rabird.core"])
+        try:
+            from pip import main as pipmain
+        except:
+            from pip._internal import main as pipmain
 
-        module_dirs = "rabird/core/__init__.py"
-        for apath in sys.path:
-            module_path = os.path.join(apath, module_dirs)
-            if os.path.exists(module_path) and os.path.isfile(module_path):
-                # Generate empty __init__.py into rabird/, an ugly fix
-                # for can't find rabird.core module during installation.
-                #
-                # Because there does not have any __init__.py in the
-                # namespace directory and we can't import it immediately
-                # after pip installed in the same process, so we added
-                # an empty __init__.py into rabird/ namespace directory
-                # for satisfy it.
-                afile = open(os.path.join(os.path.dirname(
-                    os.path.dirname(module_path)), "__init__.py"), "wb")
-                afile.close()
-                break
+        pipmain(["install", "pydgutils"])

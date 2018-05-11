@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from rabird_bootstrap import use_rabird
-use_rabird()
+from pydgutils_bootstrap import use_pydgutils, download
+use_pydgutils()
 
 import os
 import os.path
@@ -9,18 +9,16 @@ import sys
 import shutil
 import logging
 import fnmatch
-import rabird.core.distutils
+import pydgutils
 from setuptools import setup, find_packages
 
 package_name = 'rabird.auto'
 
 # Convert source to v2.x if we are using python 2.x.
-source_dir = rabird.core.distutils.preprocess_source()
-
-# Exclude the original source package, only accept the preprocessed package!
-our_packages = find_packages(where=source_dir)
+our_packages, source_dir = pydgutils.process_packages()
 
 our_requires = [
+    'rabird.core',
     'pyscreenshot',
     'numpy',
     'scipy',
