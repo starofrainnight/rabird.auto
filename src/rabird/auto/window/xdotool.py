@@ -38,6 +38,25 @@ class Window(common.Window):
         return output.strip('\r\n').strip()
 
     @property
+    def class_name(self):
+        '''Get the window's class name.
+        '''
+        output = _check_output(["wmctrl", "-lx"])
+        lines = output.splitlines()
+        for aline in lines:
+            aline = aline.strip()
+            matched = re.match(r'(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(.*)', aline)
+            if matched is None:
+                continue
+
+            if self.__handle != int(matched.group(1), 16):
+                continue
+
+            return matched.group(3).split('.')[-1]
+
+        return ""
+
+    @property
     def geometry(self):
         output = _check_output(
             ["xdotool", "getwindowgeometry", str(self.__handle)])
@@ -108,6 +127,10 @@ class Manager(common.Manager):
         command.append("--all")
         # It will freeze the search behaviors
         # command.append("--sync")
+
+        # Check all windows by default
+        if kwargs.get('only_visible', False):
+            command.append("--onlyvisible")
 
         # Seems xdotool can't work if class name and title
         # at the sametime. So we search by ourself.
