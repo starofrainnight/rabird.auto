@@ -28,14 +28,15 @@ our_requires = [
     'lxml',
 ]
 
+# If don't have opencv support, we require one
+try:
+    import cv2
+except ImportError:
+    # OpenCV supports MacOS X, Linux, Windows from 2.7 to 3.6
+    our_requires.append('opencv-python')
+
 if sys.platform == 'win32':
     our_requires.append('rabird.winio')
-
-    # If don't have opencv support, we require one
-    try:
-        import cv2
-    except ImportError:
-        our_requires.append('opencv-python')
 
 long_description = (
     open("README.rst", "r").read()
