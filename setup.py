@@ -36,7 +36,7 @@ except ImportError:
     our_requires.append('opencv-python')
 
 if sys.platform == 'win32':
-    our_requires.append('rabird.winio')
+    our_requires.append('pywinio')
 
 long_description = (
     open("README.rst", "r").read()

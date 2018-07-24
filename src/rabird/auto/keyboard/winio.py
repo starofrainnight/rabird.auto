@@ -3,7 +3,7 @@
 @author Hong-She Liang <starofrainnight@gmail.com>
 '''
 
-import rabird.winio
+import pywinio
 import time
 import win32api
 import win32con
@@ -22,7 +22,7 @@ def __get_winio():
     global __winio
 
     if __winio is None:
-        __winio = rabird.winio.WinIO()
+        __winio = pywinio.WinIO()
 
         def __clear_winio():
             global __winio
